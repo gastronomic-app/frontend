@@ -50,7 +50,7 @@
           </li>
         
           <li class="nav-item">
-            <a class="nav-link font-orange" href="#">Iniciar Sesiòn</a>
+            <a class="nav-link font-orange" href="#">Iniciar Sesión</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Registrarse</a>

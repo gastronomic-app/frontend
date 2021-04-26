@@ -11,7 +11,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css"
 
 
 Vue.use(BootstrapVue);
-Vue.use(BootstrapVueIcons)
+Vue.use(BootstrapVueIcons);
 Vue.config.productionTip = false;
 
 // Filtro global
