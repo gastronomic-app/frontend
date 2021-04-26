@@ -1,7 +1,7 @@
 import { render } from "@testing-library/vue";
 import Documentation from "@/views/docs/Documentation.vue";
 
-test('increments value on click', async () => {
+test('example with testing library', async () => {
   // Renderiza el componente y obtiene el método por desestructuración
   const { getByText } = render(Documentation)
 
