@@ -1,59 +1,67 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top static-top nav-background">
+    <div class="container-fluid">
       <a class="navbar-brand" href="#">
-        <img
-          class="logo"
-          alt="logo"
-          src="@/assets/logo.png"
-          width="80"
-          height="40"
-        />
+        <img class="logo" src="@/assets/logo.png" alt="">
       </a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
+        
+      <button 
+        class="navbar-toggler" 
+        type="button" 
+        data-toggle="collapse" 
+        data-target="#navbarResponsive" 
+        aria-controls="navbarResponsive" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon">
+             
+          </span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active ">
+            <a href="" class="nav-link">
               <router-link to="/">Establecimientos</router-link>
-              <span class="sr-only">(current)</span>
+            </a>
+            
+          </li>
+          <li class="nav-item active">
+            <a href="" class="nav-link">
+              <router-link to="/example-list">CRUD</router-link>
+            </a>
+            
+          </li>
+          
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Inicio
+                <span class="sr-only">(current)</span>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Nosotros</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Servicios</a>
+          </li>
+          <li class="nav-item active ">
+            <a href="" class="nav-link"> </a>
+            <i class="vertical-line justify-content-center"></i>
+          </li>
+        
+          <li class="nav-item">
+            <a class="nav-link font-orange" href="#">Iniciar Sesiòn</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Registrarse</a>
+          </li>
         </ul>
-        <span class="navbar-text">
-          <a class="nav-link" href="#">
-            <router-link to="/example-list">CRUD</router-link>
-          </a>
-        </span>
-        <span class="navbar-text">
-          <a
-            class="nav-link"
-            href="https://getbootstrap.com/docs/4.6/getting-started/introduction/"
-            target="_blank"
-          >
-            Docs Bootstrap
-          </a>
-        </span>
-        <span class="navbar-text">
-          <a class="nav-link" href="#">
-            <router-link to="/docs-vue">Docs Vue</router-link>
-          </a>
-        </span>
       </div>
-    </nav>
-    <div class="container">
-      <router-view />
     </div>
+  </nav>
+  <div class="container">
+      <router-view />
+  </div>
   </div>
 </template>
 
@@ -67,11 +75,33 @@ export default {
 </script>
 
 <style scoped>
-a:link {
+
+
+.nav-background{
+  background-color: black !important;  
+}
+.logo{
+  width: 30%;
+  height: 80%;
+}
+.font-orange{
+  color:orangered !important;
+}
+.font-orange:hover{
   text-decoration: none;
+}
+.vertical-line{
+
+  bottom: 20px;
+  margin-left: .5em;
+  padding-bottom: 10px;
+  position:absolute;
+  z-index:10;
+  width: 2px;
+  height: 2em;
+  border-left:thick-solid;
+  background: grey;
+
 }
 
-a:visited {
-  text-decoration: none;
-}
 </style>

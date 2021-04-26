@@ -29,6 +29,21 @@ const routes = [
     name: "ExampleEdit",
     component: () => import("@/views/example/ExampleEdit.vue"),
   },
+  {
+    path: "/geolocation",
+    name: "Geolocation",
+    component: () => import("../views/Geolocation.vue"),
+  },
+  {
+    path: "/deliveries",
+    name: "Deliveries",
+    component: () => import("../views/deliveries/Deliveries.vue"),
+  },
+  {
+    path: "/pending-orders",
+    name: "PendingOrders",
+    component: () => import("../views/deliveries/PendingOrders.vue"),
+  },
 ];
 
 const router = new VueRouter({
