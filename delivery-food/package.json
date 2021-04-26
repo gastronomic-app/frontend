@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@testing-library/vue": "^5.6.2",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.0-beta.11",
