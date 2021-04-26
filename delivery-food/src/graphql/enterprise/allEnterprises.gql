@@ -1,0 +1,13 @@
+{
+  allEnterprises {
+    edges {
+      node {
+        id
+        name
+        location
+        created
+        status
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+mutation updateEnterprise($id: ID!, $name: String, $location: String) {
+  updateEnterprise(input: { id: $id, name: $name, location: $location }) {
+    enterprise {
+      id
+      name
+      location
+    }
+  }
+}

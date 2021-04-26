@@ -1,0 +1,9 @@
+mutation deleteEnterprise($id: ID!) {
+  deleteEnterprise(input: $id) {
+    enterprise {
+      id
+      name
+      location
+    }
+  }
+}

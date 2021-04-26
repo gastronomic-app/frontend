@@ -1,0 +1,9 @@
+mutation createEnterprise($name: String!, $location: String!) {
+  createEnterprise(input: { name: $name, location: $location }) {
+    enterprise {
+      id
+      name
+      location
+    }
+  }
+}
