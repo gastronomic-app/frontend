@@ -5,14 +5,18 @@ import store from "./store";
 import { createProvider } from "./vue-apollo";
 
 
-import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue"
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap-vue/dist/bootstrap-vue.css"
+import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+
+
+Vue.config.productionTip = false;
 
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.config.productionTip = false;
+
 
 // Filtro global
 Vue.filter("capitalize", function (value) {
