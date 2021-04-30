@@ -33,7 +33,7 @@ const routes = [
     path: "/geolocation",
     name: "Geolocation",
     component: () => import("@/components/geolocation/Geolocation.vue"),
-  },  
+  },
   {
     path: "/orders",
     name: "OrdersPlaced",
@@ -44,7 +44,16 @@ const routes = [
     name: "PendingOrders",
     component: () => import("@/views/deliveries/PendingOrders.vue"),
   },
-
+  {
+    path: "/report",
+    name: "Report",
+    component: () => import("@/views/deliveries/Report.vue"),
+  },
+  {
+    path: "/countdown",
+    name: "Countdown",
+    component: () => import("@/views/deliveries/Countdown.vue"),
+  },
 ];
 
 const router = new VueRouter({
