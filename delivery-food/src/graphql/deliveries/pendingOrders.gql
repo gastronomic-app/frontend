@@ -1,0 +1,22 @@
+{
+    allOrders {
+    edges{
+      node{
+        id,
+        status,
+        location
+        products{
+          edges{
+            node{
+              name
+              price
+              enterprise{
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

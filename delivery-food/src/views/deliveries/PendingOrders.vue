@@ -1,217 +1,186 @@
 <template>
-  <div class=top>
+  <div>
     <br />
-    <h3><b>Pedidos por despachar</b></h3>
-    <h5>Vista del administrador</h5>
+    <div class="div-width">
+      <h3><b>Pedidos por despachar</b></h3>
+      <h5>Vista del administrador</h5>
 
-    <div class="accordion" id="accordionExample">
-      <!--CARD1-->
       <div class="d-flex justify-content-end">
         <label class="form-check-label">
           Seleccionar todos
-          <input type="checkbox" v-on:click="selectAll()"/>
-        </label> 
+          <input type="checkbox" v-on:click="selectAll()" />
+        </label>
       </div>
-      <template v-for="(order, index) in orders">
-        <div class="card" :key="order.id" v-if="order.state == 'preparando'">
-          <div
-            class="card-header"
-            :id="`heading` + order.id"
-            v-bind:class="{ selected: order.selected }"
-          >
-            <h2 class="mb-0 flex">
-              <button
-                class="btn btn-block text-left btn-width"
-                type="button"
-                data-toggle="collapse"
-                :data-target="'#collapse' + order.id"
-                aria-expanded="false"
-                :aria-controls="'collapse' + order.id"
-              >
-                Pedido Pendiente #{{ index + 1 }}
-              </button>
-              <span class="force-left">
-                <label class="form-check-label">
-                  <input
-                    type="checkbox"
-                    v-on:click.stop="order.selected = !order.selected"
-                    :checked = order.selected
-                    
-                  />
-                </label>
-              </span>
-            </h2>
-          </div>
 
-          <div
-            :id="'collapse' + order.id"
-            class="collapse"
-            :aria-labelledby="'heading' + order.id"
-            data-parent="#accordionExample"
-          >
-            <div class="card-body">
-              - Estado: {{ order.state }} <br />
-              - Fecha: {{ order.date }}<br />
-              <b>Productos:</b> <br />
-              - {{ order.products }} <br />
-              <b>Realizado por:</b> <br />
-              - {{ order.client }} <br />
-              <b>Ubicación:</b> <br />
-              - {{ order.location }}
-            </div>
+      <div v-if="$apollo.loading">
+        <LoadingGraphql />
+      </div>
+      <div v-else-if="error" class="d-flex justify-content-center">
+        <ConnectionErrorGraphql />
+      </div>
+
+      <template v-for="(order, index) in orders">
+        <accordion
+          :key="order.id"
+          :item="order"
+          :id="index"
+          :checkbox_use="true"
+          v-if="order.status"
+        >
+          <div class="card-body">
+            <strong>Detalles del pedido</strong><br />
+            Productos: {{order.products[0].node.name}} <br /> <!--TODO:Iterar, Mejorar-->
+            Total: {{order.price}} <br />
+            Ubicación: {{order.location}} <br />
           </div>
-        </div>
+        </accordion>
       </template>
 
       <br />
-      <span class="float-right">
+
+      <span class="d-flex justify-content-end">
         <button type="button" class="btn btn-color" v-on:click="dispatch()">
           Despachar Pedidos
         </button>
       </span>
+      <br />
     </div>
   </div>
 </template>
 
 
 <script>
+import Accordion from "@/components/common/Accordion.vue";
+import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
+import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 export default {
   name: "PendingOrders",
+  props: ["selected"],
+  components: {
+    Accordion,
+    LoadingGraphql,
+    ConnectionErrorGraphql,
+  },
   data() {
     return {
-      checked_all : false,
-      orders: [
-        {
-          id: "1",
-          date: "22/04/2021 21:07",
-          state: "preparando",
-          location: "742 Evergreen Terrace",
-          client: "Florinda Meza",
-          products: "Salchipapa especial",
-          selected: false,
-        },
-        {
-          id: "2",
-          date: "22/04/2021 21:12",
-          state: "preparando",
-          location: "Elm Street 123",
-          client: "Luigi Bross",
-          products: "Pizza de la Casa",
-          selected: false,
-        },
-        {
-          id: "3",
-          date: "22/04/2021 21:16",
-          state: "preparando",
-          location: "Elm Street 123",
-          client: "Nagato Uzumaki",
-          products: "Sopa Ramen",
-          selected: false,
-        },
-        {
-          id: "4",
-          date: "22/04/2021 21:18",
-          state: "preparando",
-          location: "Avenida Siempre Viva 123",
-          client: "Bartolomeo J. Simpson",
-          products: "Helado con chispas de chocolate",
-          selected: false,
-        },
-      ],
+      checked_all: false,
+      allOrders: Object, //Todos los pedidos de un establecimiento
+      enterprise: Object, //Mensajeros adjuntos a un establecimiento
+      error: null,
+      orders: [],
       couriers: [
         {
-          id: "courier1",
-          nombre: "Jesus Maria Peña",
-          celular: "3103103100",
-          state: true,
+          name: "Martin Santome",
+          status: true,
         },
         {
-          id: "courier2",
-          nombre: "Mario Cesar Bross",
-          celular: "3103103100",
-          state: true,
+          name: "Edward Elric",
+          status: true,
         },
         {
-          id: "courier3",
-          nombre: "Ebrio Morales",
-          celular: "3103103100",
-          state: true,
+          name: "Ernest Hemingway",
+          status: true,
         },
       ],
     };
   },
   methods: {
     dispatch() {
-      for (let index = 0; index < this.orders.length; index++) {
+      for (let index in this.orders) {
         if (this.orders[index].selected) {
-          alert("Asignando un mensajero al pedido " + this.orders[index].id) + "...";
           this.asignCourier(index);
           this.orders[index].selected = false;
         }
       }
     },
     asignCourier(index) {
-      let count_couriers = this.availableCouriers();
-      if (count_couriers == 0) {
-        alert("Lo sentimos no hay mensajeros disponibles en el momento")
-      }else{
-        for (let idx = 0; idx < this.couriers.length; idx++) {
-          if (this.couriers[idx].state) {
-            this.orders[index].state = "despachado";
-            this.couriers[idx].state = false;
-            alert("Pedido asignado al mensajero: " + this.couriers[idx].nombre);
+      if (this.availableCouriers() == 0) {
+        alert("Lo sentimos no hay mensajeros disponibles en el momento");
+      } else {
+        for (let i in this.couriers) {
+          if (this.couriers[i].status) {
+            this.orders[index].status = false; //Despachado
+            this.couriers[i].status = false; //No disponible
+            console.log("Pedido asignado al mensajero: " + this.couries[i]);
             break;
           }
         }
+        //TODO: Do it with the data got from the database
+        /*for (let i = 0; i < this.enterprise.couriers.edges.length; i++) {
+          if (this.enterprise.couriers.edges[i].node.status) { //TODO
+            order[index].status = false; //Despachado
+            courier.status = false; //No disponible
+            console.log(
+              "Pedido asignado al mensajero: " + courier.names + " " + courier.lastsnames
+            );
+            break;
+          }
+        }*/
       }
     },
-    availableCouriers(){
-      let count_couriers = 0;
-      for (let idx = 0; idx < this.couriers.length; idx++) {
-        if (this.couriers[idx].state){
-          count_couriers ++;
-        }
-      } 
-      return count_couriers;
+    availableCouriers() {
+      return this.couriers.filter((courier) => courier.status).length;
     },
-    selectAll(){
+    selectAll() {
       this.checkedAll = !this.checkedAll;
-      for (let idx = 0; idx < this.orders.length; idx++)
-        if (this.orders[idx].state == 'preparando')
-          this.orders[idx].selected = this.checkedAll;
-    }
+      this.orders.forEach((order) => {
+        if (order.status) order.selected = this.checkedAll;
+      });
+    },
+    transform(result) {
+      for (let order of result.edges) {
+        let productsOrder = order.node.products.edges.filter(
+          (product) => product.node.enterprise.id == "RW50ZXJwcmlzZU5vZGU6Mw=="
+        );
+        if (productsOrder.length > 0) {
+          this.orders.push({
+            status: order.node.status,
+            location: order.node.location,
+            products: productsOrder,
+            price: 0,
+            selected: false,
+          });
+        }
+      }
+      console.log("orders:", this.orders);
+    },
+  },
+  mounted() {
+    this.$apollo
+      .query({
+        // Establece la consulta para traer las ordenes
+        query: require("@/graphql/deliveries/pendingOrders.gql"),
+      })
+      .then((response) => {
+        // Se transforma la respuesta para ajustarla a lo necesario
+        this.transform(response.data.allOrders);
+      });
+  },
+  apollo: {
+    enterprise: {
+      query: require("@/graphql/deliveries/couriersEnterprise.gql"),
+      error(error) {
+        this.error = JSON.stringify(error.message);
+      },
+    },
   },
 };
 </script>
 
 <style scoped>
-.selected {
-  background-color: rgba(252, 86, 25, 0.5);
-  color: rgb(39, 39, 39);
-}
-.force-left {
-  width: 3%;
-}
-.flex {
-  display: flex;
-  width: 100%;
-}
-.btn-width {
-  width: 97%;
-}
-.texto {
-  color: black;
-}
-.btn-color{
+.btn-color {
   background-color: black;
   color: whitesmoke;
 }
-.check-color{
-  background-color: black;
-
+.div-width {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
-.top{
-  padding-top:4em;
+.padding-label {
+  padding-bottom: 2px;
 }
-
+.div {
+  margin-left: 81%;
+}
 </style>
