@@ -29,9 +29,9 @@
         >
           <div class="card-body">
             <strong>Detalles del pedido</strong><br />
-            Productos: {{order.products[0].node.name}} <br /> <!--TODO:Iterar, Mejorar-->
-            Total: {{order.price}} <br />
-            Ubicación: {{order.location}} <br />
+            Productos: {{ order.products }} <br />
+            Total: ${{ order.price }} <br />
+            Ubicación: {{ order.location }} <br />
           </div>
         </accordion>
       </template>
@@ -53,13 +53,13 @@
 import Accordion from "@/components/common/Accordion.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
+
 export default {
   name: "PendingOrders",
-  props: ["selected"],
   components: {
     Accordion,
     LoadingGraphql,
-    ConnectionErrorGraphql,
+    ConnectionErrorGraphql
   },
   data() {
     return {
@@ -101,7 +101,7 @@ export default {
           if (this.couriers[i].status) {
             this.orders[index].status = false; //Despachado
             this.couriers[i].status = false; //No disponible
-            console.log("Pedido asignado al mensajero: " + this.couries[i]);
+            alert("Pedido asignado al mensajero: " + this.couriers[i].name);
             break;
           }
         }
@@ -129,20 +129,33 @@ export default {
     },
     transform(result) {
       for (let order of result.edges) {
-        let productsOrder = order.node.products.edges.filter(
-          (product) => product.node.enterprise.id == "RW50ZXJwcmlzZU5vZGU6Mw=="
-        );
-        if (productsOrder.length > 0) {
+        let productsOrder = this.transformProducts(order.node.products);
+        if (productsOrder.belongs) {
           this.orders.push({
             status: order.node.status,
             location: order.node.location,
-            products: productsOrder,
-            price: 0,
+            products: productsOrder.names,
+            price: productsOrder.price,
             selected: false,
           });
         }
       }
       console.log("orders:", this.orders);
+    },
+    transformProducts(products) {
+      let productsOrder = products.edges.filter(
+        (product) => product.node.enterprise.id == "RW50ZXJwcmlzZU5vZGU6Mw=="
+      );
+      let prodNames = "", prodTotal = 0, belong = false;
+      if (productsOrder.length > 0) {
+        belong = true;
+        productsOrder.forEach((product) => {
+          prodNames += product.node.name + ", ";
+          prodTotal += product.node.price;
+        });
+      }
+      
+      return { belongs: belong, names: prodNames.substring(0, prodNames.length -2 ), price: prodTotal };
     },
   },
   mounted() {
