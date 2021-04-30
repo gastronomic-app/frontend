@@ -59,7 +59,7 @@ export default {
   components: {
     Accordion,
     LoadingGraphql,
-    ConnectionErrorGraphql
+    ConnectionErrorGraphql,
   },
   data() {
     return {
@@ -95,13 +95,20 @@ export default {
     },
     asignCourier(index) {
       if (this.availableCouriers() == 0) {
-        alert("Lo sentimos no hay mensajeros disponibles en el momento");
+        this.makeToast("danger", 'Pedido no despachado' ,"Lo sentimos, no hay mensajeros disponibles");
       } else {
         for (let i in this.couriers) {
           if (this.couriers[i].status) {
             this.orders[index].status = false; //Despachado
             this.couriers[i].status = false; //No disponible
-            alert("Pedido asignado al mensajero: " + this.couriers[i].name);
+            this.makeToast(
+              "secondary",
+              "Pedido despachado",
+              "Pedido #" +
+                (parseInt(index) + 1) +
+                " asignado al mensajero: " +
+                this.couriers[i].name
+            );
             break;
           }
         }
@@ -146,7 +153,9 @@ export default {
       let productsOrder = products.edges.filter(
         (product) => product.node.enterprise.id == "RW50ZXJwcmlzZU5vZGU6Mw=="
       );
-      let prodNames = "", prodTotal = 0, belong = false;
+      let prodNames = "",
+        prodTotal = 0,
+        belong = false;
       if (productsOrder.length > 0) {
         belong = true;
         productsOrder.forEach((product) => {
@@ -154,8 +163,19 @@ export default {
           prodTotal += product.node.price;
         });
       }
-      
-      return { belongs: belong, names: prodNames.substring(0, prodNames.length -2 ), price: prodTotal };
+
+      return {
+        belongs: belong,
+        names: prodNames.substring(0, prodNames.length - 2),
+        price: prodTotal,
+      };
+    },
+    makeToast(variant = null, title, info) {
+      this.$bvToast.toast(info, {
+        title: title,
+        variant: variant,
+        solid: true,
+      });
     },
   },
   mounted() {

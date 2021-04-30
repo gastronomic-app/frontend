@@ -1,67 +1,71 @@
 <template>
   <div>
-   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top static-top nav-background">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img class="logo" src="@/assets/logo.png" alt="">
-      </a>
-        
-      <button 
-        class="navbar-toggler" 
-        type="button" 
-        data-toggle="collapse" 
-        data-target="#navbarResponsive" 
-        aria-controls="navbarResponsive" 
-        aria-expanded="false" 
-        aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon">
-             
-          </span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active ">
-            <a href="" class="nav-link">
-              <router-link to="/">Establecimientos</router-link>
-            </a>
-            
-          </li>
-          <li class="nav-item active">
-            <a href="" class="nav-link">
-              <router-link to="/example-list">CRUD</router-link>
-            </a>
-            
-          </li>
-          
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Inicio
+    <nav
+      class="navbar navbar-expand-lg nav-bar fixed-top static-top nav-background"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img class="logo" src="@/assets/logo.png" alt="" />
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"> </span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a href="" class="nav-link">
+                <router-link class="font-orange" to="/"
+                  >Establecimientos</router-link
+                >
+              </a>
+            </li>
+            <li class="nav-item active">
+              <a href="" class="nav-link">
+                <router-link class="font-orange" to="/example-list"
+                  >CRUD</router-link
+                >
+              </a>
+            </li>
+
+            <li class="nav-item active">
+              <a class="nav-link font-gray" href="#"
+                >Inicio
                 <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Nosotros</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Servicios</a>
-          </li>
-          <li class="nav-item active ">
-            <a href="" class="nav-link"> </a>
-            <i class="vertical-line justify-content-center"></i>
-          </li>
-        
-          <li class="nav-item">
-            <a class="nav-link font-orange" href="#">Iniciar Sesión</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Registrarse</a>
-          </li>
-        </ul>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-gray" href="#">Nosotros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-gray" href="#">Servicios</a>
+            </li>
+            <li class="nav-item active">
+              <a href="" class="nav-link font-white"> </a>
+              <i class="vertical-line justify-content-center"></i>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link font-orange" href="#"><strong>Iniciar Sesión</strong></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-white" href="#"><strong>Registrarse</strong></a>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
-  <div class="container">
+    </nav>
+    <div class="container">
       <router-view />
-  </div>
+    </div>
   </div>
 </template>
 
@@ -75,33 +79,39 @@ export default {
 </script>
 
 <style scoped>
-
-
-.nav-background{
-  background-color: black !important;  
+a:link,
+a:visited,
+a:active {
+  text-decoration: none;
 }
-.logo{
+.nav-background {
+  background-color: black;
+}
+.logo {
   width: 30%;
   height: 80%;
 }
-.font-orange{
-  color:orangered !important;
+.font-orange {
+  color: rgba(255, 68, 0, 0.877) !important;
 }
-.font-orange:hover{
+.font-white {
+  color: rgb(209, 203, 203) !important;
+}
+.font-gray {
+  color: rgba(153, 151, 151, 0.836) !important;
+}
+.font-orange:hover {
   text-decoration: none;
 }
-.vertical-line{
-
+.vertical-line {
   bottom: 20px;
-  margin-left: .5em;
+  margin-left: 0.5em;
   padding-bottom: 10px;
-  position:absolute;
-  z-index:10;
+  position: absolute;
+  z-index: 10;
   width: 2px;
   height: 2em;
-  border-left:thick-solid;
+  border-left: thick-solid;
   background: grey;
-
 }
-
 </style>
