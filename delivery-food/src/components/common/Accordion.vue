@@ -13,6 +13,7 @@
           <h2 class="mb-0 flex">
             <button
               class="btn btn-block text-left btn-width shadow-none"
+              
               type="button"
               data-toggle="collapse"
               :data-target="'#collapse' + id"
@@ -38,6 +39,7 @@
           class="collapse"
           :aria-labelledby="'heading' + id"
           data-parent="#accordionExample"
+          
         >
           <slot></slot>
         </div>
@@ -149,6 +151,6 @@ export default {
   color: whitesmoke;
 }
 .card-color {
-  background-color: black;
+  background-color: var(--dark);
 }
 </style>
