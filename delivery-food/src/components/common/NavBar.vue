@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav
-      class="navbar navbar-expand-lg nav-bar fixed-top static-top nav-background"
+      class="navbar navbar-expand-lg nav-bar fixed-top static-top navbar-bg"
     >
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -23,14 +23,14 @@
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
               <a href="" class="nav-link">
-                <router-link class="font-orange" to="/"
+                <router-link class="navbar-primary-text" to="/"
                   >Establecimientos</router-link
                 >
               </a>
             </li>
             <li class="nav-item active">
               <a href="" class="nav-link">
-                <router-link class="font-orange" to="/example-list"
+                <router-link class="navbar-primary-text" to="/example-list"
                   >CRUD</router-link
                 >
               </a>
@@ -54,7 +54,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link font-orange" href="#"><strong>Iniciar Sesión</strong></a>
+              <a class="nav-link navbar-primary-text" href="#"><strong>Iniciar Sesión</strong></a>
             </li>
             <li class="nav-item">
               <a class="nav-link font-white" href="#"><strong>Registrarse</strong></a>
@@ -84,16 +84,12 @@ a:visited,
 a:active {
   text-decoration: none;
 }
-.nav-background {
-  background-color: black;
-}
+
 .logo {
   width: 30%;
   height: 80%;
 }
-.font-orange {
-  color: rgba(255, 68, 0, 0.877) !important;
-}
+
 .font-white {
   color: rgb(209, 203, 203) !important;
 }

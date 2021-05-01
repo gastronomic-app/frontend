@@ -1,0 +1,14 @@
+:root{
+    --navbar-bg: black;
+    --navbar-primary-text: rgba(255, 68, 0, 0.877);
+    /* --navbar-secundary-text:grey;  */
+    
+}
+
+.navbar-bg{
+    background-color: var(--navbar-bg);
+}
+
+.navbar-primary-text{
+    color:var(--navbar-primary-text)
+}
