@@ -28,10 +28,11 @@ Hoy en día los domicilios de gastronomía se han convertido en una necesidad pa
 
 ## Pasos para ejecutar la aplicación
 
-1. Se recomienda utilizar **Node js 12.22** o superior
-2. Instalar las dependencias contenidas en **package.json** usando el comando `npm install` o `npm i`
-3. Ejecutar el proyecto con `npm run serve`
-4. Abrir el navegador e ir a la dirección <http://localhost:8080/> o <http://localhost:8081/>
+1. Se recomienda utilizar **Node js 14.17** o superior
+2. Instalar Vue CLI (command line interface) usando el comando `npm install -g @vue/cli`
+3. Instalar las dependencias contenidas en **package.json** usando el comando `npm install` o `npm i`
+4. Ejecutar el proyecto con `npm run serve`
+5. Abrir el navegador e ir a la dirección <http://localhost:8080/> o <http://localhost:8081/>
 
 ---
 
