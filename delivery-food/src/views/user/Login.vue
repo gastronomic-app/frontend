@@ -56,7 +56,7 @@
           <input
             type="submit"
             class="fadeIn fourth"
-            @click="$router.push('/Registrar')"
+            @click="$router.push('/Register')"
             value="Registrar"
           />
         </form>

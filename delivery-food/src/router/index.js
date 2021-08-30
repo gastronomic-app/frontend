@@ -30,14 +30,14 @@ const routes = [
     component: () => import("@/views/example/ExampleEdit.vue"),
   },
   {
-    path: "/editar/:id",
-    name: "Editar",
-    component: () => import("@/views/user/Editar.vue"),
+    path: "/edit/:id",
+    name: "Edit",
+    component: () => import("@/views/user/Edit.vue"),
   },
   {
-    path: "/registrar",
-    name: "Registrar",
-    component: () => import("../views/user/Registrar.vue"),
+    path: "/register",
+    name: "Register",
+    component: () => import("../views/user/Register.vue"),
   },
   {
     path: "/geolocation",
