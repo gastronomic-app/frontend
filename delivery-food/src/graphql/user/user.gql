@@ -1,0 +1,20 @@
+query user($id: ID!) {
+  user(id: $id) {
+    id
+    password
+    isAlternative
+    email
+    contact{
+      edges{
+        node
+        {
+          names
+          id
+          lastnames
+          location
+          telephone
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+query alluser($email: String, $password: String){
+  allUsers (email: $email, password: $password){
+    edges{
+      node{
+        id
+        email
+        password
+        isActive
+        isAlternative
+        isSuperuser
+        type
+        contact{
+          edges{
+            node{
+              names
+              lastnames
+              location
+              telephone
+            }
+          }
+        }
+      }
+    }
+  }
+}

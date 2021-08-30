@@ -11,17 +11,17 @@
     --orange: rgba(255, 68, 0, 0.877);
     --grey:rgba(153, 151, 151, 0.836);
     --grey-hover:rgba(235, 235, 235, 0.959);
-    
+
 
 
     --height-navbar:12vh;
     --height-footer:18vh;
-    
+
 }
 
 
 body{
-    
+
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     font-weight: 300;
@@ -33,7 +33,7 @@ body{
 }
 
 .font-white {
-    color: var(--white);    
+    color: var(--white);
   }
   .font-gray {
     color: var(--grey);

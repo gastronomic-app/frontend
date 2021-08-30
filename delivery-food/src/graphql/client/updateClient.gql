@@ -1,0 +1,7 @@
+mutation updateClient($id: ID!, $password: String){
+  updateClient(input: {id: $id, password: $password}){
+    client{
+      id
+    }
+  }
+}

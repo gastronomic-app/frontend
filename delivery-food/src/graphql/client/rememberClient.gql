@@ -1,0 +1,8 @@
+mutation rememberClient($email: RememberPasswordInput!) {
+  rememberClient(input: $email){
+    client{
+      id
+      isAlternative
+    }
+  }
+}

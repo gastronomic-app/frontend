@@ -1,0 +1,7 @@
+mutation updateContact($id :ID!, $names: String, $lastnames: String, $location: String, $telephone: String){
+  updateContact(input: {id: $id, names: $names, lastnames: $lastnames, location: $location, telephone: $telephone}){
+    contact{
+      id
+    }
+  }
+}

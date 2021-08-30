@@ -1,0 +1,22 @@
+query allUsers{
+  allUsers{
+    edges{
+      node{
+        id
+        email
+        password
+        isActive
+        type
+        contact{
+          edges{
+            node{
+              names
+              lastnames
+              location
+            }
+          }
+        }
+      }
+    }
+  }
+}
