@@ -21,7 +21,7 @@
     <br />
   </div>
 </template>
-<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"></script>
 <script>
 export default {
   name: "Geolocation",
@@ -76,7 +76,7 @@ export default {
           lat +
           "," +
           lon +
-          "&key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"
+          "&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"
       )
         .then((response) => response.json())
         .then((data) => {
