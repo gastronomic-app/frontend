@@ -34,7 +34,3 @@ new Vue({
   apolloProvider: createProvider(),
   render: (h) => h(App),
 }).$mount("#app");
-Vue.GoogleAuth.then(auth2 => {
-  console.log(auth2.isSignedIn.get());
-  console.log(auth2.currentUser.get())
-})

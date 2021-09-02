@@ -1,4 +1,4 @@
-mutation desactivateClient($id: ID!){
+mutation deactivateClient($id: ID!){
   updateClient(input: {id: $id, isActive: false}){
     client{
       id

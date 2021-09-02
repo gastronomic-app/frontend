@@ -51,9 +51,8 @@ export default {
   },
   methods: {
     createRegister() {
-      console.log(this.email);
       this.$apollo.mutate({
-        mutation: require("@/graphql/client/register.gql"),
+        mutation: require("@/graphql/client/createClient.gql"),
         variables: {
           name: this.names,
           lastName: this.lastNames,
@@ -70,7 +69,6 @@ export default {
         this.createRegister();
       } else {
         alert("Las contraseñas no coinciden");
-        console.log("Las contraseñas no coinciden");
       }
     },
   }

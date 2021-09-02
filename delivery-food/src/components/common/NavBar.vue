@@ -164,7 +164,7 @@ export default {
   },
 
   data: () => ({
-    ok: localStorage.getItem("hayUser"),
+    ok: localStorage.getItem("existUser"),
     names: "",
     role: "",
     email: "",
@@ -188,7 +188,7 @@ export default {
       });
     },
     update() {
-      this.ok = localStorage.getItem("hayUser");
+      this.ok = localStorage.getItem("existUser");
       if (this.ok) {
         let user = JSON.parse(localStorage.getItem('user'));
         this.id = user.id;
@@ -209,7 +209,7 @@ export default {
         this.$apollo
           .mutate({
             // Establece la mutación de editar
-            mutation: require("@/graphql/client/desactivateClient.gql"),
+            mutation: require("@/graphql/client/deactivateClient.gql"),
             // Define las variables
             variables: {
               id: this.id,
@@ -219,7 +219,6 @@ export default {
           // que puede usarse para agregar más logica
           .then((response) => {
             console.log("actualización de empresa:", response.data);
-            console.log("agrega aquí más lógica si es necesaria");
              this.makeToast(
             "danger",
             "Desactivado",

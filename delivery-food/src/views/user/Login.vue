@@ -146,10 +146,6 @@ export default {
             }
             this.error = true;
           } else {
-            console.log(
-              "Activo: ",
-              response.data.allUsers.edges[0].node.isActive
-            );
             if (response.data.allUsers.edges[0].node.isActive) {
               this.user.id = response.data.allUsers.edges[0].node.id;
               this.user.email = response.data.allUsers.edges[0].node.email;
@@ -163,7 +159,7 @@ export default {
               // this.user.location = response.data.allUsers.edges[0].node.contact.edges[0].node.location;
               // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
               localStorage.setItem("user", JSON.stringify(this.user));
-              localStorage.setItem("hayUser", true);
+              localStorage.setItem("existUser", true);
 
               this.$router.push({ name: "ExampleList" }).then(() => {
                 this.makeToast(
@@ -182,7 +178,7 @@ export default {
     },
   },
   mounted() {
-    if (localStorage.getItem("hayUser")) {
+    if (localStorage.getItem("existUser")) {
       this.$router.push({ name: "ExampleList" });
     }
   },
