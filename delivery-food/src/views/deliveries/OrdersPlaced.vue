@@ -1,27 +1,25 @@
 <template>
   <div>
     <h3>Mis Pedidos</h3>
-    <template v-for="(pedido, idx) in pedidos">
-      <accordion :key="pedido.id" :item="pedido" :checkbox_use="true" :id="idx">
+    <template v-for="(order, idx) in orders">
+      <accordion :key="order.id" :item="order" :checkbox_use="true" :id="idx">
         <div class="card-body">
-          <strong> Detalles de pedido</strong>
-          <b> Productos:</b> <br />
-          {{ pedido.productos }}<br />
-          <b> Establecimiento: </b> <br />
-          {{ pedido.establecimiento }} <br />
-          <b> Costo: </b> <br />
-          {{ pedido.costo }}
+          <h4>Resumen de pedido <br /></h4>
+          <h5>Productos: {{ order.products }}</h5>
+          <h5>Establecimiento: {{ order.enterprise }}</h5>
+          <h5>Lugar de entrega: {{ order.location }}</h5>
+          <h5>Costo: {{ order.cost }}</h5>
         </div>
       </accordion>
     </template>
-    <br>
+    <br />
 
     <span class="container d-flex justify-content-end">
-      <button type="button" class="btn btn-black  " @click="trackOrder">
+      <button type="button" class="btn btn-black" @click="trackOrder">
         Seguir Pedido
       </button>
     </span>
-    <br>
+    <br />
     <div class="container map" ref="map" v-show="showmap"></div>
   </div>
 </template>
@@ -35,58 +33,42 @@ export default {
   name: "OrdersPlaced",
 
   mounted() {
-    this.getUserPosition();
+    this.$apollo
+      .query({
+        query: require("@/graphql/deliveries/ordersPlaced.gql"),
+      })
+      .then((response) => {
+        this.tansformQuery(response.data.allUsers.edges);
+      });
   },
   data() {
     return {
+      user: {
+        id: "VXNlck5vZGU6Mg==",
+      },
       showmap: false,
       duration: "",
       distance: "",
 
       routes: [],
-      destination: {
-        address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
-          lat: 2.1087322,
-          lng: -76.9855849,
-      },
-      pedidos: [
+      orders: [
         {
           id: "1",
-          productos: "Alitas BBQ, Gaseosa 1.5 litros",
-          establecimiento: "Delicias",
-          costo: "$24.000",
+          products: "",
+          enterprise: "",
+          cost: "$",
           selected: false,
           origin: {
-             address: "Popayán,Cauca",
-             lat: 2.4574702,
-             lng: -76.6349537,
-           },
+            address: "Popayán,Cauca",
+            lat: 2.4574702,
+            lng: -76.6349537,
+          },
+          destination: {
+            address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
+            lat: 2.1087322,
+            lng: -76.9855849,
+          },
         },
-        // {
-        //   id: "2",
-        //   productos: "Sancocho de gallina",
-        //   establecimiento: "Doña Pepa",
-        //   costo: "$18.000",
-        //   selected: false,
-        //   origin: {
-        //     address: "Popayán,Cauca",
-        //     lat: 2.4574702,
-        //     lng: -76.6349537,
-        //   },
-        // },
-
-        // {
-        //   id: "3",
-        //   productos: "Arepas de choclo, Queso cuajada bien caliente",
-        //   establecimiento: "Queseria de mì",
-        //   costo: "$8000",
-        //   selected: false,
-        //   origin: {
-        //     address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
-        //     lat: 2.1087322,
-        //     lng: -76.9855849,
-        //   },
-        // },
       ],
     };
   },
@@ -104,7 +86,7 @@ export default {
       }
     },
     getDataLocal() {
-      this.pedidos.forEach((pedido) => {
+      this.orders.forEach((order) => {
         let route = {
           origin: {
             address: "",
@@ -120,8 +102,8 @@ export default {
           distance: "",
           duration: "",
         };
-        route.origin = pedido.origin;
-        route.destination = this.destination;
+        route.origin = order.origin;
+        route.destination = order.destination;
         this.getDurationDistance(route);
 
         route.duration = this.duration;
@@ -233,10 +215,12 @@ export default {
         );
       });
     },
+
     trackOrder() {
+      this.getDataLocal()
       let flag = false;
-      for (let idx in this.pedidos) {
-        if (this.pedidos[idx].selected) {
+      for (let idx in this.orders) {
+        if (this.orders[idx].selected) {
           this.showmap = true;
           this.showRoute([this.routes[idx]]);
           flag = true;
@@ -245,8 +229,14 @@ export default {
       if (!flag) {
         alert("Seleccione un pedido para ver la ruta y el tiempo estimado");
       }
-      
     },
+    tansformQuery(data) {
+      let allOrders = data.filter((userId) => userId.node.id === this.user.id);
+      allOrders[0].node.orders.edges.forEach((order) => {
+        //console.log(order);
+      });
+    },
+    getCurrentUser() {},
   },
 };
 </script>

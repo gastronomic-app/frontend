@@ -1,0 +1,30 @@
+{
+  allUsers {
+    edges {
+      node {
+        id
+        orders {
+          edges {
+            node {
+              id
+              date
+              estimatedTime
+              location
+            	details{
+                edges{
+                  node{
+                    quantity
+                    product{
+                      name
+                      price
+                    }
+                  }
+                }
+              } 
+            }
+          }
+        }
+      }
+    }
+  }
+}
