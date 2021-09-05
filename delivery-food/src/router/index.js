@@ -7,7 +7,7 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/login/Login.vue"),
+    component: () => import("@/views/user/Login.vue"),
   },
   {
     path: "/docs-vue",
@@ -28,6 +28,16 @@ const routes = [
     path: "/example-edit/:id",
     name: "ExampleEdit",
     component: () => import("@/views/example/ExampleEdit.vue"),
+  },
+  {
+    path: "/edit/:id",
+    name: "Edit",
+    component: () => import("@/views/user/Edit.vue"),
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("@/views/user/Register.vue"),
   },
   {
     path: "/geolocation",
@@ -53,6 +63,21 @@ const routes = [
     path: "/countdown",
     name: "Countdown",
     component: () => import("@/views/deliveries/Countdown.vue"),
+  },
+  {
+    path: "/password",
+    name: "Password",
+    component: () => import("@/views/user/Password.vue"),
+  },
+  {
+    path: "/password/reset/:id",
+    name: "Reset",
+     component: () => import("@/views/user/Reset.vue")
+  },
+  {
+    path: "/RegisterPassword",
+    name: "RegisterPassword",
+    component: () => import("@/views/user/RegisterPassword.vue"),
   },
 ];
 

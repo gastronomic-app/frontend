@@ -1,0 +1,10 @@
+mutation createClient ($email: String!, $password: String!,$is_alternative:Boolean!, $names: String!, $telephone: String!, $lastnames: String!, $location: String!){
+  createClient(input: {email: $email, password: $password, isAlternative: $is_alternative, names: $names, lastnames: $lastnames, location: $location, telephone: $telephone}){
+    client{
+      email
+      password
+      id
+      isAlternative
+    }
+  }
+}
