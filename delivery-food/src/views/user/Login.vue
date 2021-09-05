@@ -114,7 +114,6 @@ export default {
       console.log(error);
     },
     async startSesion() {
-      console.log("iniciando sesion");
       if(!this.google && this.password === ""){
         this.error_msg = "Datos incorrectos";
         this.error=true;

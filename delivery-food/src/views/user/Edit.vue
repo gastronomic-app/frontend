@@ -198,7 +198,7 @@
 
 <script>
 export default {
-  name: "Editar",
+  name: "Edit",
   data() {
     return {
       name: "",

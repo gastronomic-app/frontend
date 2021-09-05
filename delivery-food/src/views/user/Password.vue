@@ -42,10 +42,10 @@ export default {
     ok: false,
   }),
   methods: {
-    makeToast(variant = null, title, info, tiempo) {
+    makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
-        autoHideDelay: tiempo,
+        autoHideDelay: time,
         variant: variant,
         solid: true,
       });
