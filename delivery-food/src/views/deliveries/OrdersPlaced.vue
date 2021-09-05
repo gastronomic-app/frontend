@@ -1,6 +1,13 @@
 <template>
   <div>
     <h3>Mis Pedidos</h3>
+
+      <div v-if="$apollo.loading">
+        <LoadingGraphql />
+      </div>
+      <div v-else-if="error" class="d-flex justify-content-center">
+        <ConnectionErrorGraphql />
+      </div>
     <template v-for="(order, idx) in orders">
       <accordion :key="order.id" :item="order" :checkbox_use="true" :id="idx">
         <div class="card-body">
@@ -20,16 +27,20 @@
       </button>
     </span>
     <br />
-    <div class="container map" ref="map" v-show="showmap"></div>
+    <div>
+      <div class="container map" ref="map" v-show="showmap"></div>
+    </div>
+    
   </div>
 </template>
-<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
 <script>
 import Accordion from "@/components/common/Accordion.vue";
-
+import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
+import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 export default {
-  components: { Accordion },
+  components: { Accordion, LoadingGraphql,ConnectionErrorGraphql },
   name: "OrdersPlaced",
 
   mounted() {
@@ -47,9 +58,6 @@ export default {
         id: "VXNlck5vZGU6Mg==",
       },
       showmap: false,
-      duration: "",
-      distance: "",
-
       routes: [],
       orders: [
         {
@@ -58,6 +66,8 @@ export default {
           enterprise: "",
           cost: "$",
           selected: false,
+          duration: "",
+          distance: "",
           origin: {
             address: "Popayán,Cauca",
             lat: 2.4574702,
@@ -70,6 +80,7 @@ export default {
           },
         },
       ],
+      error:null
     };
   },
   methods: {
@@ -104,10 +115,9 @@ export default {
         };
         route.origin = order.origin;
         route.destination = order.destination;
+
         this.getDurationDistance(route);
 
-        route.duration = this.duration;
-        route.distance = this.distance;
         this.routes.push(route);
       });
     },
@@ -135,23 +145,25 @@ export default {
     },
 
     async getDurationDistance(route) {
-      const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/distancematrix/json?origins=${route.origin.lat},${route.origin.lng}&destinations=${route.destination.lat},${route.destination.lng}&key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0`;
-      await fetch(URL)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "OK") {
-            let elements = data.rows[0].elements[0];
-
+      const distanceMatrix = new google.maps.DistanceMatrixService();
+      distanceMatrix.getDistanceMatrix(
+        {
+          origins: [{ lat: route.origin.lat, lng: route.origin.lng }],
+          destinations: [
+            { lat: route.destination.lat, lng: route.destination.lng },
+          ],
+          travelMode: 'DRIVING',
+        },
+        (response) => {
+          if (response.rows[0].elements[0].status === "OK") {
+            let elements = response.rows[0].elements[0];
             route.distance = elements.distance.text;
             route.duration = elements.duration.text;
           } else {
             this.error = "No results found";
           }
-        })
-        .catch((error) => {
-          console.log(error.message);
-          this.error = error.message;
-        });
+        }
+      );
     },
     showRoute(routes) {
       const directionsService = new google.maps.DirectionsService();
@@ -161,13 +173,11 @@ export default {
         mapTyeId: google.maps.MapTypeId.ROADMAP,
       });
       routes.forEach((route) => {
-        console.log(route.duration);
-        console.log(route.distance);
         directionsService.route(
           {
-            origin: route.origin.address,
-            destination: route.destination.address,
-            travelMode: "DRIVING",
+            origin: { lat: route.origin.lat, lng: route.origin.lng },
+          destination:  { lat: route.destination.lat, lng: route.destination.lng },
+          travelMode: 'DRIVING',
           },
           (response, status) => {
             if (status === "OK") {
@@ -176,7 +186,7 @@ export default {
               });
 
               const originLabel = new google.maps.InfoWindow({
-                content: `<i class ="marker alternate icon"></i> ${route.origin.address}`,
+                content: `<i class ="bi-geo-alt-fill alternate icon"></i> ${route.origin.address}`,
                 position: new google.maps.LatLng(
                   route.origin.lat,
                   route.origin.lng
@@ -185,7 +195,7 @@ export default {
 
               originLabel.open(map, null);
               const destinationLabel = new google.maps.InfoWindow({
-                content: `<i class ="flag checkered icon"></i> ${route.destination.address}`,
+                content: `<i class ="bi-flag-fill checkered icon"> </i> ${route.destination.address}`,
                 position: new google.maps.LatLng(
                   route.destination.lat,
                   route.destination.lng
@@ -199,7 +209,7 @@ export default {
 
               const middleLoc = overviewPath[middleIndex];
               const distanceDurationLabel = new google.maps.InfoWindow({
-                content: `<i class ="car icon"></i> ${route.distance}-${route.duration}`,
+                content: `<i class ="bi-alarm-fill icon"></i> ${route.distance}-${route.duration}`,
                 position: new google.maps.LatLng(
                   middleLoc.lat(),
                   middleLoc.lng()
@@ -217,7 +227,7 @@ export default {
     },
 
     trackOrder() {
-      this.getDataLocal()
+      this.getDataLocal();
       let flag = false;
       for (let idx in this.orders) {
         if (this.orders[idx].selected) {
@@ -241,7 +251,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scope>
 .centered {
   margin: auto;
   background-color: rgb(0, 66, 128);
@@ -278,6 +288,14 @@ export default {
   right: 0;
   left: 0;
   bottom: 0;
-  background-color: teal;
+  background-color:whitesmoke;
 }
+
+
+</style>
+<style >
+.gm-style-iw button{
+  display: none !important;
+}
+
 </style>

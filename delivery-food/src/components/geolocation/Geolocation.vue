@@ -21,7 +21,7 @@
     <br />
   </div>
 </template>
-<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
 <script>
 export default {
   name: "Geolocation",
