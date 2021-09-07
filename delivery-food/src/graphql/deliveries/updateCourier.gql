@@ -1,0 +1,9 @@
+mutation updateCourier($id: ID!, $isAvailable: Boolean)  {
+  updateCourier(input: {id: $id, isAvailable: $isAvailable}) {
+    courier {
+      id
+      type
+      isAvailable
+    }
+  }
+}

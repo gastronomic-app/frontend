@@ -1,17 +1,20 @@
 {
-    allOrders {
-    edges{
-      node{
-        id,
-        status,
+  allOrders(status: "nuevo") {
+    edges {
+      node {
+        id
+        status
         location
-        products{
-          edges{
-            node{
-              name
-              price
-              enterprise{
-                id
+        details {
+          edges {
+            node {
+              quantity
+              product {
+                name
+                price
+                enterprise {
+                  name
+                }
               }
             }
           }

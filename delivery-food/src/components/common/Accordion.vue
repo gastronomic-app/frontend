@@ -13,13 +13,13 @@
           <h2 class="mb-0 flex">
             <button
               class="btn btn-block text-left btn-width shadow-none"
-              
+
               type="button"
               data-toggle="collapse"
               :data-target="'#collapse' + id"
               :aria-controls="'collapse' + id"
             >
-              Pedido realizado # {{ id + 1 }}
+              Pedido # {{ id + 1 }}
             </button>
             <span v-if="checkbox_use" class="force-left">
               <label class="container-checkbox">
@@ -39,7 +39,7 @@
           class="collapse"
           :aria-labelledby="'heading' + id"
           data-parent="#accordionExample"
-          
+
         >
           <slot></slot>
         </div>
@@ -133,7 +133,7 @@ export default {
 <style scoped>
 .card-header:hover {
   background-color:var(--hover-selected);
-  color: black;
+  color: var(--dark);
 }
 .selected {
   background-color: var(--hover-selected);

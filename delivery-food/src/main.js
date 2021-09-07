@@ -6,18 +6,22 @@ import { createProvider } from "./vue-apollo";
 
 
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import VuePaginate from "vue-paginate";
+import Vuesax from "vuesax";
+
 import "bootstrap"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import '@/assets/css/global.css';
-
+import 'vuesax/dist/vuesax.css';
 
 Vue.config.productionTip = false;
 
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-
+Vue.use(VuePaginate);
+Vue.use(Vuesax);
 
 // Filtro global
 Vue.filter("capitalize", function (value) {
