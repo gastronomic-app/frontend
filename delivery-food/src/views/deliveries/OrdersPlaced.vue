@@ -2,20 +2,38 @@
   <div>
     <h3>Mis Pedidos</h3>
 
-      <div v-if="$apollo.loading">
-        <LoadingGraphql />
-      </div>
-      <div v-else-if="error" class="d-flex justify-content-center">
-        <ConnectionErrorGraphql />
-      </div>
+    <div v-if="$apollo.loading">
+      <LoadingGraphql />
+    </div>
+    <div v-else-if="error" class="d-flex justify-content-center">
+      <ConnectionErrorGraphql />
+    </div>
     <template v-for="(order, idx) in orders">
       <accordion :key="order.id" :item="order" :checkbox_use="true" :id="idx">
         <div class="card-body">
           <h4>Resumen de pedido <br /></h4>
-          <h5>Productos: {{ order.products }}</h5>
+          <div>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Productos</th>
+                  <th>Cantidad</th>
+                  <th>Valor Unitario</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="product in order.products" :key="product.id">
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.quantity }}</td>
+                  <td>{{ product.cost }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <h5>Establecimiento: {{ order.enterprise }}</h5>
           <h5>Lugar de entrega: {{ order.location }}</h5>
-          <h5>Costo: {{ order.cost }}</h5>
+          <h5>Costo Total: ${{ order.cost }}</h5>
         </div>
       </accordion>
     </template>
@@ -30,7 +48,6 @@
     <div>
       <div class="container map" ref="map" v-show="showmap"></div>
     </div>
-    
   </div>
 </template>
 
@@ -40,7 +57,7 @@ import Accordion from "@/components/common/Accordion.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 export default {
-  components: { Accordion, LoadingGraphql,ConnectionErrorGraphql },
+  components: { Accordion, LoadingGraphql, ConnectionErrorGraphql },
   name: "OrdersPlaced",
 
   mounted() {
@@ -49,38 +66,18 @@ export default {
         query: require("@/graphql/deliveries/ordersPlaced.gql"),
       })
       .then((response) => {
-        this.tansformQuery(response.data.allUsers.edges);
+        this.tansformQuery(response.data.allOrders.edges);
       });
   },
   data() {
     return {
       user: {
-        id: "VXNlck5vZGU6Mg==",
+        id: "Q2xpZW50Tm9kZToy", //"Q2xpZW50Tm9kZTo2",
       },
       showmap: false,
       routes: [],
-      orders: [
-        {
-          id: "1",
-          products: "",
-          enterprise: "",
-          cost: "$",
-          selected: false,
-          duration: "",
-          distance: "",
-          origin: {
-            address: "Popayán,Cauca",
-            lat: 2.4574702,
-            lng: -76.6349537,
-          },
-          destination: {
-            address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
-            lat: 2.1087322,
-            lng: -76.9855849,
-          },
-        },
-      ],
-      error:null
+      orders: [],
+      error: null,
     };
   },
   methods: {
@@ -96,7 +93,7 @@ export default {
         console.log("No se ha podido acceder su ubicación");
       }
     },
-    getDataLocal() {
+    getRoutes() {
       this.orders.forEach((order) => {
         let route = {
           origin: {
@@ -121,30 +118,21 @@ export default {
         this.routes.push(route);
       });
     },
-    //TODO: Tomar cada latitud y longitud y pasarla a Places API para obtener el address exacto
-    async getAddressFrom(lat, lon) {
-      const URL =
-        "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
-        lat +
-        "," +
-        lon +
-        "&key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0";
-      await fetch(URL)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "OK") {
-            console.log(data);
-          } else {
-            console.log("No fue posible obtener el lugar");
+    //TODO: agregar info necesaría a los obj orders a renderizar
+    getCompleteAddress(address) {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {
+          address: address,
+        },
+        (response, status) => {
+          if (status === "OK") {
           }
-        })
-        .catch((error) => {
-          this.error = error.message;
-          console.log(error.message);
-        });
+        }
+      );
     },
 
-    async getDurationDistance(route) {
+    getDurationDistance(route) {
       const distanceMatrix = new google.maps.DistanceMatrixService();
       distanceMatrix.getDistanceMatrix(
         {
@@ -152,7 +140,7 @@ export default {
           destinations: [
             { lat: route.destination.lat, lng: route.destination.lng },
           ],
-          travelMode: 'DRIVING',
+          travelMode: "DRIVING",
         },
         (response) => {
           if (response.rows[0].elements[0].status === "OK") {
@@ -176,8 +164,11 @@ export default {
         directionsService.route(
           {
             origin: { lat: route.origin.lat, lng: route.origin.lng },
-          destination:  { lat: route.destination.lat, lng: route.destination.lng },
-          travelMode: 'DRIVING',
+            destination: {
+              lat: route.destination.lat,
+              lng: route.destination.lng,
+            },
+            travelMode: "DRIVING",
           },
           (response, status) => {
             if (status === "OK") {
@@ -227,7 +218,7 @@ export default {
     },
 
     trackOrder() {
-      this.getDataLocal();
+      this.getRoutes();
       let flag = false;
       for (let idx in this.orders) {
         if (this.orders[idx].selected) {
@@ -241,11 +232,48 @@ export default {
       }
     },
     tansformQuery(data) {
-      let allOrders = data.filter((userId) => userId.node.id === this.user.id);
-      allOrders[0].node.orders.edges.forEach((order) => {
-        //console.log(order);
+      let allOrders = data.filter(
+        (userId) => userId.node.client.id === this.user.id
+      );
+
+      allOrders.forEach((order) => {
+        let newOrder = {
+          id: order.node.id,
+          date: order.node.date,
+          products: [],
+          enterprise: "",
+          cost: "",
+          selected: false,
+          estimatedTime: order.node.estimatedTime,
+          origin: {
+            address: "Popayán,Cauca",
+            lat: 2.4574702,
+            lng: -76.6349537,
+          },
+          destination: {
+            address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
+            lat: 2.1087322,
+            lng: -76.9855849,
+          },
+        };
+
+        let cost = 0;
+        order.node.details.edges.forEach((product) => {
+          newOrder.products.push({
+            id:product.node.product.id,
+            name: product.node.product.name,
+            quantity: product.node.quantity,
+            cost: product.node.product.price,
+          });
+          cost += parseInt(product.node.product.price * product.node.quantity);
+          newOrder.enterprise = product.node.product.enterprise.name;
+        });
+        newOrder.cost = cost;
+        this.orders.push(newOrder);
       });
+      console.log(this.orders);
     },
+
     getCurrentUser() {},
   },
 };
@@ -288,14 +316,11 @@ export default {
   right: 0;
   left: 0;
   bottom: 0;
-  background-color:whitesmoke;
+  background-color: whitesmoke;
 }
-
-
 </style>
 <style >
-.gm-style-iw button{
+.gm-style-iw button {
   display: none !important;
 }
-
 </style>

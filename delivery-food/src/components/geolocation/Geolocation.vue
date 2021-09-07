@@ -21,7 +21,7 @@
     <br />
   </div>
 </template>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
+<script src="https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"></script>
 <script>
 export default {
   name: "Geolocation",
@@ -35,7 +35,7 @@ export default {
   props: ["showinput", "showmap"],
 
   mounted() {
-    let autocomplete = new google.maps.places.Autocomplete(
+    const autocomplete = new google.maps.places.Autocomplete(
       document.getElementById("autocomplete"),
       {
         bounds: google.maps.LatLngBounds(
@@ -44,8 +44,8 @@ export default {
       }
     );
     autocomplete.addListener("place_changed", () => {
-      let place = autocomplete.getPlace();
-      console.log(place);
+      const place = autocomplete.getPlace();
+     
       this.showUserLocation(
         place.geometry.location.lat(),
         place.geometry.location.lng()
@@ -70,27 +70,23 @@ export default {
         console.log("Su navegador no soporta geolocation API");
       }
     },
-    getAddressFrom(lat, lon) {
-      fetch(
-        "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
-          lat +
-          "," +
-          lon +
-          "&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "OK") {
-            this.address = data.results[0].formatted_address;
-            console.log(data.results[0].formatted_address);
-          } else {
-            console.log("Error");
-          }
-        })
-        .catch((error) => {
-          this.error = error.message;
-          console.log(error.message);
-        });
+    getAddressFrom(lat, lng) {
+
+    
+      const latlng={
+        lat: lat,lng:lng
+      }
+      const geocoder= new google.maps.Geocoder()
+      geocoder.geocode({location:latlng}
+      , (response,status)=>{
+        if(status === 'OK'){
+          this.address=response[0].formatted_address;
+        }
+        else{
+          console.log(status)
+        }
+        
+      })
     },
 
     showUserLocation(lat, lon) {

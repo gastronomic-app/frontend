@@ -1,26 +1,27 @@
 {
-  allUsers {
-    edges {
-      node {
+  allOrders{
+    edges{
+      node{
+        client{
+          id
+        }
         id
-        orders {
-          edges {
-            node {
-              id
-              date
-              estimatedTime
-              location
-            	details{
-                edges{
-                  node{
-                    quantity
-                    product{
-                      name
-                      price
-                    }
-                  }
-                }
-              } 
+        date,
+        estimatedTime,
+        location,
+        details{
+          edges{
+            node{
+              quantity,
+              product{
+                id,
+                name,
+                price,
+                enterprise{
+                  name
+                  
+                },
+              }
             }
           }
         }
