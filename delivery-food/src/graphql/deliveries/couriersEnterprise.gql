@@ -1,12 +1,15 @@
 {
-  enterprise(id: "RW50ZXJwcmlzZU5vZGU6Mw=="){
-    couriers{
-      edges{
-        node{
-          contact{
-            edges{
-              node{
-                names,
+  enterprise(id: "RW50ZXJwcmlzZU5vZGU6MQ==") {
+    couriers {
+      edges {
+        node {
+          id
+          email
+          isAvailable
+          contact {
+            edges {
+              node {
+                names
                 lastnames
               }
             }
