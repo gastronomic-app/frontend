@@ -1,0 +1,8 @@
+mutation updateOrder($id: ID!, $status: String) {
+  updateOrder(input: { id: $id, status: $status}) {
+    order {
+      id
+      status
+    }
+  }
+}
