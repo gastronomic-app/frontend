@@ -1,0 +1,5 @@
+mutation createImage($product: ID!, $file: Upload!) {
+  createImage(product: $product, file: $file) {
+    success
+  }
+}

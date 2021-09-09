@@ -1,0 +1,26 @@
+{
+  allProducts{
+    edges{
+      node{
+        id
+        productType
+        name
+        price
+        ingredients
+        preparation
+        estimatedTime
+        enterprise{
+          id
+        }        
+        images{
+          edges{
+            node{
+              id
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}

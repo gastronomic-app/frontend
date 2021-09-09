@@ -1,0 +1,13 @@
+{
+  allImages{
+    edges{
+      node{
+        id
+        url
+        product{
+          id
+        }
+      }
+    }
+  }
+}
