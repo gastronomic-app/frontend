@@ -18,7 +18,8 @@
                 name,
                 price,
                 enterprise{
-                  name
+                  name,
+                  location
                   
                 },
               }

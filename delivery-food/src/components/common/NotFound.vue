@@ -45,7 +45,7 @@
         margin-top: 1em;
     }
     to{
-        transform:translate(-30em, -100%)
+        transform:translate(-30em, -150%);
     }
 }
 
@@ -59,7 +59,7 @@
     background-color: rgba(0, 0, 0, 0.3);
     padding-top: 2em;
     border-radius: 100%;
-    transform: translate(0, -5.5em);
+    transform: translate(0, -7em);
     background-color: rgba(0, 0, 0, 0);
   }
 }

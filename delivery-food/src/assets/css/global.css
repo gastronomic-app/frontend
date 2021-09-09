@@ -1,4 +1,7 @@
 :root{
+
+      box-sizing: border-box;/* Para que el modelo de caja se calcule a partir del borde */
+
     --white:rgb(209, 203, 203);
     --dark: #0A0A0A;
     --blue: #005e7f;

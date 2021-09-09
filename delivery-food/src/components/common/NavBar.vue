@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section>
     <nav class="navbar navbar-expand-lg nav-bar fixed-top static-top navbar-bg">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -72,7 +72,12 @@
                           <div class="span3"></div>
                           <div class="span6">
                             <table
-                              class="table table-condensed table-responsive table-user-information"
+                              class="
+                                table
+                                table-condensed
+                                table-responsive
+                                table-user-information
+                              "
                             >
                               <tbody>
                                 <tr>
@@ -108,10 +113,7 @@
                             @click="removeClient()"
                             data-original-title="Darse de baja"
                           >
-                            <i
-                              class="icon-remove icon-white"
-                              >Darme de baja</i
-                            >
+                            <i class="icon-remove icon-white">Darme de baja</i>
                           </button>
                         </span>
                       </center>
@@ -138,8 +140,7 @@
               >
             </li>
             <li v-show="!ok" class="nav-item">
-              <a class="nav-link text-light font-weight-bold"
-              href="/Register"
+              <a class="nav-link text-light font-weight-bold" href="/Register"
                 ><strong>Registrarse</strong></a
               >
             </li>
@@ -147,10 +148,10 @@
         </div>
       </div>
     </nav>
-    <div class="container container-general">
+    <section class="container container-general">
       <router-view />
-    </div>
-  </div>
+    </section>
+  </section>
 </template>
 <script>
 /**
@@ -190,7 +191,7 @@ export default {
     update() {
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
-        let user = JSON.parse(localStorage.getItem('user'));
+        let user = JSON.parse(localStorage.getItem("user"));
         this.id = user.id;
         this.email = user.email;
         this.names = user.names;
@@ -219,17 +220,16 @@ export default {
           // que puede usarse para agregar más logica
           .then((response) => {
             console.log("actualización de empresa:", response.data);
-             this.makeToast(
-            "danger",
-            "Desactivado",
-            "Usuario: " + this.names+" ha sido desactivado",
-            3000
-          );
-          this.ok = false;
-          localStorage.clear();
-          this.$router.push({ name: "ExampleList" });
+            this.makeToast(
+              "danger",
+              "Desactivado",
+              "Usuario: " + this.names + " ha sido desactivado",
+              3000
+            );
+            this.ok = false;
+            localStorage.clear();
+            this.$router.push({ name: "ExampleList" });
           });
-
       }
     },
   },
@@ -276,4 +276,8 @@ a:active {
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 68, 0, 0.877)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
+.container-general {
+  min-height: calc(100vh - var(--height-navbar) - var(--height-footer));
+}
 </style>
+
