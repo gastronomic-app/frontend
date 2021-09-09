@@ -22,24 +22,6 @@
             </li>
           </ul>
         </div>
-        <div class="col-lg-6 text-left">
-          <ul class="list-inline-item ">
-            <li class="list-inline-item">
-              <a
-                class="nav-link"
-                href="https://getbootstrap.com/docs/4.6/getting-started/introduction/"
-                target="_blank"
-              >
-                Docs Bootstrap
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a class="nav-link" href="#">
-                <router-link to="/docs-vue">Docs Vue</router-link>
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   </footer>

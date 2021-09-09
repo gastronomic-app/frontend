@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top: 1em">
     <h3><b>Mis Pedidos</b></h3>
 
     <div v-if="$apollo.loading">
@@ -31,8 +31,10 @@
                 </tbody>
               </table>
             </div>
-            <h5>Establecimiento: {{ order.enterprise }}</h5>
-            <h5>Lugar de entrega: {{ order.location }}</h5>
+            <h5>
+              Establecimiento: <b>{{ order.enterprise }}</b>
+            </h5>
+            <h5>Lugar de entrega: {{ order.destination.address }}</h5>
             <h5>Costo Total: ${{ order.cost }}</h5>
           </div>
         </accordion>
@@ -142,15 +144,23 @@ export default {
     //TODO: agregar info necesaría a los obj orders a renderizar
     getCompleteAddress(address) {
       const geocoder = new google.maps.Geocoder();
+      let completeAddress={}
       geocoder.geocode(
         {
           address: address,
         },
         (response, status) => {
+           
           if (status === "OK") {
+
+          completeAddress.address=response[0].formatted_address,
+          completeAddress.lat=response[0].geometry.location.lat(),
+          completeAddress.lng=response[0].geometry.location.lng()
           }
-        }
+          
+          }
       );
+      return completeAddress
     },
 
     getDurationDistance(route) {
@@ -271,11 +281,7 @@ export default {
             lat: 2.4574702,
             lng: -76.6349537,
           },
-          destination: {
-            address: "Cra. 1d Este ## 16 - 52, El Bordo, Patía, Cauca",
-            lat: 2.1087322,
-            lng: -76.9855849,
-          },
+          destination: {},
         };
 
         let cost = 0;
@@ -288,11 +294,15 @@ export default {
           });
           cost += parseInt(product.node.product.price * product.node.quantity);
           newOrder.enterprise = product.node.product.enterprise.name;
+          newOrder.origin=this.getCompleteAddress(product.node.product.enterprise.location)
         });
         newOrder.cost = cost;
+        
+        newOrder.destination=this.getCompleteAddress(order.node.location)
+      console.log(newOrder.destination.address )
         this.orders.push(newOrder);
       });
-      console.log(this.orders);
+     
     },
 
     getCurrentUser() {},
