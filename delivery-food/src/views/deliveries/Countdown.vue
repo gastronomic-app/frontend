@@ -1,20 +1,19 @@
 <template>
-  <div class="text-center">
-    <div class="jumbotron">
-      <h1 class="display-4" v-if="timerCount !== 0">
-        Tiempo estimado de la entrega: {{ timerCount }}
-      </h1>
+   <section class="inline">
+<span v-if="timeout===true">
+        {{min}} minutos-{{ sec }} segundos
+      </span>
       <!-- Button trigger modal -->
       <button
+      style="background-color:var(--dark); color:   white"
         type="button"
-        class="btn btn-primary"
+        class="btn"
         data-toggle="modal"
         data-target="#exampleModal"
         v-else
       >
         Generar reporte
       </button>
-    </div>
     <!-- Modal -->
     <div
       class="modal fade"
@@ -26,7 +25,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Información</h5>
+            <h5 class="modal-title"  style="color: black" id="exampleModalLabel">Información</h5>
             <button
               type="button"
               class="close"
@@ -38,7 +37,7 @@
           </div>
           <div class="modal-body">Hola ¿paso algo con tu orden?</div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" @click="redirect">
+            <button type="button" class="btn " style="background-color:var(--dark); color: white" @click="redirect">
               Generar reporte
             </button>
             <button
@@ -50,17 +49,20 @@
             </button>
           </div>
         </div>
-      </div>
     </div>
   </div>
+   </section>
+      
 </template>
 
 <script>
 export default {
   name: "Countdown",
+  props:["sec","min","hour"],
+ 
   data() {
     return {
-      timerCount: 5,
+      timeout:true
     };
   },
   methods: {
@@ -70,12 +72,24 @@ export default {
     },
   },
   watch: {
-    timerCount: {
+    sec: {
       handler(value) {
         if (value > 0) {
           setTimeout(() => {
-            this.timerCount--;
+            this.sec--;
           }, 1000);
+        }
+        else if(this.min>0){
+          this.min--
+          this.sec=60
+        }
+        else if(this.hour>0){
+          this.hour--
+          this.min=60
+          this.sec=60
+        }
+        else{
+          this.timeout=false
         }
       },
       immediate: true,
@@ -83,3 +97,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .inline{
+    display: inline-block; 
+  }
+</style>
