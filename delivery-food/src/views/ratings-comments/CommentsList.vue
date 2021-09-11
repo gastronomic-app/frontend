@@ -17,11 +17,16 @@
       </div>
     </div>
     <div class="row">
+      <h2 class="mt-2 ml-2">Comentarios y calificaciones</h2>
+    </div>
+    <div class="row">
+      <div class="col-5 mt-2">
+        <h2>Promedio</h2>
+        <br>
+        <h5>Aqui irían los promedios de las calificaciones totales</h5>
+      </div>
       <div class="col-7 mt-2">
-        <h2>Comentarios y calificaciones</h2>
-
-        <h3>Promedio</h3>
-
+        <h2>Comentarios</h2>
         <div v-for="comment in allReviews.edges" :key="comment.node.id">
           <TextArea :review="comment.node" />
         </div>

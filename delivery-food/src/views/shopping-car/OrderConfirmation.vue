@@ -224,8 +224,17 @@ export default {
       }
       this.saveItems();
     },
+    calculateEstimatedTime() {
+      console.log("ingresando al metodo");
+      var sumatoria = 0;
+      for (var index = 1; index < this.items.length; index++) {
+        sumatoria =
+          sumatoria + this.items[index].recoveredProduct.estimatedTime;
+      }
+      this.estimatedTime = sumatoria;
+    },
     confirmOrder() {
-      // this.estimatedTime = 123;
+      this.calculateEstimatedTime();
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
         let user = JSON.parse(localStorage.getItem("user"));
