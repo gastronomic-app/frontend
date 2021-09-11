@@ -1,0 +1,5 @@
+mutation urlImage($product: ID!) {
+  urlImage(product: $product) {
+    url
+  }
+}
