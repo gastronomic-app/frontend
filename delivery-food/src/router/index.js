@@ -72,12 +72,27 @@ const routes = [
   {
     path: "/password/reset/:id",
     name: "Reset",
-     component: () => import("@/views/user/Reset.vue")
+    component: () => import("@/views/user/Reset.vue")
   },
   {
     path: "/RegisterPassword",
     name: "RegisterPassword",
     component: () => import("@/views/user/RegisterPassword.vue"),
+  },
+  {
+    path: "/product-list",
+    name: "ProductList",
+    component: () => import("@/views/shopping-car/ProductList.vue"),
+  },
+  {
+    path: "/order-confirmation",
+    name: "OrderConfirmation",
+    component: () => import("@/views/shopping-car/OrderConfirmation.vue"),
+  },
+  {
+    path: "/comments-list",
+    name: "CommentsList",
+    component: () => import("@/views/ratings-comments/CommentsList.vue"),
   },
 ];
 

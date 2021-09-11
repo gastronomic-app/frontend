@@ -41,7 +41,9 @@
         </div>
 
         <div id="formFooter">
-          <a class="underlineHover"  @click="$router.push('/password')" >¿Ha olvidado la contraseña?</a>
+          <a class="underlineHover" @click="$router.push('/password')"
+            >¿Ha olvidado la contraseña?</a
+          >
         </div>
 
         <GoogleLogin
@@ -114,9 +116,9 @@ export default {
       console.log(error);
     },
     async startSesion() {
-      if(!this.google && this.password === ""){
+      if (!this.google && this.password === "") {
         this.error_msg = "Datos incorrectos";
-        this.error=true;
+        this.error = true;
         return false;
       }
       await this.$apollo
@@ -153,9 +155,11 @@ export default {
               // this.user.isActive = response.data.allUsers.edges[0].node.isActive;
               // this.user.isSuperuser = response.data.allUsers.edges[0].node.isSuperuser;
               this.user.type = response.data.allUsers.edges[0].node.type;
-              this.user.names = response.data.allUsers.edges[0].node.contact.edges[0].node.names;
+              this.user.names =
+                response.data.allUsers.edges[0].node.contact.edges[0].node.names;
               // this.user.lastnames = response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
-              // this.user.location = response.data.allUsers.edges[0].node.contact.edges[0].node.location;
+              this.user.location =
+                response.data.allUsers.edges[0].node.contact.edges[0].node.location;
               // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
               localStorage.setItem("user", JSON.stringify(this.user));
               localStorage.setItem("existUser", true);
@@ -208,7 +212,7 @@ export default {
 }
 /* BASIC */
 html {
-  background-color: #FF6079;
+  background-color: #ff6079;
 }
 body {
   font-family: "Poppins", sans-serif;
@@ -266,13 +270,13 @@ h2.inactive {
 }
 h2.active {
   color: #0d0d0d;
-  border-bottom: 2px solid #FF6079;
+  border-bottom: 2px solid #ff6079;
 }
 /* FORM TYPOGRAPHY*/
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
-  background-color: #FF6079;
+  background-color: #ff6079;
   border: none;
   color: white;
   padding: 15px 80px;
@@ -295,7 +299,7 @@ input[type="reset"] {
 input[type="button"]:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover {
-  background-color: #FF6079;
+  background-color: #ff6079;
 }
 input[type="button"]:active,
 input[type="submit"]:active,
@@ -328,7 +332,7 @@ input {
 }
 input:focus {
   background-color: #fff;
-  border-bottom: 2px solid #FF6079;
+  border-bottom: 2px solid #ff6079;
 }
 input:placeholder {
   color: #cccccc;
@@ -431,7 +435,7 @@ input:placeholder {
   bottom: -10px;
   width: 0;
   height: 2px;
-  background-color: #FF6079;
+  background-color: #ff6079;
   content: "";
   transition: width 0.2s;
 }

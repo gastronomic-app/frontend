@@ -1,0 +1,9 @@
+mutation createDetail($quantity: Int!, $productId: ID!, $orderId: ID!) {
+  createDetail(
+    input: { quantity: $quantity, productId: $productId, orderId: $orderId }
+  ) {
+    detail {
+      id
+    }
+  }
+}
