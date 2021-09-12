@@ -1,0 +1,8 @@
+mutation updateImage($id: ID!, $url: Upload!) {
+  updateImage(input: {id: $id, url: $url}) {
+    image {
+      id
+      url
+    }
+  }
+}
