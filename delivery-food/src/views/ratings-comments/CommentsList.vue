@@ -22,11 +22,23 @@
     <div class="row">
       <div class="col-5 mt-2">
         <h2>Promedio</h2>
-        <br>
+        <br />
         <h5>Aqui irían los promedios de las calificaciones totales</h5>
       </div>
       <div class="col-7 mt-2">
         <h2>Comentarios</h2>
+        <div class="container">
+          <div class="row justify-content-center align-items-center">
+            <div v-if="$apollo.loading" class="center">
+              <LoadingGraphql />
+              <p>Loading...</p>
+            </div>
+            <!--Cuando sucede un error-->
+            <div v-else-if="error" class="d-flex justify-content-center mt-5">
+              <ConnectionErrorGraphql />
+            </div>
+          </div>
+        </div>
         <div v-for="comment in allReviews.edges" :key="comment.node.id">
           <TextArea :review="comment.node" />
         </div>
@@ -37,11 +49,15 @@
 
 <script>
 import TextArea from "@/components/cards/TextArea.vue";
+import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
+import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 
 export default {
   name: "CommentsList",
   components: {
     TextArea,
+    LoadingGraphql,
+    ConnectionErrorGraphql,
   },
   data() {
     return {

@@ -35,7 +35,11 @@
             <label for="formGroupExampleInput">Dirección</label>
           </b-col>
           <b-col>
-            <select class="form-control form-control-sm" v-model="selected">
+            <select
+              class="form-control form-control-sm"
+              name="locationOption"
+              v-model="selected"
+            >
               <option disabled value="">Seleccione dirección</option>
               <option>Dirección del perfil</option>
               <option>Añadir dirección</option>
@@ -43,26 +47,47 @@
           </b-col>
         </b-row>
         <br />
-        <template v-if="selected === 'Añadir dirección'">
-          <Geolocation v-on:value="getLocation" showmap="True"></Geolocation>
-        </template>
-        <template v-if="selected === 'Dirección del perfil'">
-          {{ update() }}
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <button class="input-group-text btn btn-dark">
-                <b-icon icon="geo-alt-fill"></b-icon>
-              </button>
-            </div>
-            <input
-              id="autocomplete"
-              type="text"
-              class="form-control"
-              placeholder="Direccion perfil"
-              readonly="true"
-              v-model="location"
-            />
+        <template>
+          <span v-if="msjError === 'error'">
+            {{ cleanError() }}
+          </span>
+          <div
+            style="
+              background: #f8d7da;
+              margin-top: 1%;
+              padding: 0.5%;
+              border-radius: 6px;
+              border: 1px solid #f5c1b3;
+              color: #730115;
+            "
+            v-else-if="msjError != ''"
+          >
+            {{ msjError }}
           </div>
+          <br />
+          <template v-if="selected === 'Añadir dirección'">
+            {{ cleanInput() }}
+            <Geolocation v-on:value="getLocation" showmap="True"></Geolocation>
+          </template>
+          <template v-if="selected === 'Dirección del perfil'">
+            {{ cleanError() }}
+            {{ update() }}
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <button class="input-group-text btn btn-dark">
+                  <b-icon icon="geo-alt-fill"></b-icon>
+                </button>
+              </div>
+              <input
+                id="autocomplete"
+                type="text"
+                class="form-control"
+                placeholder="Direccion perfil"
+                readonly="true"
+                v-model="location"
+              />
+            </div>
+          </template>
         </template>
         <div class="container text-center">
           <button
@@ -140,6 +165,7 @@ export default {
       // de la consulta definida en la sección apollo
       allProducts: Object,
       // Variable que recibe el error de la consulta
+
       items: [{ recoveredProduct: Object, counter: null }],
       ok: localStorage.getItem("existUser"),
       emailUser: "",
@@ -152,6 +178,7 @@ export default {
       productId: "",
       orderId: "",
       total: 0,
+      msjError: "",
       error: null,
     };
   },
@@ -159,6 +186,9 @@ export default {
   methods: {
     getLocation(value) {
       this.location = value;
+    },
+    cleanError() {
+      this.msjError = "";
     },
     update() {
       console.log("creacion");
@@ -233,60 +263,81 @@ export default {
       }
       this.estimatedTime = sumatoria;
     },
-    confirmOrder() {
-      this.calculateEstimatedTime();
-      this.ok = localStorage.getItem("existUser");
-      if (this.ok) {
-        let user = JSON.parse(localStorage.getItem("user"));
-        this.clientId = user.id;
-        this.nameClient = user.names;
-        this.emailUser = user.email;
-        this.location = user.location;
+    validate() {
+      this.msjError = "error";
+      if (this.selected === "") {
+        this.msjError = "Seleccione un tipo de dirección";
+        return false;
       }
-      console.log("Pasando por confirmando pedido");
-      console.log("My location: ", this.location);
+      if (this.location.length == 0) {
+        console.log("MIMD: " + this.location.trim().length);
+        console.log("MIMD2: " + this.location + "; ");
+        this.msjError = "Ingrese una direccion o seleccione en el mapa";
+        return false;
+      }
+      console.log("Tam MIMD: " + this.location.trim().length);
+      console.log("Dir MIMD2: " + this.location);
+      return true;
+    },
+    cleanInput() {
+      this.location = "";
+    },
+    confirmOrder() {
+      if (this.validate()) {
+        this.calculateEstimatedTime();
+        this.ok = localStorage.getItem("existUser");
+        if (this.ok) {
+          let user = JSON.parse(localStorage.getItem("user"));
+          this.clientId = user.id;
+          this.nameClient = user.names;
+          this.emailUser = user.email;
+          this.location = user.location;
+        }
+        console.log("Pasando por confirmando pedido");
+        console.log("My location: ", this.location);
 
-      this.$apollo
-        .mutate({
-          // Establece la mutación de crear
-          mutation: require("@/graphql/order/createOrder.gql"),
-          // Define las variables
-          variables: {
-            estimatedTime: this.estimatedTime,
-            location: this.location,
-            clientId: this.clientId,
-          },
-        })
-        .then((response) => {
-          this.orderId = response.data.createOrder.order.id;
-          console.log("creación de detalle:", response.data);
-          for (var index = 1; index < this.items.length; index++) {
-            this.productId = this.items[index].recoveredProduct.id;
-            this.quantity = this.items[index].counter;
-            console.log("idorden", this.orderId);
-            console.log("cantidad", this.quantity);
-            console.log("idproducto", this.productId);
+        this.$apollo
+          .mutate({
+            // Establece la mutación de crear
+            mutation: require("@/graphql/order/createOrder.gql"),
+            // Define las variables
+            variables: {
+              estimatedTime: this.estimatedTime,
+              location: this.location,
+              clientId: this.clientId,
+            },
+          })
+          .then((response) => {
+            this.orderId = response.data.createOrder.order.id;
+            console.log("creación de detalle:", response.data);
+            for (var index = 1; index < this.items.length; index++) {
+              this.productId = this.items[index].recoveredProduct.id;
+              this.quantity = this.items[index].counter;
+              console.log("idorden", this.orderId);
+              console.log("cantidad", this.quantity);
+              console.log("idproducto", this.productId);
 
-            this.$apollo
-              .mutate({
-                // Establece la mutación de crear
-                mutation: require("@/graphql/detail/createDetail.gql"),
-                // Define las variables
-                variables: {
-                  quantity: this.quantity,
-                  productId: this.productId,
-                  orderId: this.orderId,
-                },
-              })
-              .then((response) => {
-                console.log("creación de detalle:", response.data);
-                //agrega aquí más lógica si es necesaria"
-              });
-          }
-        });
+              this.$apollo
+                .mutate({
+                  // Establece la mutación de crear
+                  mutation: require("@/graphql/detail/createDetail.gql"),
+                  // Define las variables
+                  variables: {
+                    quantity: this.quantity,
+                    productId: this.productId,
+                    orderId: this.orderId,
+                  },
+                })
+                .then((response) => {
+                  console.log("creación de detalle:", response.data);
+                  //agrega aquí más lógica si es necesaria"
+                });
+            }
+          });
 
-      this.$router.push({ name: "ProductList" });
-      localStorage.removeItem("items");
+        this.$router.push({ name: "ProductList" });
+        localStorage.removeItem("items");
+      }
     },
   },
   mounted() {
