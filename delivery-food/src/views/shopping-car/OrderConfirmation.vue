@@ -1,40 +1,37 @@
 <template>
-  <div class="container-fluid">
-    <div class="row mt-3">
+  <div class="container">
+    <div class="row mt-2">
       <div class="col-6">
         <div class="row">
-          <div class="col-lg-3">
+          <div class="col-lg-4 pl-0">
             <img
               src="@/assets/enterprise.jpg"
               class="card-img-top"
               alt="logo establecimiento"
             />
           </div>
-          <div class="col-sm-autor mt-3">
+          <div class="col-sm-autor mt-4">
             <h3>Nombre del restaurante</h3>
           </div>
         </div>
       </div>
-      <div class="col-6" style="text-align: right">
+      <div class="col-6 mt-4" style="text-align: right">
         <button
           type="submit"
           class="boton_pedido btn btn-outline-dark btn-sm"
           style="width: 140px"
+          v-on:click="btnComments()"
         >
           Opiniones (10)
         </button>
       </div>
     </div>
-
+    <SubTitle content="Completa tu dirección de entrega"></SubTitle>
     <div class="row">
-      <div class="col-7 mt-2">
-        <h4>Completa tu dirección de entrega</h4>
-        <br />
-        <b-row>
-          <b-col sm="">
-            <label for="formGroupExampleInput">Dirección</label>
-          </b-col>
-          <b-col>
+      <div class="col-md-7 mt-2">
+        <div class="form-group row mb-0">
+          <label class="col-sm-auto col-form-label">Dirección</label>
+          <div class="col-sm">
             <select
               class="form-control form-control-sm"
               name="locationOption"
@@ -44,13 +41,12 @@
               <option>Dirección del perfil</option>
               <option>Añadir dirección</option>
             </select>
-          </b-col>
-        </b-row>
-        <br />
+          </div>
+        </div>
         <template>
-          <span v-if="msjError === 'error'">
+          <template v-if="msjError === 'error'">
             {{ cleanError() }}
-          </span>
+          </template>
           <div
             style="
               background: #f8d7da;
@@ -100,8 +96,8 @@
         <br />
       </div>
 
-      <div class="col-5 mt-4">
-        <div class="card border-dark color_carro">
+      <div class="col-5">
+        <div class="card border-dark">
           <div class="row">
             <div class="col mt-3 container text-center">
               <span style="font-weight: bold">Mi pedido</span>
@@ -114,7 +110,7 @@
               {{ items[indice].counter }}
 
               <div class="col" style="padding-right: 1%">
-                {{ items[indice].recoveredProduct.name }}
+                {{ items[indice].recoveredProduct.name | capitalize }}
               </div>
               <div class="col">
                 {{ updateTotal(indice) }}
@@ -128,7 +124,7 @@
           </div>
           <!--costos-->
           <hr />
-          <div class="row ml-1 container text-center">
+          <!-- <div class="row ml-1 container text-center">
             <div class="col">
               <p style="text-align: left; margin-left: 2%">
                 Envio <br />Sub-Total <br />
@@ -145,7 +141,8 @@
                 >
               </p>
             </div>
-          </div>
+          </div> -->
+          <TotalOrder :total="this.total" :envio="this.envio"></TotalOrder>
         </div>
       </div>
     </div>
@@ -154,10 +151,14 @@
 
 <script>
 import Geolocation from "@/components/geolocation/Geolocation.vue";
+import SubTitle from "@/components/cards/SubTitles.vue";
+import TotalOrder from "@/components/order/TotalOrder.vue";
 export default {
   name: "OrderConfirmation",
   components: {
     Geolocation,
+    SubTitle,
+    TotalOrder,
   },
   data() {
     return {
@@ -178,17 +179,32 @@ export default {
       productId: "",
       orderId: "",
       total: 0,
+      envio: 0,
       msjError: "",
       error: null,
     };
   },
-
+  mounted() {
+    if (localStorage.getItem("items")) {
+      try {
+        this.items = JSON.parse(localStorage.getItem("items"));
+      } catch (error) {
+        localStorage.removeItem("items");
+      }
+    }
+  },
   methods: {
     getLocation(value) {
       this.location = value;
     },
     cleanError() {
       this.msjError = "";
+    },
+    btnComments() {
+      console.log("redirigir");
+      this.$router.push({
+        name: "CommentsList",
+      });
     },
     update() {
       console.log("creacion");
@@ -202,6 +218,7 @@ export default {
         console.log("Datos:  ", user);
       }
     },
+
     updateTotal() {
       var sumatoria = 0;
       for (var index = 1; index < this.items.length; index++) {
@@ -255,7 +272,6 @@ export default {
       this.saveItems();
     },
     calculateEstimatedTime() {
-      console.log("ingresando al metodo");
       var sumatoria = 0;
       for (var index = 1; index < this.items.length; index++) {
         sumatoria =
@@ -275,8 +291,6 @@ export default {
         this.msjError = "Ingrese una direccion o seleccione en el mapa";
         return false;
       }
-      console.log("Tam MIMD: " + this.location.trim().length);
-      console.log("Dir MIMD2: " + this.location);
       return true;
     },
     cleanInput() {
@@ -335,20 +349,14 @@ export default {
             }
           });
 
-        this.$router.push({ name: "ProductList" });
+        this.$router.push({ name: "ProductListOrder" });
         localStorage.removeItem("items");
+        localStorage.removeItem("envio");
+        localStorage.removeItem("total");
       }
     },
   },
-  mounted() {
-    if (localStorage.getItem("items")) {
-      try {
-        this.items = JSON.parse(localStorage.getItem("items"));
-      } catch (error) {
-        localStorage.removeItem("items");
-      }
-    }
-  },
+
   saveItems() {
     localStorage.setItem("items", JSON.stringify(this.items));
   },

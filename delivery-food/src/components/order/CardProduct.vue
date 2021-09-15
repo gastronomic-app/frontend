@@ -1,14 +1,15 @@
 <template>
   <div class="card">
     <img
-      src="@/assets/enterprise.jpg"
+      :src="image.url"
       class="card-img-top"
-      alt="logo establecimiento"
+      :alt="'Imagen de ' + product.name"
     />
-    <div class="card-body footer_descripcion">
+    <div class="card-body footer_descripcion pb-1">
       <h5 class="card-title">{{ product.name | capitalize }}</h5>
-      <small class="text-muted">{{ product.preparation }}</small>
-      <p class="card-text">{{ product.price | capitalize }}</p>
+      <span class="card-text">Precio: ${{ product.price | capitalize }}</span>
+      <br />
+      <span class="card-text">Ingredientes: {{ product.ingredients }}</span>
     </div>
   </div>
 </template>
@@ -16,17 +17,13 @@
 <script>
 export default {
   name: "CardItem",
-  data() {
-    return {
-      contador: 0,
-    };
-  },
   props: {
     /**
      * Objeto establecimiento enviado
      * como prop desde una vista
      */
     product: Object,
+    image: Object,
   },
 };
 </script>

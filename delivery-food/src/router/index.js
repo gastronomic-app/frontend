@@ -94,8 +94,27 @@ const routes = [
     name: "ProductEdit",
     component: () => import("@/views/products/ProductEdit.vue"),
   },
-
-
+  {
+    path: "/products-order",
+    name: "ProductListOrder",
+    component: () => import("@/views/shopping-car/ProductListOrder.vue"),
+  },
+  {
+    path: "/order-confirmation",
+    name: "OrderConfirmation",
+    component: () => import("@/views/shopping-car/OrderConfirmation.vue"),
+  },
+  {
+    path: "/comments-list",
+    name: "CommentsList",
+    component: () => import("@/views/ratings-comments/CommentsList.vue"),
+  },
+  {
+    path: "/add-Rating",
+    name: "AddRating",
+    component: () =>
+        import("@/views/ratings-comments/AddRating.vue"),
+},
 ];
 
 const router = new VueRouter({
