@@ -1,0 +1,27 @@
+ 
+ mutation createProduct(
+            $productType: String!,
+            $name: String!,
+            $price: String!,
+            $ingredients: String!,
+            $preparation: String,
+            $estimatedTime: String!,
+            $enterpriseId: ID!
+          ) {
+            createProduct(
+              input: {
+                productType: $productType,
+                name: $name,
+                price: $price,
+                ingredients: $ingredients,
+                preparation: $preparation,
+                estimatedTime: $estimatedTime,
+                enterpriseId: $enterpriseId
+              }
+            ) {
+              product {
+                name
+                id
+              }
+            }
+          }
