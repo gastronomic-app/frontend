@@ -42,7 +42,7 @@
               </h5>
               <h5>Lugar de entrega: {{ order.destination.address }}</h5>
               <h5 >
-                Tu pedido llegara en: <b style="color: var(--orange)"><Countdown sec="10" min="0" hour="0" /></b>
+                Tu pedido llegara en: <b style="color: var(--orange)"><Countdown sec="60" min="1" hour="0" /></b>
               </h5>
               <h5>
                 Costo Total: <b>${{ order.cost }}</b>
@@ -291,6 +291,7 @@ export default {
       let allOrders = data.filter(
         (userId) => userId.node.client.id === this.user.id
       );
+      let idx=20
       if (allOrders.length > 0) {
         allOrders.forEach((order) => {
           let newOrder = {
@@ -300,7 +301,7 @@ export default {
             enterprise: "",
             cost: "",
             selected: false,
-            estimatedTime: {},
+            estimatedTime: idx,
             duration: "",
             origin: {},
             destination: {},
@@ -329,9 +330,10 @@ export default {
           this.getCompleteAddress(order.node.location).then((value) => {
             newOrder.destination = value;
             this.orders.push(newOrder);
+           
           });
         });
-       
+        idx=idx+4
         //this.countDown()
       } else {
         this.exitsOrders = false;

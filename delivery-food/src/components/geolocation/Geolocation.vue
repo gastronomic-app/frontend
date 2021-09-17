@@ -14,7 +14,7 @@
         v-model="address"
       />
     </div>
-    <div v-show="showmap">
+    <div >
        <section id="map" class="containder map" ></section>
 
     </div>

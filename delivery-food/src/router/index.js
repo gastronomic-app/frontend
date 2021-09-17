@@ -45,7 +45,7 @@ const routes = [
     component: () => import("@/components/geolocation/Geolocation.vue"),
   },
   {
-    path: "/orders",
+    path: "/orders/juanda7712308",
     name: "OrdersPlaced",
     component: () => import("@/views/deliveries/OrdersPlaced.vue"),
   },

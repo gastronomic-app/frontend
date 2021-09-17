@@ -37,7 +37,7 @@
 
             <li class="nav-item">
               <a
-                v-if="update()"
+                
                 class="nav-link dropdown-toggle text-white font-orange"
                 data-toggle="dropdown"
                 role="button"
@@ -63,7 +63,7 @@
                               <path
                                 d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"
                               /></svg
-                            >Usuario: {{ names }}
+                            >Usuario: JuanDa
                           </h3>
                         </div>
                       </center>
@@ -82,11 +82,11 @@
                               <tbody>
                                 <tr>
                                   <td>Rol:</td>
-                                  <td>{{ role }}</td>
+                                  <td>Cliente</td>
                                 </tr>
                                 <tr>
                                   <td>email:</td>
-                                  <td>{{ email }}</td>
+                                  <td>jaunda77@gmail.com</td>
                                 </tr>
                               </tbody>
                             </table>
@@ -132,7 +132,7 @@
                 </center>
               </div>
             </li>
-            <li v-show="!ok" class="nav-item">
+            <!-- <li v-show="!ok" class="nav-item">
               <a
                 class="nav-link navbar-orange-text font-weight-bold login"
                 href="/login"
@@ -141,9 +141,9 @@
             </li>
             <li v-show="!ok" class="nav-item">
               <a class="nav-link text-light font-weight-bold" href="/Register"
-                ><strong>Registrarse</strong></a
-              >
-            </li>
+                ><strong>Registrarse</strong></a -->
+              <!-- >
+            </li> -->
           </ul>
         </div>
       </div>
