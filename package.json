@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "start": "node index.js",
+        "heroku-postbuild": "cd delivery-food && npm install && npm run build"
+    }
+}
