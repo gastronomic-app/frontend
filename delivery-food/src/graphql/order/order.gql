@@ -1,0 +1,6 @@
+query order($id: ID!) {
+  order(id: $id) {
+    id
+    location
+  }
+}
