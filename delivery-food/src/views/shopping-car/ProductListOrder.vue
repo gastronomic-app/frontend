@@ -2,7 +2,7 @@
   <div class="container">
     <!--Sección comentarios-->
     <div class="row mt-2">
-      <div class="col-6">
+      <!-- <div class="col-6">
         <div class="row">
           <div class="col-lg-4 pl-0">
             <img
@@ -15,7 +15,11 @@
             <h3>Nombre del restaurante</h3>
           </div>
         </div>
-      </div>
+      </div> -->
+      <Enterprise
+        name="Nombre del restaurante"
+        image="@/assets/alien.png"
+      ></Enterprise>
       <div class="col-6 mt-4" style="text-align: right">
         <button
           type="submit"
@@ -39,7 +43,7 @@
           <div class="col-sm-10 pl-0">
             <input
               type="text"
-              class="form-control "
+              class="form-control"
               v-model="searchString"
               placeholder="Nombre del producto"
             />
@@ -315,6 +319,7 @@ import ProductCard from "@/components/order/CardProduct.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import SubTitle from "@/components/cards/SubTitles.vue";
+import Enterprise from "@/components/order/Enterprise.vue";
 // import TotalOrder from "@/components/order/TotalOrder.vue";
 
 export default {
@@ -324,6 +329,7 @@ export default {
     LoadingGraphql,
     ConnectionErrorGraphql,
     SubTitle,
+    Enterprise,
     // TotalOrder,
   },
   data() {
@@ -431,7 +437,7 @@ export default {
 
     addItem(product) {
       var bandera = false;
-      console.log(product.node.id);
+      //console.log(product.node.id);
       if (this.items.length == 0) {
         this.items.push({ recoveredProduct: product.node, counter: 1 });
       } else {
@@ -501,7 +507,7 @@ export default {
       //}
     },
     continueOrder() {
-      console.log("redirigir");
+      //console.log("redirigir");
       this.$router.push({
         name: "OrderConfirmation",
         params: { listado: this.items },
@@ -509,7 +515,7 @@ export default {
     },
 
     btnComments() {
-      console.log("redirigir");
+      //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
       });

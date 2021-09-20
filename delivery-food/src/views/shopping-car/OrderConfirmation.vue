@@ -62,7 +62,7 @@
           </div>
           <br />
           <template v-if="selected === 'Añadir dirección'">
-            {{ cleanInput() }}
+            {{ resetLocation() }}
             <Geolocation v-on:value="getLocation" showmap="True"></Geolocation>
           </template>
           <template v-if="selected === 'Dirección del perfil'">
@@ -97,7 +97,7 @@
       </div>
 
       <div class="col-5">
-        <div class="card border-dark">
+        <div class="card border-dark mb-2">
           <div class="row">
             <div class="col mt-3 container text-center">
               <span style="font-weight: bold">Mi pedido</span>
@@ -201,13 +201,13 @@ export default {
       this.msjError = "";
     },
     btnComments() {
-      console.log("redirigir");
+      //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
       });
     },
     update() {
-      console.log("creacion");
+      //console.log("creacion");
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
         let user = JSON.parse(localStorage.getItem("user"));
@@ -247,7 +247,7 @@ export default {
     },
 
     decrementCounter(id) {
-      console.log(id);
+      //console.log(id);
       for (var index = 1; index < this.items.length; index++) {
         if (
           id == this.items[index].recoveredProduct.id &&
@@ -286,14 +286,14 @@ export default {
         return false;
       }
       if (this.location.length == 0) {
-        console.log("MIMD: " + this.location.trim().length);
-        console.log("MIMD2: " + this.location + "; ");
+        // console.log("MIMD: " + this.location.trim().length);
+        // console.log("MIMD2: " + this.location + "; ");
         this.msjError = "Ingrese una direccion o seleccione en el mapa";
         return false;
       }
       return true;
     },
-    cleanInput() {
+    resetLocation() {
       this.location = "";
     },
     confirmOrder() {
@@ -305,10 +305,10 @@ export default {
           this.clientId = user.id;
           this.nameClient = user.names;
           this.emailUser = user.email;
-          this.location = user.location;
+          //this.location = user.location;
         }
-        console.log("Pasando por confirmando pedido");
-        console.log("My location: ", this.location);
+        // console.log("Pasando por confirmando pedido");
+        // console.log("My location: ", this.location);
 
         this.$apollo
           .mutate({
@@ -327,9 +327,9 @@ export default {
             for (var index = 1; index < this.items.length; index++) {
               this.productId = this.items[index].recoveredProduct.id;
               this.quantity = this.items[index].counter;
-              console.log("idorden", this.orderId);
-              console.log("cantidad", this.quantity);
-              console.log("idproducto", this.productId);
+              // console.log("idorden", this.orderId);
+              // console.log("cantidad", this.quantity);
+              // console.log("idproducto", this.productId);
 
               this.$apollo
                 .mutate({
