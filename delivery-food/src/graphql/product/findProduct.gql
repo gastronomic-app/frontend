@@ -1,0 +1,11 @@
+query findProduct($name_product: String) {
+  allProducts(name_product: $name_product) {
+    edges {
+      node {
+        id
+        name
+        price
+      }
+    }
+  }
+}

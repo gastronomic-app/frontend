@@ -1,0 +1,19 @@
+mutation createPedido(
+  $estimatedTime: Int!
+  $location: String!
+  $clientId: ID!
+) {
+  createOrder(
+    input: {
+      estimatedTime: $estimatedTime
+      location: $location
+      clientId: $clientId
+    }
+  ) {
+    order {
+      id
+      location
+      estimatedTime
+    }
+  }
+}

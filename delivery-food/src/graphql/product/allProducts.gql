@@ -11,7 +11,7 @@
         estimatedTime
         enterprise{
           id
-        }        
+        }
         images{
           edges{
             node{
