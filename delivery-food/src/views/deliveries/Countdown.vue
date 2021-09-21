@@ -66,7 +66,7 @@
 <script>
 export default {
   name: "Countdown",
-  props: ["id", " sec", "min", "hours", "currentTime"],
+  props: ["id", "sec", "min", "hours", "currentTime"],
 
   data() {
     return {

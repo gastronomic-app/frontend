@@ -113,7 +113,7 @@ export default {
 
     this.queryOrders();
   },
-  //TODO: Almacenar el tiempo estimado actual para posterior calculo.
+  
   destroyed() {
     localStorage.setItem("times", JSON.stringify(this.currentTimes));
   },
@@ -126,7 +126,7 @@ export default {
       showmap: false,
       orders: [],
       error: null,
-      //Pagination
+      //Paginator
       currentPage: 1,
       currentTimes: [],
       paginate: ["orders"],
@@ -167,9 +167,9 @@ export default {
         },
         async (response, status) => {
           if (status === "OK") {
-            completeAddress.address = await response[0].formatted_address,
-              completeAddress.lat = await response[0].geometry.location.lat(),
-              completeAddress.lng = await response[0].geometry.location.lng();
+            (completeAddress.address = await response[0].formatted_address),
+              (completeAddress.lat = await response[0].geometry.location.lat()),
+              (completeAddress.lng = await response[0].geometry.location.lng());
           }
         }
       );
@@ -329,7 +329,6 @@ export default {
               this.orders.push(newOrder);
             });
           });
-       
         }
         this.isReady = true;
       } else {
@@ -337,11 +336,11 @@ export default {
       }
     },
     secondsToString(seconds) {
-      var hours = Math.floor(seconds / 3600);
+      let hours = Math.floor(seconds / 3600);
       hours = hours < 10 ? "0" + hours : hours;
-      var minute = Math.floor((seconds / 60) % 60);
+      let minute = Math.floor((seconds / 60) % 60);
       minute = minute < 10 ? "0" + minute : minute;
-      var second = seconds % 60;
+      let second = seconds % 60;
       second = second < 10 ? "0" + second : second;
       return { hours: hours, min: minute, sec: second };
     },
@@ -356,7 +355,6 @@ export default {
       } else {
         let time = this.secondsToString(order.route.duration.durationInSec);
         order.estimatedTime = time;
-        
       }
     },
     getCurrentTime(time) {
