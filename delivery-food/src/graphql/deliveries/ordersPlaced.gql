@@ -4,6 +4,7 @@
       node{
         client{
           id
+          email
         }
         id
         date,

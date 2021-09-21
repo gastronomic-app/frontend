@@ -1,19 +1,21 @@
 <template>
-   <section class="inline">
-<span v-if="timeout===true">
-        {{min}} minutos-{{ sec }} segundos
-      </span>
-      <!-- Button trigger modal -->
-      <button
-      style="background-color:var(--dark); color:   white"
-        type="button"
-        class="btn"
-        data-toggle="modal"
-        data-target="#exampleModal"
-        v-else
-      >
-        Generar reporte
-      </button>
+  <section class="inline">
+    <span v-if="timeout === false">
+      <span v-show="time.hours > 0">{{ time.hours }} horas - </span>
+      <span v-show="time.min > 0"> {{ time.min }} minutos - </span
+      >{{ time.sec }} segundos
+    </span>
+    <!-- Button trigger modal -->
+    <button
+      style="background-color: var(--dark); color: white"
+      type="button"
+      class="btn"
+      data-toggle="modal"
+      data-target="#exampleModal"
+      v-else
+    >
+      Generar reporte
+    </button>
     <!-- Modal -->
     <div
       class="modal fade"
@@ -25,7 +27,9 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title"  style="color: black" id="exampleModalLabel">Información</h5>
+            <h5 class="modal-title" style="color: black" id="exampleModalLabel">
+              Información
+            </h5>
             <button
               type="button"
               class="close"
@@ -37,7 +41,12 @@
           </div>
           <div class="modal-body">Hola ¿paso algo con tu orden?</div>
           <div class="modal-footer">
-            <button type="button" class="btn " style="background-color:var(--dark); color: white" @click="redirect">
+            <button
+              type="button"
+              class="btn"
+              style="background-color: var(--dark); color: white"
+              @click="redirect"
+            >
               Generar reporte
             </button>
             <button
@@ -49,47 +58,62 @@
             </button>
           </div>
         </div>
+      </div>
     </div>
-  </div>
-   </section>
-      
+  </section>
 </template>
 
 <script>
 export default {
   name: "Countdown",
-  props:["sec","min","hour"],
- 
+  props: ["id", " sec", "min", "hours", "currentTime"],
+
   data() {
     return {
-      timeout:true
+      timeout: false,
+
+      time: {
+        id: this.id,
+        hours: this.hours,
+        min: this.min,
+        sec: this.sec,
+      },
     };
+  },
+
+  beforeDestroy() {
+    this.prepareData();
+    this.currentTime(this.time);
   },
   methods: {
     redirect() {
       this.$destroy();
       this.$router.push({ name: "Report" });
     },
+    prepareData() {
+      this.time.hours === undefined ? (this.time.hours = 0) : this.time.hours;
+      this.time.min === undefined ? (this.time.min = 0) : this.time.min;
+      this.time.sec === undefined ? (this.time.sec = 0) : this.time.sec;
+    },
   },
+
   watch: {
-    sec: {
+    time: {
+      deep: true,
       handler(value) {
-        if (value > 0) {
+        if (value.sec > 0) {
           setTimeout(() => {
-            this.sec--;
+            this.time.sec--;
           }, 1000);
-        }
-        else if(this.min>0){
-          this.min--
-          this.sec=60
-        }
-        else if(this.hour>0){
-          this.hour--
-          this.min=60
-          this.sec=60
-        }
-        else{
-          this.timeout=false
+        } else if (this.time.min > 0) {
+          this.time.min--;
+          this.time.sec = 60;
+        } else if (this.time.hours > 0) {
+          this.time.hours--;
+          this.time.min = 60;
+          this.time.sec = 60;
+        } else {
+          this.timeout = true;
         }
       },
       immediate: true,
@@ -98,7 +122,7 @@ export default {
 };
 </script>
 <style scoped>
-  .inline{
-    display: inline-block; 
-  }
+.inline {
+  display: inline-block;
+}
 </style>

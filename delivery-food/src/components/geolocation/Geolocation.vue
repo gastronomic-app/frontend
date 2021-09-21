@@ -14,11 +14,10 @@
         v-model="address"
       />
     </div>
-    <div >
-       <section id="map" class="containder map" ></section>
-
+    <div>
+      <section id="map" class="containder map"></section>
     </div>
-   
+
     <br />
   </div>
 </template>
@@ -29,12 +28,12 @@ export default {
 
   data() {
     return {
-      address: "",
+      address: "", //variable donde se guardará la dirección formateada
       error: "",
-      map: Object,
+      map: Object, //Objeto de google maps para el mapa
     };
   },
-  props: ["showinput", "showmap"],
+  props: ["showinput", "showmap"], //Showinput: Muestra un elemento input html- showmap: true para mostrar el mapa; false de lo contrario
 
   mounted() {
     this.showUserLocation(2.45, -76.6167);
@@ -48,7 +47,7 @@ export default {
     );
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      
+
       this.showUserLocation(
         place.geometry.location.lat(),
         place.geometry.location.lng()
@@ -56,6 +55,8 @@ export default {
     });
   },
   methods: {
+
+    //Se captura la ubicación (lat y lng) del usuario solo si el mismo permite acceder a la unicación
     getUserLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -78,11 +79,14 @@ export default {
         lat: lat,
         lng: lng,
       };
+      //Objeto con la dirección formateada calculada a partir de una lat y una lng
       const geocoder = new google.maps.Geocoder();
+      //Se obtiene la dirección formateada y se almmacena en "address"
       geocoder.geocode({ location: latlng }, (response, status) => {
         if (status === "OK") {
           this.address = response[0].formatted_address;
-          this.$emit ('value',this.address)
+          //Se emite el evento con la inforación de la dirección formateada
+          this.$emit("value", this.address);
         } else {
           console.log(status);
         }
@@ -90,27 +94,31 @@ export default {
     },
 
     showUserLocation(lat, lon) {
+      //Creación del objeto map
       this.map = new google.maps.Map(document.getElementById("map"), {
         zoom: 15,
         center: new google.maps.LatLng(lat, lon),
       });
+
+      //Marcador que se dibujara al obtener la ubicacion o dar click sobre un lugar del mapa
       let marker = new google.maps.Marker({
         position: new google.maps.LatLng(lat, lon),
         map: this.map,
       });
-
+      //Evento para dar click en una region del mapa
       this.map.addListener("click", (event) => {
         marker.setPosition(event.latLng);
+
         let direction = this.getAddressFrom(
           event.latLng.lat(),
           event.latLng.lng()
         );
-        
+
         if (direction != undefined) {
+          //Se muestra la direccion obtenida en el input
           document.getElementById("autocomplete").value = direction;
         }
       });
-      
     },
   },
 };

@@ -2,12 +2,10 @@
   <div class="container" style="margin-top: 1em">
     <h3><b>Mis Pedidos</b></h3>
 
-    <div v-if="$apollo.loading">
+    <div v-if="!isReady">
       <LoadingGraphql />
     </div>
-    <div v-else-if="error" class="d-flex justify-content-center">
-      <ConnectionErrorGraphql />
-    </div>
+
     <div v-else>
       <paginate name="orders" :list="orders" :per="5">
         <template v-for="(order, idx) in paginated('orders')">
@@ -40,9 +38,17 @@
               <h5>
                 Establecimiento: <b>{{ order.enterprise }}</b>
               </h5>
-              <h5>Lugar de entrega: {{ order.destination.address }}</h5>
-              <h5 >
-                Tu pedido llegara en: <b style="color: var(--orange)"><Countdown sec="60" min="1" hour="0" /></b>
+              <h5>Lugar de entrega: {{ order.route.destination.address }}</h5>
+              <h5>
+                Tu pedido llegara en:
+                <b style="color: var(--orange)"
+                  ><Countdown
+                    :id="order.id"
+                    :currentTime="getCurrentTime"
+                    :hours="order.estimatedTime.hours"
+                    :min="order.estimatedTime.min"
+                    :sec="order.estimatedTime.sec"
+                /></b>
               </h5>
               <h5>
                 Costo Total: <b>${{ order.cost }}</b>
@@ -95,24 +101,34 @@ export default {
     Countdown,
   },
   name: "OrdersPlaced",
-
+  created() {
+    let elements = JSON.parse(localStorage.getItem("times"));
+    if (elements.length > 0) {
+      this.currentTimes = elements;
+      this.existsTimes = true;
+    }
+  },
   mounted() {
+    this.getCurrentUser();
+
     this.queryOrders();
-     
+  },
+  //TODO: Almacenar el tiempo estimado actual para posterior calculo.
+  destroyed() {
+    localStorage.setItem("times", JSON.stringify(this.currentTimes));
   },
   data() {
     return {
       exitsOrders: false,
-
-      user: {
-        id: "Q2xpZW50Tm9kZToxOQ==", //"Q2xpZW50Tm9kZToy", //"Q2xpZW50Tm9kZTo2",
-      },
+      existsTimes: false,
+      isReady: false,
+      user: {},
       showmap: false,
-      routes: [],
       orders: [],
       error: null,
       //Pagination
       currentPage: 1,
+      currentTimes: [],
       paginate: ["orders"],
     };
   },
@@ -124,7 +140,6 @@ export default {
         })
         .then((response) => {
           this.tansformQuery(response.data.allOrders.edges);
-          
         });
     },
     getUserPosition() {
@@ -132,38 +147,12 @@ export default {
         navigator.geolocation.getCurrentPosition((position) => {
           this.destination.lat = position.coords.latitude;
           this.destination.lng = position.coords.longitude;
-          //this.getAddressFrom(this.destination.lat, this.destination.lng);
-          this.getDataLocal();
         });
       } else {
         console.log("No se ha podido acceder su ubicación");
       }
     },
-    getRoutes() {
-      this.orders.forEach((order) => {
-        let route = {
-          origin: {
-            address: "",
-            lat: 0,
-            lng: 0,
-          },
-          destination: {
-            address: "",
-            lat: 0,
-            lng: 0,
-          },
 
-          distance: "",
-          duration: "",
-          durationInSec: "",
-        };
-        route.origin = order.origin;
-        route.destination = order.destination;
-
-      this.getDurationDistance(route);
-        this.routes.push(route);
-      });
-    },
     async getCompleteAddress(address) {
       const geocoder = new google.maps.Geocoder();
       let completeAddress = {
@@ -171,25 +160,25 @@ export default {
         lat: "",
         lng: "",
       };
+
       await geocoder.geocode(
         {
           address: address,
         },
-        (response, status) => {
+        async (response, status) => {
           if (status === "OK") {
-            (completeAddress.address = response[0].formatted_address),
-              (completeAddress.lat = response[0].geometry.location.lat()),
-              (completeAddress.lng = response[0].geometry.location.lng());
+            completeAddress.address = await response[0].formatted_address,
+              completeAddress.lat = await response[0].geometry.location.lat(),
+              completeAddress.lng = await response[0].geometry.location.lng();
           }
         }
       );
-
       return completeAddress;
     },
 
-    getDurationDistance(route) {
+    async getDurationDistance(route) {
       const distanceMatrix = new google.maps.DistanceMatrixService();
-      distanceMatrix.getDistanceMatrix(
+      await distanceMatrix.getDistanceMatrix(
         {
           origins: [{ lat: route.origin.lat, lng: route.origin.lng }],
           destinations: [
@@ -197,12 +186,12 @@ export default {
           ],
           travelMode: "DRIVING",
         },
-        (response) => {
+        async (response) => {
           if (response.rows[0].elements[0].status === "OK") {
-            let elements = response.rows[0].elements[0];
+            let elements = await response.rows[0].elements[0];
             route.distance = elements.distance.text;
-            route.duration = elements.duration.text;
-            route.durationInSec = elements.duration.value;
+            route.duration.durationFormatted = elements.duration.text;
+            route.duration.durationInSec = elements.duration.value;
           } else {
             this.error = "No results found";
           }
@@ -256,7 +245,7 @@ export default {
 
               const middleLoc = overviewPath[middleIndex];
               const distanceDurationLabel = new google.maps.InfoWindow({
-                content: `<i class ="bi-alarm-fill icon"></i> ${route.duration}`,
+                content: `<i class ="bi-alarm-fill icon"></i> ${route.duration.durationFormatted}`,
                 position: new google.maps.LatLng(
                   middleLoc.lat(),
                   middleLoc.lng()
@@ -274,12 +263,12 @@ export default {
     },
 
     trackOrder() {
-      this.getRoutes();
       let flag = false;
       for (let idx in this.orders) {
         if (this.orders[idx].selected) {
           this.showmap = true;
-          this.showRoute([this.routes[idx]]);
+
+          this.showRoute([this.orders[idx].route]);
           flag = true;
         }
       }
@@ -289,11 +278,11 @@ export default {
     },
     async tansformQuery(data) {
       let allOrders = data.filter(
-        (userId) => userId.node.client.id === this.user.id
+        (user) => user.node.client.email === this.user.email
       );
-      let idx=20
+
       if (allOrders.length > 0) {
-        allOrders.forEach((order) => {
+        for await (let order of allOrders) {
           let newOrder = {
             id: order.node.id,
             date: order.node.date,
@@ -301,14 +290,19 @@ export default {
             enterprise: "",
             cost: "",
             selected: false,
-            estimatedTime: idx,
-            duration: "",
-            origin: {},
-            destination: {},
+            estimatedTime: { hours: "", min: "", sec: "" },
+            preparationTime: "",
+            route: {
+              origin: {},
+              destination: {},
+              duration: { durationFormatted: "", durationInSec: "" },
+              distance: "",
+            },
           };
 
           let cost = 0;
-          order.node.details.edges.forEach((product) => {
+
+          for await (let product of order.node.details.edges) {
             newOrder.products.push({
               id: product.node.product.id,
               name: product.node.product.name,
@@ -319,42 +313,64 @@ export default {
               product.node.product.price * product.node.quantity
             );
             newOrder.enterprise = product.node.product.enterprise.name;
-            this.getCompleteAddress(
+
+            await this.getCompleteAddress(
               product.node.product.enterprise.location
             ).then((value) => {
-              newOrder.origin = value;
+              newOrder.route.origin = value;
             });
-          });
+          }
           newOrder.cost = cost;
 
-          this.getCompleteAddress(order.node.location).then((value) => {
-            newOrder.destination = value;
-            this.orders.push(newOrder);
-           
+          await this.getCompleteAddress(order.node.location).then((value) => {
+            newOrder.route.destination = value;
+            this.getDurationDistance(newOrder.route).then(() => {
+              this.getEstimatedTime(newOrder);
+              this.orders.push(newOrder);
+            });
           });
-        });
-        idx=idx+4
-        //this.countDown()
+       
+        }
+        this.isReady = true;
       } else {
         this.exitsOrders = false;
       }
     },
-    //Return the estimated time for any order in hours, minutes and seconds
-    getEstimatedTime(preparation, delivery) {
-      let secTotal =( preparation * 60 )+ delivery;
-      console.log(secTotal)
-    },
     secondsToString(seconds) {
-      var hour = Math.floor(seconds / 3600);
-      hour = hour < 10 ? "0" + hour : hour;
+      var hours = Math.floor(seconds / 3600);
+      hours = hours < 10 ? "0" + hours : hours;
       var minute = Math.floor((seconds / 60) % 60);
       minute = minute < 10 ? "0" + minute : minute;
       var second = seconds % 60;
       second = second < 10 ? "0" + second : second;
-      return { hour:hour, min: minute,sec: second}
+      return { hours: hours, min: minute, sec: second };
     },
-
-    getCurrentUser() {},
+    getCurrentUser() {
+      this.user = JSON.parse(localStorage.getItem("user"));
+    },
+    getEstimatedTime(order) {
+      if (this.existsTimes) {
+        order.estimatedTime = this.currentTimes.find(
+          ({ id }) => id === order.id
+        );
+      } else {
+        let time = this.secondsToString(order.route.duration.durationInSec);
+        order.estimatedTime = time;
+        
+      }
+    },
+    getCurrentTime(time) {
+      let idx = this.currentTimes.findIndex((element, idx) => {
+        if (element.id === time.id) {
+          return true;
+        }
+      });
+      if (idx >= 0) {
+        this.currentTimes[idx] = time;
+      } else {
+        this.currentTimes.push(time);
+      }
+    },
   },
 };
 </script>
