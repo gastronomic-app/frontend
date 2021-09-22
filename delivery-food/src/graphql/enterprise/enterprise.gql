@@ -4,5 +4,6 @@ query enterprise($id: ID!) {
     name
     location
     status
+    businessHours
   }
 }
