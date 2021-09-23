@@ -329,22 +329,6 @@ methods: {
 
         this.$router.push({ name: "EnterpriseList" });
     },
-
-    getPosition() {
-        if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-            this.center = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            };
-            },
-            (error) => {
-            console.log(error.message);
-            }
-        );
-        }
-    },
     /**
      * Método que crea actualiza una empresa cuando es precionado el botón
      */

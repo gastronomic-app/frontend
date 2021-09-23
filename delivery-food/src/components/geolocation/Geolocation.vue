@@ -15,10 +15,10 @@
       />
     </div>
     <div v-show="showmap">
-       <section id="map" class="containder map" ></section>
+      <section id="map" class="containder map" ></section>
 
     </div>
-   
+
     <br />
   </div>
 </template>
@@ -48,7 +48,7 @@ export default {
     );
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      
+
       this.showUserLocation(
         place.geometry.location.lat(),
         place.geometry.location.lng()
@@ -105,12 +105,12 @@ export default {
           event.latLng.lat(),
           event.latLng.lng()
         );
-        
+
         if (direction != undefined) {
           document.getElementById("autocomplete").value = direction;
         }
       });
-      
+
     },
   },
 };
