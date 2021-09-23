@@ -35,11 +35,6 @@ const routes = [
     component: () => import("@/views/user/Edit.vue"),
   },
   {
-    path: "/test",
-    name: "test",
-    component: () => import("@/components/geolocation/test.vue"),
-  },
-  {
     path: "/register",
     name: "Register",
     component: () => import("@/views/user/Register.vue"),
