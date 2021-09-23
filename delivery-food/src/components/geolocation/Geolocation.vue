@@ -1,21 +1,25 @@
 <template>
   <div>
-    <div class="input-group mb-3">
-      <div class=" back">
-        <b-icon icon="geo-alt-fill" class="icon-location"></b-icon>
-        <input class="input-locatio" type="button" @click="getUserLocation">
-       
+    <div class="input-group mb-3 input-container" :style="{ width: input_width }">
+      <div class="input-group-prepend">
+        <button
+          class="input-group-text btn btn-dark"
+          type="button"
+          @click="getUserLocation"
+        >
+          <b-icon icon="geo-alt-fill"></b-icon>
+        </button>
       </div>
-         
       <input
         id="autocomplete"
         type="text"
         class="form-control"
-        placeholder="Ingrese su dirección"
+        :placeholder="placeholder"
         v-model="address"
+        
       />
     </div>
-    <div>
+    <div v-show="showmap" :style="{ width: map_width, height: map_height }">
       <section id="map" class="containder map"></section>
     </div>
 
@@ -34,7 +38,7 @@ export default {
       map: Object, //Objeto de google maps para el mapa
     };
   },
-  props: ["showinput", "showmap"], //Showinput: Muestra un elemento input html- showmap: true para mostrar el mapa; false de lo contrario
+  props: ["showinput", "showmap", "placeholder","map_height", "map_width", "input_width"], //Showinput: Muestra un elemento input html- showmap: true para mostrar el mapa; false de lo contrario
 
   mounted() {
     this.showUserLocation(2.45, -76.6167);
@@ -46,17 +50,28 @@ export default {
         ),
       }
     );
+    const input = document.getElementById("autocomplete");
+    input.addEventListener("keydown", (event) => {
+      if (event.key == "Enter") {
+        event.preventDefault();
+        return false;
+      }
+    });
+
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-
+      this.address = place.formatted_address;
+      this.returnValue();
       this.showUserLocation(
         place.geometry.location.lat(),
         place.geometry.location.lng()
       );
     });
+    input.addEventListener("input", () => {
+      this.returnValue();
+    });
   },
   methods: {
-
     //Se captura la ubicación (lat y lng) del usuario solo si el mismo permite acceder a la unicación
     getUserLocation() {
       if (navigator.geolocation) {
@@ -83,11 +98,12 @@ export default {
       //Objeto con la dirección formateada calculada a partir de una lat y una lng
       const geocoder = new google.maps.Geocoder();
       //Se obtiene la dirección formateada y se almmacena en "address"
+
       geocoder.geocode({ location: latlng }, (response, status) => {
         if (status === "OK") {
           this.address = response[0].formatted_address;
           //Se emite el evento con la inforación de la dirección formateada
-          this.$emit("value", this.address);
+          this.returnValue();
         } else {
           console.log(status);
         }
@@ -121,6 +137,9 @@ export default {
         }
       });
     },
+    returnValue() {
+      this.$emit("value", this.address);
+    },
   },
 };
 </script>
@@ -128,28 +147,10 @@ export default {
 .map {
   /* position:absolute; */
   background: whitesmoke;
-  width: 100;
+  width: 100%;
   height: 20em;
 }
-.back{
-
-  display:flex;
-  justify-content: center;
-  background-color: var(--gray);
-  border-top-left-radius: 10%;
-  border-bottom-left-radius: 10%;
-}
-.input-locatio{
-  background: var(--gray  );
-}
-
-
-.icon-location{
-  position: relative;
-  padding: 0;
-  left:.6em;
-  top: 0.5rem;
-  margin:0;
-
+.input-container {
+  margin-top: 1rem;
 }
 </style>
