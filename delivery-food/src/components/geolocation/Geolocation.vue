@@ -1,11 +1,12 @@
 <template>
   <div>
     <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <button class="input-group-text btn btn-dark" @click="getUserLocation">
-          <b-icon icon="geo-alt-fill"></b-icon>
-        </button>
+      <div class=" back">
+        <b-icon icon="geo-alt-fill" class="icon-location"></b-icon>
+        <input class="input-locatio" type="button" @click="getUserLocation">
+       
       </div>
+         
       <input
         id="autocomplete"
         type="text"
@@ -129,5 +130,26 @@ export default {
   background: whitesmoke;
   width: 100;
   height: 20em;
+}
+.back{
+
+  display:flex;
+  justify-content: center;
+  background-color: var(--gray);
+  border-top-left-radius: 10%;
+  border-bottom-left-radius: 10%;
+}
+.input-locatio{
+  background: var(--gray  );
+}
+
+
+.icon-location{
+  position: relative;
+  padding: 0;
+  left:.6em;
+  top: 0.5rem;
+  margin:0;
+
 }
 </style>
