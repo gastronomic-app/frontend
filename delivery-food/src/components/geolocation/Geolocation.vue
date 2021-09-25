@@ -32,7 +32,6 @@ export default {
   data() {
     return {
       address: "", //variable donde se guardará la dirección formateada
-      activate: false,
       error: "",
       map: Object, //Objeto de google maps para el mapa
     };
@@ -70,7 +69,6 @@ export default {
   },
   methods: {
     getUserLocation() {
-      this.activate = true;
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
