@@ -13,8 +13,7 @@
         />
         </div>
         <div class="form-group">
-        <label for="input-name">Direccion Establecimiento</label>
-        <label for="location">Direccion <span class="text-danger">*</span></label>
+        <label for="location">Direccion Establecimiento<span class="text-danger"></span></label>
         <Geolocation required v-on:value= "ral_Location" showmap="True"/>
         <br />
         <input
