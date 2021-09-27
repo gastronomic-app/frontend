@@ -40,6 +40,66 @@
           {{ error_msg }}
         </div>
 
+        <div id="formFooter" v-show="error_inactive">
+          <a class="underlineHover" v-b-modal.modal-1 @click="show_modal = true"
+            >¿Desea reactivar su cuenta?
+          </a>
+        </div>
+
+        <!-- Modal -->
+        <div>
+          <b-modal
+            v-model="show_modal"
+            id="modal-1"
+            hide-footer
+            title="Reactivar usuario"
+          >
+            <b-form validated v-on:submit.prevent="activateUser()">
+              <center>
+                <div class="col-md-11 mb-3">
+                  <label for="inputEmail"
+                    >Correo Electronico<span class="text-danger">*</span></label
+                  >
+                  <b-form-input
+                    type="email"
+                    id="inputEmail"
+                    class="form-control"
+                    aria-describedby="emailHelpBlock"
+                    required
+                    v-model="email"
+                  ></b-form-input>
+                  <div class="invalid-feedback">
+                    Es necesario escribir el correo.
+                  </div>
+                  <small id="emailHelpBlock" class="form-text text-muted">
+                    Correo debe ser valido.
+                  </small>
+                </div>
+                <div v-if="show_charging">
+                  <LoadingGraphql />
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="submit"
+                    data-dismiss="modal"
+                    class="btn btn-primary"
+                  >
+                    Reactivar Usuario
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                    @click="show_modal = false"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </center>
+            </b-form>
+          </b-modal>
+        </div>
+
         <div id="formFooter">
           <a class="underlineHover" @click="$router.push('/password')"
             >¿Ha olvidado la contraseña?</a
@@ -54,14 +114,12 @@
           >Iniciar sesión</GoogleLogin
         >
         <br />
-        <form v-on:submit.prevent="login">
           <input
             type="submit"
             class="fadeIn fourth"
             @click="$router.push('/Register')"
             value="Registrar"
           />
-        </form>
       </div>
     </div>
   </div>
@@ -69,18 +127,23 @@
 
 <script>
 import GoogleLogin from "vue-google-login";
+import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 export default {
   name: "Login",
   components: {
     GoogleLogin,
+    LoadingGraphql,
   },
   data: () => ({
     email: "",
     password: "",
     error: false,
+    error_inactive: false,
     error_msg: "datos invalidos",
     google: false,
     alert: true,
+    show_modal: false,
+    show_charging: false,
     // only needed if you want to render the button with the google ui
     params: {},
     user: {
@@ -98,24 +161,26 @@ export default {
     },
   }),
   methods: {
-    makeToast(variant = null, title, info, tiempo) {
+    makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
-        autoHideDelay: tiempo,
+        autoHideDelay: time,
         variant: variant,
         solid: true,
       });
     },
     onSuccess(googleUser) {
       // This only gets the user information: id, name, imageUrl and email
-      this.email = googleUser.getBasicProfile().Ht;
+      this.email =  googleUser.getBasicProfile().getEmail();
       this.google = true;
+      this.password = "";
       this.startSesion();
     },
     onFailure(error) {
       console.log(error);
     },
     async startSesion() {
+      this.show_charging = true;
       if (!this.google && this.password === "") {
         this.error_msg = "Datos incorrectos";
         this.error = true;
@@ -138,12 +203,14 @@ export default {
           // con los datos obtenidos
           if (response.data.allUsers.edges[0] == null) {
             if (this.google) {
-              this.error_msg = "Usuario de Google no registrado o inactivo";
+              this.error_msg = "Usuario de Google no registrado";
               localStorage.clear();
               this.google = false;
               this.email = "";
+              this.show_charging = false;
             } else {
               this.error_msg = "Datos inválidos";
+              this.show_charging = false;
             }
             this.error = true;
           } else {
@@ -163,8 +230,8 @@ export default {
               // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
               localStorage.setItem("user", JSON.stringify(this.user));
               localStorage.setItem("existUser", true);
-
-              this.$router.push({ name: "ExampleList" }).then(() => {
+              this.show_charging = false;
+              this.$router.push({ name: "catalogSearch" }).then(() => {
                 this.makeToast(
                   "success",
                   "Bienvenido",
@@ -173,16 +240,58 @@ export default {
                 );
               });
             } else {
-              (this.error_msg = "El usuario esta inactivo"),
-                (this.error = true);
+              this.error_msg = "El usuario esta inactivo";
+              if (response.data.allUsers.edges[0].node.type == 'CLIENT') {
+                this.error_inactive = true;
+                this.show_charging = false;
+              }
+              this.error = true;
+
             }
           }
         });
     },
+    async activateUser() {
+      this.show_charging = true;
+      try {
+        await this.$apollo
+          .mutate({
+            // Establece la consulta para recuperar la empresa
+            mutation: require("@/graphql/client/activateClient.gql"),
+            // Define las variables
+            variables: {
+              email: this.email,
+            },
+          })
+          // El método query devuelve una promesa
+          // que puede usarse para agregar más logica
+          .then((response) => {
+            this.makeToast(
+              "success",
+              "Correo enviado",
+              "Revisa tu correo para activar la cuenta ",
+              4000
+            );
+            this.show_modal = false;
+            this.error_inactive = false;
+            this.error = false;
+            this.show_charging = false;
+            return response;
+          });
+      } catch (error) {
+        this.show_charging = false;
+        this.makeToast(
+          "danger",
+          "Error",
+          "El usuario no se encuentra registrado",
+          3000
+        );
+      }
+    },
   },
   mounted() {
     if (localStorage.getItem("existUser")) {
-      this.$router.push({ name: "ExampleList" });
+      this.$router.push({ name: "catalogSearch" });
     }
   },
 };

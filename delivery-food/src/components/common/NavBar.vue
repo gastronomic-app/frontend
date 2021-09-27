@@ -20,16 +20,16 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item mr-3">
-              <a class="nav-link font-gray" href="#"
-                >Inicio
+              <a class="nav-link text-light font-weight-bold" href="/"
+                >Busqueda Catalogo
                 <span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item mr-3">
-              <a class="nav-link font-gray" href="#">Nosotros</a>
+            <li class="nav-item mr-3" v-show="ok">
+              <a class="nav-link text-light font-weight-bold" href="/geolocationSearch">Busqueda geolocalización</a>
             </li>
-            <li class="nav-item mr-3">
-              <a class="nav-link font-gray" href="#">Servicios</a>
+            <li class="nav-item mr-3" v-show="ok">
+              <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
             </li>
             <li class="nav-item mr-3">
               <span class="nav-link separator" href="#">|</span>
@@ -203,7 +203,7 @@ export default {
     onSuccess() {
       this.ok = false;
       localStorage.clear();
-      this.$router.push({ name: "ExampleList" });
+      this.$router.push({ name: "catalogSearch" });
     },
     removeClient() {
       if (confirm("¿Seguro que desea darse de baja?", false)) {
@@ -219,7 +219,7 @@ export default {
           // El método mutate devuelve una promesa
           // que puede usarse para agregar más logica
           .then((response) => {
-            console.log("actualización de empresa:", response.data);
+            console.log("Desactivado", response.data.updateClient.client.isActive);
             this.makeToast(
               "danger",
               "Desactivado",
@@ -228,7 +228,7 @@ export default {
             );
             this.ok = false;
             localStorage.clear();
-            this.$router.push({ name: "ExampleList" });
+            this.$router.push({ name: "catalogSearch" });
           });
       }
     },
@@ -280,4 +280,3 @@ a:active {
   min-height: calc(100vh - var(--height-navbar) - var(--height-footer));
 }
 </style>
-

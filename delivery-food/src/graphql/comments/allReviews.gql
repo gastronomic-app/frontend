@@ -1,16 +1,31 @@
-{
-  allReviews {
-    edges {
-      node {
-        id
-        comments
-        order {
-          client {
-            id
-            email
+query enterprise($id: ID!) {
+  enterprise(id: $id)  {
+    name
+      products{
+
+        edges{
+          node{
+            orders{
+              edges{
+                node{
+                  client{
+                    email
+                  }
+                  review{
+                    comments
+                    qualityService
+                    presentation
+                    preparation
+                    ingredients
+                    price
+                    textures
+                    cookingPoint
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   }
-}
