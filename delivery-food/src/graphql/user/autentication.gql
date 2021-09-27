@@ -1,4 +1,4 @@
-query allUser($email: String, $password: String){
+query allUser($email: String!, $password: String){
   allUsers (email: $email, password: $password){
     edges{
       node{

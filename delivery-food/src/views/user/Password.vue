@@ -77,7 +77,7 @@ export default {
               );
             }else{
               //Validar cuando es de google
-            this.$router.push({ name: "ExampleList" }).then(() => {
+            this.$router.push({ name: "catalogSearch" }).then(() => {
               this.makeToast(
                 "success",
                 "¡Recordatorio de contraseña enviado! ",
