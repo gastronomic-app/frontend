@@ -1,10 +1,11 @@
-mutation createEnterprise($name: String!, $location: String!,$businessHours: String!) {
-  createEnterprise(input: { name: $name, location: $location, businessHours: $businessHours }) {
+mutation createEnterprise($name: String!, $location: String!,$businessHours: String!,$historical_review: String!) {
+  createEnterprise(input: { name: $name, location: $location, businessHours: $businessHours, historical_review : $historical_review }) {
     enterprise {
       id
       name
       location
       businessHours
+      historical_review
     }
   }
 }

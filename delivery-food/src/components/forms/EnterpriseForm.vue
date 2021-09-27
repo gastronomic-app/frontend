@@ -184,7 +184,7 @@
         <label for="input-name">Reseña Establecimiento</label>
         <div class="input-group">
             <div class="input-group-prepend"></div>
-            <textarea class="form-control"></textarea>
+            <textarea class="form-control" v-model="historical_review"></textarea>
         </div>
     </div>
     <br/>
@@ -240,6 +240,8 @@ export default {
         location: null,
       // Horario de atencion
         businessHours: "",
+      // Reseña
+        historical_review: "",
     };
 },
 /**
@@ -271,7 +273,7 @@ async mounted() {
         this.name = response.data.enterprise.name;
         this.location = response.data.enterprise.location;
         this.businessHours = JSON.parse(response.data.enterprise.businessHours);
-
+        this.historical_review = response.data.enterprise.historical_review;
         /*function cargarhoras() {
             Document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
         }
@@ -400,6 +402,7 @@ methods: {
             name: this.name,
             location: this.location,
             businessHours: this.businessHours,
+            historical_review: this.historical_review,
         },
         })
         // El método mutate devuelve una promesa

@@ -8,7 +8,7 @@
         businessHours
         created
         status
-        businessHours
+        historical_review
       }
     }
   }
