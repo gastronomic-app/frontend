@@ -24,7 +24,7 @@
             v-model="location"
         />
         </div>
-        <!--Imagen-->
+        <!--TODO Habilitar Imagen -->
         <!--
         <div class="input-group">
             <div class="custom-file">
@@ -275,11 +275,6 @@ async mounted() {
         this.location = response.data.enterprise.location;
         this.businessHours = JSON.parse(response.data.enterprise.businessHours);
         this.historicalReview = response.data.enterprise.historicalReview;
-        /*function cargarhoras() {
-            Document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
-        }
-        cargarhoras();*/
-        //this.mostrar();
 
         });
         document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
@@ -389,9 +384,6 @@ methods: {
                         "horaI":domingoI,
                         "horaF":domingoC}
                 });
-
-        //this.name = "hola";
-        //console.log(this.Bussiness_hours);
 
         this.$apollo
         .mutate({
