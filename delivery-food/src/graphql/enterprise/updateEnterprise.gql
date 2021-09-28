@@ -1,5 +1,5 @@
-mutation updateEnterprise($id: ID!, $name: String, $location: String, $businessHours: String, $historical_review: String!) {
-  updateEnterprise(input: { id: $id, name: $name, location: $location, businessHours: $businessHours, historical_review : $historical_review }) {
+mutation updateEnterprise($id: ID!, $name: String, $location: String, $businessHours: String!,$historical_review: String) {
+  updateEnterprise(input: { id: $id, name: $name, location: $location, businessHours: $businessHours, historical_review: $historical_review }) {
     enterprise {
       id
       name

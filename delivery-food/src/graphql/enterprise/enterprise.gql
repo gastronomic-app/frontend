@@ -5,6 +5,6 @@ query enterprise($id: ID!) {
     location
     status
     businessHours
-    historical_review
+    historicalReview
   }
 }

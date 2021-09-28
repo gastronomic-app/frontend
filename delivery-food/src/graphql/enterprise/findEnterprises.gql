@@ -6,7 +6,6 @@ query findEnterprises($name_Icontains: String){
         name
         location
         businessHours
-        historical_review
         created
         status
       }
