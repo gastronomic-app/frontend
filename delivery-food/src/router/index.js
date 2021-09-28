@@ -40,6 +40,16 @@ const routes = [
     component: () => import("@/views/example/ExampleEdit.vue"),
   },
   {
+    path: "/enterprise-list",
+    name: "EnterpriseList",
+    component: () => import("@/views/enterprise/EnterpriseList.vue"),
+  },
+  {
+    path: "/enterprise-edit/:id",
+    name: "EnterpriseEdit",
+    component: () => import("@/views/enterprise/EnterpriseEdit.vue"),
+  },
+  {
     path: "/edit/:id",
     name: "Edit",
     component: () => import("@/views/user/Edit.vue"),
