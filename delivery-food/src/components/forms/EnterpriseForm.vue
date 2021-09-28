@@ -13,8 +13,7 @@
         />
         </div>
         <div class="form-group">
-        <label for="input-name">Direccion Establecimiento</label>
-        <label for="location">Direccion <span class="text-danger">*</span></label>
+        <label for="location">Direccion Establecimiento<span class="text-danger"></span></label>
         <Geolocation required v-on:value= "ral_Location" showmap="True"/>
         <br />
         <input
@@ -25,7 +24,7 @@
             v-model="location"
         />
         </div>
-        <!--Imagen-->
+        <!--TODO Habilitar Imagen -->
         <!--
         <div class="input-group">
             <div class="custom-file">
@@ -185,7 +184,8 @@
         <label for="input-name">Reseña Establecimiento</label>
         <div class="input-group">
             <div class="input-group-prepend"></div>
-            <textarea class="form-control"></textarea>
+            <!---->
+            <textarea class="form-control" v-model="historicalReview"></textarea>
         </div>
     </div>
     <br/>
@@ -241,6 +241,8 @@ export default {
         location: null,
       // Horario de atencion
         businessHours: "",
+      // Reseña
+        historicalReview: "",
     };
 },
 /**
@@ -272,12 +274,7 @@ async mounted() {
         this.name = response.data.enterprise.name;
         this.location = response.data.enterprise.location;
         this.businessHours = JSON.parse(response.data.enterprise.businessHours);
-
-        /*function cargarhoras() {
-            Document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
-        }
-        cargarhoras();*/
-        //this.mostrar();
+        this.historicalReview = response.data.enterprise.historicalReview;
 
         });
         document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
@@ -328,22 +325,6 @@ methods: {
         });
 
         this.$router.push({ name: "EnterpriseList" });
-    },
-
-    getPosition() {
-        if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-            this.center = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            };
-            },
-            (error) => {
-            console.log(error.message);
-            }
-        );
-        }
     },
     /**
      * Método que crea actualiza una empresa cuando es precionado el botón
@@ -404,9 +385,6 @@ methods: {
                         "horaF":domingoC}
                 });
 
-        //this.name = "hola";
-        //console.log(this.Bussiness_hours);
-
         this.$apollo
         .mutate({
           // Establece la mutación de editar
@@ -417,6 +395,7 @@ methods: {
             name: this.name,
             location: this.location,
             businessHours: this.businessHours,
+            historicalReview: this.historicalReview,
         },
         })
         // El método mutate devuelve una promesa

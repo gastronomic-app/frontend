@@ -164,7 +164,7 @@ export default {
           else if (dia == "jueves") {
             if (diasSemana.jueves.horaI != "") {
                 this.varShedule = "Abierto: "+diasSemana.jueves.horaI
-                +" Cierre: "+diasSemana.jueves.horaF;
+                 +" Cierre: "+diasSemana.jueves.horaF;
             }
 
           }
