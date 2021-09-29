@@ -1,0 +1,7 @@
+mutation activateClient($email: RememberPasswordInput!){
+  activateClient(input: $email){
+    client{
+    	isActive
+    }
+  }
+}

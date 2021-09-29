@@ -20,6 +20,16 @@ const routes = [
     component: () => import("@/views/example/ExampleList.vue"),
   },
   {
+    path: "/",
+    name: "catalogSearch",
+    component: () => import("@/views/searches/catalogSearch.vue"),
+  },
+  {
+    path: "/geolocationSearch",
+    name: "geolocationSearch",
+    component: () => import("@/views/searches/geolocationSearch.vue"),
+  },
+  {
     path: "/example-add",
     name: "ExampleAdd",
     component: () => import("@/views/example/ExampleAdd.vue"),
@@ -28,6 +38,16 @@ const routes = [
     path: "/example-edit/:id",
     name: "ExampleEdit",
     component: () => import("@/views/example/ExampleEdit.vue"),
+  },
+  {
+    path: "/enterprise-list",
+    name: "EnterpriseList",
+    component: () => import("@/views/enterprise/EnterpriseList.vue"),
+  },
+  {
+    path: "/enterprise-edit/:id",
+    name: "EnterpriseEdit",
+    component: () => import("@/views/enterprise/EnterpriseEdit.vue"),
   },
   {
     path: "/edit/:id",
@@ -72,12 +92,7 @@ const routes = [
   {
     path: "/password/reset/:id",
     name: "Reset",
-    component: () => import("@/views/user/Reset.vue")
-  },
-  {
-    path: "/RegisterPassword",
-    name: "RegisterPassword",
-    component: () => import("@/views/user/RegisterPassword.vue"),
+    component: () => import("@/views/user/Reset.vue"),
   },
   {
     path: "/products-list",

@@ -5,8 +5,10 @@
         id
         name
         location
+        businessHours
         created
         status
+        historicalReview
       }
     }
   }

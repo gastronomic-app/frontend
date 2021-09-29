@@ -1,0 +1,14 @@
+query findEnterprises($name_Icontains: String){
+  allEnterprises(name_Icontains: $name_Icontains){
+    edges{
+      node{
+        id
+        name
+        location
+        businessHours
+        created
+        status
+      }
+    }
+  }
+}

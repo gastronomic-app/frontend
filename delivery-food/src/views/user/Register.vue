@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="card-body container align-self-center">
     <h1>Registro</h1>
-    <form>
+    <b-form  validated v-on:submit.prevent="check()">
       <div class="form-group">
-        <label for="names">Nombres</label>
+        <label for="names">Nombres <span class="text-danger">*</span></label>
         <input
           :disabled="google"
           type="text"
@@ -13,7 +13,7 @@
           required
           aria-describedby="namesComplete"
         />
-        <label for="lastNames">Apellidos</label>
+        <label for="lastNames">Apellidos <span class="text-danger">*</span></label>
         <input
           :disabled="google"
           type="text"
@@ -24,7 +24,7 @@
           aria-describedby="lastNames"
         />
 
-        <label for="email">Correo electronico</label>
+        <label for="email">Correo electronico <span class="text-danger">*</span></label>
         <input
           :disabled="google"
           type="email"
@@ -34,7 +34,7 @@
           required
         />
 
-        <label for="phoneNumber">Número de telefono</label>
+        <label for="phoneNumber">Número de telefono <span class="text-danger">*</span></label>
         <input
           type="number"
           class="form-control"
@@ -44,17 +44,17 @@
           pattern="[0-9]+"
         />
 
-        <div v-show="!google">
-          <label for="exampleInputPassword">Contraseña</label>
-          <input
-            @keydown.space.prevent
-            type="password"
-            class="form-control"
-            id="password"
-            v-model.trim="password"
-            required=""
-          />
-          <label for="confirmPassword">Confirmar contraseña</label>
+        <div v-if="!google">
+            <label for="exampleInputPassword">Contraseña <span class="text-danger">*</span></label>
+            <input
+              @keydown.space.prevent
+              type="password"
+              class="form-control"
+              id="password"
+              v-model.trim="password"
+              required=""
+            />
+          <label for="confirmPassword">Confirmar contraseña <span class="text-danger">*</span></label>
           <input
             @keydown.space.prevent
             type="password"
@@ -64,47 +64,44 @@
             required=""
           />
         </div>
-        <label for="location">Direccion</label>
+        <label for="location">Direccion <span class="text-danger">*</span></label>
+        <Geolocation required v-on:value= "ral_Location" showmap="True"/>
+        <br />
+        <p>Los campos marcados con <span class="text-danger">*</span> son Obligatorios </p>
         <input
-          type="text"
-          class="form-control"
-          id="location"
-          v-model.trim="location"
-          required=""
-          aria-describedby="location"
-        />
-        <br />
-        <br />
-        <GoogleLogin
+        type="submit"
+        class="btn btn-outline-primary"
+        value="Registrar"
+      />
+    <button @click="$router.push('/Login')" class="btn btn-outline-secondary">
+      Volver
+    </button>
+    <br />
+      </div>
+
+    </b-form>
+    <div v-if="!google">
+    <GoogleLogin
           class="buttonText"
           :params="params"
           :onSuccess="onSuccess"
           :onFailure="onFailure"
           >Registrar con Google
         </GoogleLogin>
-        <br />
-      </div>
 
-    </form>
-    <button
-        type="submit"
-        class="btn btn-outline-primary"
-        @click="check()"
-      >
-        Registrar
-      </button>
-    <button @click="$router.push('/Login')" class="btn btn-outline-secondary">
-      Volver
-    </button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import GoogleLogin from "vue-google-login";
+import Geolocation from "@/components/geolocation/Geolocation.vue"
 export default {
   name: "Register",
   components: {
     GoogleLogin,
+    Geolocation
   },
 
   data() {
@@ -124,6 +121,9 @@ export default {
     };
   },
   methods: {
+    ral_Location(value){
+      this.location = value;
+    },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
@@ -174,18 +174,42 @@ export default {
     async check() {
       if (!this.google) {
         if (this.names != null && this.lastNames!= null && this.email!= null && this.telephone!= null && this.location!= null && this.password!= null && this.passwordConfirmation!=null){
-          if (this.password === this.passwordConfirmation) {
-            await this.checkEmail();
-            if (this.flag === false) {
-              this.createRegister();
+          if (this.password.length>4){
+            if (this.password === this.passwordConfirmation) {
+              await this.checkEmail();
+              if (this.flag === false) {
+                this.createRegister();
+              } else {
+                this.makeToast(
+                  "danger",
+                  "El correo ya ha sido usado por otra persona!!",
+                  "Cuidado",
+                  3000
+                );
+              }
             } else {
-              alert("El correo ya ha sido usado por otra persona!!");
+              this.makeToast(
+                  "danger",
+                  "Las contraseñas no coinciden",
+                  "Cuidado",
+                  3000
+                );
             }
-          } else {
-            alert("Las contraseñas no coinciden");
+          }else{
+            this.makeToast(
+                  "danger",
+                  "Las contraseñas deben tener mas de 4 digitos",
+                  "Cuidado",
+                  3000
+            );
           }
         } else {
-          alert("Llena todos los campos por favor ");
+          this.makeToast(
+            "danger",
+            "Llena todos los campos por favor ",
+            "Cuidado",
+            3000
+          );
         }
       } else {
         if (this.telephone != null && this.location != null) {
@@ -194,17 +218,27 @@ export default {
           if (this.flag === false) {
             this.createRegister();
           } else if (this.flag === true) {
-            alert("El correo ya ha sido usado por otra persona!!");
+              this.makeToast(
+                  "danger",
+                  "El correo ya ha sido usado por otra persona!!",
+                  "Cuidado",
+                  3000
+              );
           }
         }else{
-          alert("Llena todos los campos por favor ")
+          this.makeToast(
+                  "danger",
+                  "Llena todos los campos por favor",
+                  "Cuidado",
+                  3000
+          );
       }
       }
     },
     onSuccess(googleUser) {
-      this.names = googleUser.getBasicProfile().zU;
-      this.lastNames = googleUser.getBasicProfile().zS;
-      this.email = googleUser.getBasicProfile().Ht;
+      this.names = googleUser.getBasicProfile().getGivenName();
+      this.lastNames = googleUser.getBasicProfile().getFamilyName();
+      this.email = googleUser.getBasicProfile().getEmail();
       this.google = true;
       this.is_alternative = true;
     },
