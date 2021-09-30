@@ -1,0 +1,16 @@
+{
+  allReviews {
+    edges {
+      node {
+        id
+        comments
+        order {
+          client {
+            id
+            email
+          }
+        }
+      }
+    }
+  }
+}
