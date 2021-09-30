@@ -357,4 +357,8 @@ export default {
 };
 </script>
 <style scoped>
+.car {
+  background-color: var(--dark);
+  color: var(--light);
+}
 </style>

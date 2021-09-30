@@ -540,22 +540,16 @@ export default {
   },
 
   created() {
-    /*if (
-      !localStorage.getItem("idEnterprise") &&
-      !localStorage.getItem("enterpriseName")
-    ) {*/
-    this.idRecovered = this.$route.params.selectedEnterprise.id;
-    this.enterpriseName = this.$route.params.selectedEnterprise.name;
-    console.log(
-      "Id obtenido: " + this.idRecovered + "\n Nombre: " + this.enterpriseName
-    );
-    //Guardar en localStorage datos recuperados.
-    localStorage.idEnterprise = this.idRecovered;
-    localStorage.enterpriseName = this.enterpriseName;
-    /*} else {
+    if (
+      localStorage.getItem("idEnterprise") == "" &&
+      localStorage.getItem("enterpriseName") == ""
+    ) {
+      this.idRecovered = this.$route.params.selectedEnterprise.id;
+      this.enterpriseName = this.$route.params.selectedEnterprise.name;
+      //Guardar en localStorage datos recuperados.
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;
-    }*/
+    }
   },
 };
 </script>
@@ -606,10 +600,9 @@ export default {
   padding-bottom: 0%;
   border-radius: 5px;
 }
-</style>
-<style>
 .car {
   background-color: var(--dark);
   color: var(--light);
 }
 </style>
+
