@@ -1,16 +1,16 @@
-{
-  enterprise(id: "RW50ZXJwcmlzZU5vZGU6MQ==") {
+query couriersEnterprise($id: ID!){
+  enterprise(id: $id) {
     couriers {
       edges {
         node {
-          id
-          email
-          isAvailable
+          id,
+          email,
+          isAvailable,
           contact {
             edges {
               node {
-                names
-                lastnames
+                names,
+                lastnames,
               }
             }
           }
