@@ -1,36 +1,15 @@
 <template>
-  <div class="container">
-    <div class="row mt-2">
-      <div class="col-6">
-        <div class="row">
-          <div class="col-lg-4 pl-0">
-            <img
-              src="@/assets/enterprise.jpg"
-              class="card-img-top"
-              alt="logo establecimiento"
-            />
-          </div>
-          <div class="col-sm-autor mt-4">
-            <h3>Nombre del restaurante</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 mt-4" style="text-align: right">
-        <button
-          type="submit"
-          class="boton_pedido btn btn-outline-dark btn-sm"
-          style="width: 140px"
-          v-on:click="btnComments()"
-        >
-          Opiniones (10)
-        </button>
-      </div>
-    </div>
-    <SubTitle content="Completa tu dirección de entrega"></SubTitle>
+  <div class="container-fluid">
+    <Enterprise
+      :name="enterpriseName"
+      :image="'@/assets/enterprise.jpg'"
+      section="Completa tu dirección de entrega"
+    ></Enterprise>
+
     <div class="row">
-      <div class="col-md-7 mt-2">
+      <div class="col-lg-7 col-sm-12 mt-2">
         <div class="form-group row mb-0">
-          <label class="col-sm-auto col-form-label">Dirección</label>
+          <label class="col-sm-auto col-form-labe">Dirección</label>
           <div class="col-sm">
             <select
               class="form-control form-control-sm"
@@ -87,7 +66,7 @@
         </template>
         <div class="container text-center">
           <button
-            class="rounded-pill btn btn-sm btn-outline-dark"
+            class="rounded-pill btn btn-success btn-sm"
             v-on:click="confirmOrder()"
           >
             Enviar pedido
@@ -96,8 +75,8 @@
         <br />
       </div>
 
-      <div class="col-5">
-        <div class="card border-dark mb-2">
+      <div class="col-lg-5 col-xs-12">
+        <div class="card border-dark mb-2 car">
           <div class="row">
             <div class="col mt-3 container text-center">
               <span style="font-weight: bold">Mi pedido</span>
@@ -151,14 +130,14 @@
 
 <script>
 import Geolocation from "@/components/geolocation/Geolocation.vue";
-import SubTitle from "@/components/cards/SubTitles.vue";
 import TotalOrder from "@/components/order/TotalOrder.vue";
+import Enterprise from "@/components/order/Enterprise.vue";
 export default {
   name: "OrderConfirmation",
   components: {
     Geolocation,
-    SubTitle,
     TotalOrder,
+    Enterprise,
   },
   data() {
     return {
@@ -169,6 +148,7 @@ export default {
 
       items: [{ recoveredProduct: Object, counter: null }],
       ok: localStorage.getItem("existUser"),
+      enterpriseName: "",
       emailUser: "",
       nameClient: "",
       estimatedTime: 0,
@@ -185,6 +165,13 @@ export default {
     };
   },
   mounted() {
+    if (localStorage.getItem("idEnterprise")) {
+      this.idRecovered = localStorage.idEnterprise;
+    }
+
+    if (localStorage.getItem("enterpriseName")) {
+      this.enterpriseName = localStorage.enterpriseName;
+    }
     if (localStorage.getItem("items")) {
       try {
         this.items = JSON.parse(localStorage.getItem("items"));
@@ -349,10 +336,12 @@ export default {
             }
           });
 
-        this.$router.push({ name: "ProductListOrder" });
+        this.$router.push({ name: "catalogSearch" });
         localStorage.removeItem("items");
         localStorage.removeItem("envio");
         localStorage.removeItem("total");
+        localStorage.removeItem("enterpriseName");
+        localStorage.removeItem("idEnterprise");
       }
     },
   },
@@ -362,7 +351,10 @@ export default {
   },
   created() {
     this.items = this.$route.params.listado;
-    //console.log("obtener id por url:", this.id);
+    this.enterpriseName = this.$route.params.enterpriseName;
+    console.log("Nombre empresa:", this.enterpriseName);
   },
 };
 </script>
+<style scoped>
+</style>

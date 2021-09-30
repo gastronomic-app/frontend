@@ -21,7 +21,7 @@
           {{varShedule}}
       </p>
 
-      <button v-show="ok" type="button" class="btn btn-success btn-sm mr-4">
+      <button v-show="ok" v-on:click="makeOrder(enterprise)" type="button" class="btn btn-success btn-sm mr-4">
         Hacer Pedido
       </button>
     </div>
@@ -78,6 +78,14 @@ export default {
     this.mostrar();
   },
   methods:{
+    makeOrder(Enterprise) {
+      localStorage.removeItem("items");
+      localStorage.removeItem("idRecovered");
+      this.$router.push({
+        name: "ProductListOrder",
+        params: { selectedEnterprise: Enterprise },
+      });
+    },
     valnum(texto){
       var aux=1;
       if(texto=="BUENO"){
