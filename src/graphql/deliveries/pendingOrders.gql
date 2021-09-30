@@ -13,6 +13,7 @@
                 name
                 price
                 enterprise {
+                  id,
                   name
                 }
               }
