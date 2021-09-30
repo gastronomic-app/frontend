@@ -81,6 +81,8 @@ export default {
     makeOrder(Enterprise) {
       localStorage.removeItem("items");
       localStorage.removeItem("idRecovered");
+      localStorage.idEnterprise = "";
+      localStorage.enterpriseName = "";
       this.$router.push({
         name: "ProductListOrder",
         params: { selectedEnterprise: Enterprise },
