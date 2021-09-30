@@ -187,12 +187,6 @@ export default {
     cleanError() {
       this.msjError = "";
     },
-    btnComments() {
-      //console.log("redirigir");
-      this.$router.push({
-        name: "CommentsList",
-      });
-    },
     update() {
       //console.log("creacion");
       this.ok = localStorage.getItem("existUser");
@@ -234,7 +228,6 @@ export default {
     },
 
     decrementCounter(id) {
-      //console.log(id);
       for (var index = 1; index < this.items.length; index++) {
         if (
           id == this.items[index].recoveredProduct.id &&
@@ -273,8 +266,6 @@ export default {
         return false;
       }
       if (this.location.length == 0) {
-        // console.log("MIMD: " + this.location.trim().length);
-        // console.log("MIMD2: " + this.location + "; ");
         this.msjError = "Ingrese una direccion o seleccione en el mapa";
         return false;
       }
@@ -294,8 +285,6 @@ export default {
           this.emailUser = user.email;
           //this.location = user.location;
         }
-        // console.log("Pasando por confirmando pedido");
-        // console.log("My location: ", this.location);
 
         this.$apollo
           .mutate({
@@ -314,9 +303,6 @@ export default {
             for (var index = 1; index < this.items.length; index++) {
               this.productId = this.items[index].recoveredProduct.id;
               this.quantity = this.items[index].counter;
-              // console.log("idorden", this.orderId);
-              // console.log("cantidad", this.quantity);
-              // console.log("idproducto", this.productId);
 
               this.$apollo
                 .mutate({
@@ -352,7 +338,6 @@ export default {
   created() {
     this.items = this.$route.params.listado;
     this.enterpriseName = this.$route.params.enterpriseName;
-    console.log("Nombre empresa:", this.enterpriseName);
   },
 };
 </script>
