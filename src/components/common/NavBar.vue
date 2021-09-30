@@ -51,20 +51,22 @@
                     <div class="panel panel-primary">
                       <center>
                         <div class="panel-heading">
-                          <h3 class="panel-title">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="28"
-                              height="28"
-                              fill="currentColor"
-                              class="bi bi-person-badge-fill"
-                              viewBox="0 0 16 16"
-                            >
-                              <path
-                                d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"
-                              /></svg
-                            >Usuario: {{ names }}
-                          </h3>
+                          <h5 class="panel-title">
+                            <span>
+                              <i
+                                class="
+                                  icon
+                                  ion-md-person
+                                  lead
+                                  align-middle
+                                  pr-1
+                                  pl-1
+                                  alignment
+                                "
+                              ></i>
+                            </span>
+                            Usuario: {{ names }}
+                          </h5>
                         </div>
                       </center>
                       <div class="panel-body">
@@ -94,9 +96,9 @@
                         </div>
                       </div>
                       <center class="botones">
-                        <span class="float-left">
+                        <div class="dropdown-divider"></div>
                           <button
-                            class="btn btn-success"
+                            class="btn btn-success btn-sm"
                             type="button"
                             data-toggle="tooltip"
                             @click="redirectEdit()"
@@ -104,10 +106,8 @@
                           >
                             <i class="icon-edit icon-white">Editar usuario</i>
                           </button>
-                        </span>
-                        <span class="float-right">
                           <button
-                            class="btn btn-danger"
+                            class="btn btn-danger btn-sm ml-2"
                             type="button"
                             data-toggle="tooltip"
                             @click="removeClient()"
@@ -115,7 +115,6 @@
                           >
                             <i class="icon-remove icon-white">Darme de baja</i>
                           </button>
-                        </span>
                       </center>
                     </div>
                   </div>

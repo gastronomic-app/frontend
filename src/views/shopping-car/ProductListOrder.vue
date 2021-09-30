@@ -1,49 +1,23 @@
 <template>
-  <div class="container">
-    <!--Sección comentarios-->
-    <div class="row mt-2">
-      <!-- <div class="col-6">
-        <div class="row">
-          <div class="col-lg-4 pl-0">
-            <img
-              src="@/assets/enterprise.jpg"
-              class="card-img-top"
-              alt="logo establecimiento"
-            />
-          </div>
-          <div class="col-sm-autor mt-4">
-            <h3>Nombre del restaurante</h3>
-          </div>
-        </div>
-      </div> -->
-      <Enterprise
-        name="Nombre del restaurante"
-        image="@/assets/alien.png"
-      ></Enterprise>
-      <div class="col-6 mt-4" style="text-align: right">
-        <button
-          type="submit"
-          class="btn btn-outline-dark btn-sm"
-          style="width: 140px"
-          v-on:click="btnComments()"
-        >
-          Opiniones (10)
-        </button>
-      </div>
-    </div>
+  <div class="container-fluid">
+    <Enterprise
+      :name="enterpriseName"
+      :image="'@/assets/enterprise.jpg'"
+      section="Realizar pedido"
+    ></Enterprise>
 
-    <SubTitle content="Realizar pedido"></SubTitle>
+    {{ showProductEnterprise() }}
 
     <!--Sección productos ofertados-->
     <div class="row">
-      <div class="col-7">
+      <div class="col-xl-7 col-xs-12">
         <!--Sección busqueda producto-->
         <div class="form-group row">
-          <label class="col-sm-2 col-form-label pl-0">Buscar</label>
+          <label class="col-sm-2 col-form-label">Buscar</label>
           <div class="col-sm-10 pl-0">
             <input
               type="text"
-              class="form-control"
+              class="form-control search mb-1"
               v-model="searchString"
               placeholder="Nombre del producto"
             />
@@ -56,28 +30,29 @@
         <div v-else-if="error" class="d-flex justify-content-center">
           <ConnectionErrorGraphql />
         </div>
-        <div class="row" v-if="allProducts.edges !== undefined">
+        <div class="row" v-if="list_products_enterprise !== undefined">
           <div
-            class="col-xl-4 col-md-6 col-sm-12 pl-0"
-            v-for="product in allProducts.edges.filter(
+            class="col-xl-4 col-lg-3 col-md-4 col-sm-12"
+            v-for="product in list_products_enterprise.filter(
               (element) =>
                 element.node.productType.includes(leaveType) &&
                 element.node.name.includes(searchString.toLowerCase())
             )"
             :key="product.node.id"
           >
-            <div v-if="product.node.images.edges[0] !== undefined">
+            <div
+              class="contentProduct"
+              v-if="product.node.images.edges[0] !== undefined"
+            >
               <template>
-                <ProductCard
-                  :product="product.node"
-                  :image="product.node.images.edges[0].node"
-                />
+                <ProductCard :product="product.node" />
+
                 <div class="row mt-2">
                   <div class="col">
-                    <span class="float-right">
+                    <span class="float-right mr-2">
                       <button
                         type="button"
-                        class="btn btn-outline-dark btn-sm"
+                        class="btn btn-success btn-sm"
                         data-toggle="modal"
                         data-target="#viewProductModal"
                         @click="showProduct(product.node.id)"
@@ -86,7 +61,7 @@
                       </button>
                       <button
                         type="button"
-                        class="btn btn-outline-dark btn-sm ml-2"
+                        class="btn btn-success btn-sm ml-2"
                         v-on:click="addItem(product)"
                       >
                         Añadir
@@ -102,27 +77,29 @@
       </div>
       <!--Carrito-->
 
-      <div class="col-5" v-if="this.items.length > 1">
-        <div class="card border-dark">
+      <div class="col-xl-5 col-xs-12" v-if="this.items.length > 1">
+        <div class="card border-dark car-border car mb-2">
           <div class="row">
-            <div class="col mt-3" style="text-align: left; margin-left: 10px">
-              <span style="font-weight: bold">Mi pedido</span>
+            <div class="col-sm mt-3" style="text-align: left; margin-left: 1em">
+              <h5><b>Mi pedido</b></h5>
             </div>
-            <div class="col mt-2" style="text-align: right">
+            <div class="col-sm mt-2 mr-3" style="text-align: right">
               <label
                 type="button"
-                class="btn btn-xs"
+                class="btn btn-sm"
                 data-toggle="modal"
                 data-target="#deleteConfirmationModal"
               >
                 <span>
                   <i
-                    class="icon ion-md-trash lead align-middle pr-1 pl-1"
-                    style="
-                      color: #e48130;
-                      background: white;
-                      border-radius: 5px;
-                      border: 2px solid #e48130;
+                    class="
+                      icon
+                      ion-md-trash
+                      lead
+                      align-middle
+                      pr-1
+                      pl-1
+                      alignment
                     "
                   ></i>
                 </span>
@@ -130,43 +107,30 @@
             </div>
           </div>
           <!--Items-->
-          <div
-            class=""
-            v-for="(item, indice) of this.items"
-            v-bind:key="item.id"
-          >
-            <div class="row ml-1 mt-1" v-if="indice != 0">
-              <div
-                class="col-sm-auto"
-                style="
-                  padding: 0px;
-                  background: #fff;
-                  border-radius: 5px;
-                  border: 2px solid #e48130;
-                  margin: 0px;
-                "
-              >
-                <i
-                  class="btn btn-sm"
+          <div v-for="(item, indice) of this.items" v-bind:key="item.id">
+            <div class="row ml-2 mt-1" v-if="indice != 0">
+              <div class="col-sm outer-border">
+                <b
+                  class="btn btn-sm orange"
                   v-on:click="decrementCounter(item.recoveredProduct.id)"
                 >
                   -
-                </i>
+                </b>
 
                 {{ items[indice].counter }}
 
-                <i
-                  class="btn btn-sm"
+                <b
+                  class="btn btn-sm orange"
                   v-on:click="incrementCounter(item.recoveredProduct.id)"
                 >
                   +
-                </i>
+                </b>
               </div>
 
-              <div class="col" style="padding-right: 1%">
+              <div class="col-sm" style="padding-right: 1%">
                 {{ items[indice].recoveredProduct.name | capitalize }}
               </div>
-              <div class="col">
+              <div class="col-sm">
                 {{ updateTotal(indice) }}
                 {{
                   new Intl.NumberFormat().format(
@@ -174,12 +138,11 @@
                   )
                 }}
               </div>
-              <div class="col-sm-2 mr-2" style="text-align: right">
+              <div class="col-sm-2">
                 <label
                   type="button"
-                  class="btn btn-sm"
+                  class="btn orange p-0"
                   v-on:click="deleteItem(item.recoveredProduct.id)"
-                  style="color: #e37b2a"
                 >
                   <strong>X</strong>
                 </label>
@@ -208,7 +171,7 @@
           </div>
           <div class="container text-center">
             <button
-              class="boton_pedido btn btn-sm btn-outline-dark mt-3"
+              class="btn btn-success btn-sm mt-3"
               v-on:click="continueOrder()"
             >
               continuar
@@ -249,11 +212,7 @@
             Está a punto de eliminar todo su pedido ¿Desea continuar?
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-outline-dark"
-              data-dismiss="modal"
-            >
+            <button type="button" class="btn btn-success" data-dismiss="modal">
               Cerrar
             </button>
             <button
@@ -286,25 +245,31 @@
           </div>
           <div class="modal-body">
             <img class="d-block w-100" :src="productView.imageUrl" />
-            <p><b>Precio:</b> ${{ productView.price }}</p>
-            <p>
-              <b>Ingredientes:</b> {{ productView.ingredients | capitalize }}
-            </p>
-            <p>
-              <b>Preparación:</b> {{ productView.preparation | capitalize }}
-            </p>
-            <p><b>Tiempo:</b> {{ productView.preparation_time }}</p>
-            <p>
-              <b>Tipo de producto:</b>
-              {{ productView.product_type | capitalize }}
-            </p>
+            <div class="row">
+              <div class="col-6">
+                <b class="bold">Precio</b><br />
+                <b class="bold">Ingredientes</b><br />
+                <b class="bold">Preparación</b><br />
+                <b class="bold">Tiempo</b><br />
+                <b class="bold">Tipo de producto</b><br />
+              </div>
+              <div class="col-6">
+                ${{ productView.price }} <br />
+
+                {{ productView.ingredients | capitalize }} <br />
+
+                {{ productView.preparation | capitalize }} <br />
+
+                {{ productView.preparation_time }} <br />
+
+                {{ productView.product_type | capitalize }}
+                <br />
+              </div>
+            </div>
+            <p></p>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
+            <button type="button" class="btn btn-success" data-dismiss="modal">
               Cerrar
             </button>
           </div>
@@ -318,7 +283,6 @@
 import ProductCard from "@/components/order/CardProduct.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
-import SubTitle from "@/components/cards/SubTitles.vue";
 import Enterprise from "@/components/order/Enterprise.vue";
 // import TotalOrder from "@/components/order/TotalOrder.vue";
 
@@ -328,7 +292,6 @@ export default {
     ProductCard,
     LoadingGraphql,
     ConnectionErrorGraphql,
-    SubTitle,
     Enterprise,
     // TotalOrder,
   },
@@ -342,6 +305,8 @@ export default {
       total: 0,
       envio: 4000,
       estimatedTime: 0,
+      idRecovered: "",
+      enterpriseName: "",
       // Variable que recibe el error de la consulta
       error: null,
 
@@ -400,6 +365,14 @@ export default {
     };
   },
   mounted() {
+    if (localStorage.getItem("idEnterprise")) {
+      this.idRecovered = localStorage.idEnterprise;
+    }
+
+    if (localStorage.getItem("enterpriseName")) {
+      this.enterpriseName = localStorage.enterpriseName;
+    }
+
     if (localStorage.getItem("items")) {
       try {
         this.items = JSON.parse(localStorage.getItem("items"));
@@ -415,8 +388,23 @@ export default {
     }
   },
   methods: {
+    showProductEnterprise() {
+      //var idRecovered = "RW50ZXJwcmlzZU5vZGU6MQ==";
+      var list_products_enterprise = [];
+
+      for (const key in this.allProducts.edges) {
+        if (
+          this.allProducts.edges[key].node.enterprise.id == this.idRecovered
+        ) {
+          list_products_enterprise.push(this.allProducts.edges[key]);
+          //console.log(this.allProducts.edges[key].node);
+        }
+      }
+      this.list_products_enterprise = list_products_enterprise;
+    },
+
     showProduct(idProduct) {
-      var producto = this.allProducts.edges.filter(
+      var producto = this.list_products_enterprise.filter(
         (element) => element.node.id == idProduct
       )[0].node;
 
@@ -510,14 +498,7 @@ export default {
       //console.log("redirigir");
       this.$router.push({
         name: "OrderConfirmation",
-        params: { listado: this.items },
-      });
-    },
-
-    btnComments() {
-      //console.log("redirigir");
-      this.$router.push({
-        name: "CommentsList",
+        params: { listado: this.items, enterpriseName: this.enterpriseName },
       });
     },
 
@@ -557,5 +538,78 @@ export default {
       },
     },
   },
+
+  created() {
+    /*if (
+      !localStorage.getItem("idEnterprise") &&
+      !localStorage.getItem("enterpriseName")
+    ) {*/
+    this.idRecovered = this.$route.params.selectedEnterprise.id;
+    this.enterpriseName = this.$route.params.selectedEnterprise.name;
+    console.log(
+      "Id obtenido: " + this.idRecovered + "\n Nombre: " + this.enterpriseName
+    );
+    //Guardar en localStorage datos recuperados.
+    localStorage.idEnterprise = this.idRecovered;
+    localStorage.enterpriseName = this.enterpriseName;
+    /*} else {
+      localStorage.idEnterprise = this.idRecovered;
+      localStorage.enterpriseName = this.enterpriseName;
+    }*/
+  },
 };
 </script>
+
+<style scoped>
+.bold {
+  font-weight: bold;
+}
+.border-bottom {
+  background-color: var(--primary);
+}
+.btn_order {
+  background-color: var(--dark);
+  color: var(--white);
+}
+.search {
+  background: var(--muted);
+}
+.btn_order:hover {
+  background: var(--dark-xx);
+  color: var(--white);
+}
+.alignment {
+  color: var(--orange);
+  background: var(--dark);
+  border-radius: 5px;
+  border: 2px solid var(--orange);
+}
+.orange {
+  color: var(--orange);
+  font-size: large;
+}
+.outer-border {
+  border-radius: 5px;
+  border: 2px solid var(--orange);
+  margin: 0px;
+  padding: 0px;
+}
+@media only screen and (max-width: 575px) {
+  .outer-border {
+    border-radius: 5px;
+    border: 2px solid var(--orange);
+    margin-right: 20rem;
+  }
+}
+.contentProduct {
+  background-color: var(--dark);
+  padding-bottom: 0%;
+  border-radius: 5px;
+}
+</style>
+<style>
+.car {
+  background-color: var(--dark);
+  color: var(--light);
+}
+</style>

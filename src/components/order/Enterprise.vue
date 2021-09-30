@@ -1,11 +1,27 @@
 <template>
-  <div class="col-6">
-    <div class="row">
-      <div class="col-lg-4 pl-0">
-        <img :src="image" class="card-img-top" :alt="'logo ' + name" />
+  <div class="row mt-2">
+    <div class="col-md-12 col-sm-12">
+      <div class="row">
+        <div class="col-lg-2">
+          <!-- <img :src="image" class="card-img-top" :alt="'logo ' + name" /> -->
+          <img
+            src="@/assets/enterprise.jpg"
+            class="card-img-top"
+            :alt="'logo ' + name"
+          />
+        </div>
+        <div class="col-lg-10 col-md-12 col-sm-12 mt-4">
+          <h2>
+            <b>{{ name | capitalize }}</b>
+          </h2>
+        </div>
       </div>
-      <div class="col-sm-autor mt-4">
-        <h3>{{ name | capitalize }}</h3>
+      <div class="row">
+        <div class="col-lg-10 col-md-12 col-sm-12">
+          <h4>
+            {{ section | capitalize }}
+          </h4>
+        </div>
       </div>
     </div>
   </div>
@@ -17,6 +33,7 @@ export default {
   props: {
     name: String,
     image: String,
+    section: String,
   },
   methods: {
     ver() {
