@@ -80,7 +80,7 @@
           <div class="row">
             <div class="col mt-3 container text-center">
               <span style="font-weight: bold">Mi pedido</span>
-              <hr />
+              <hr style="background-color: var(--orange)" />
             </div>
           </div>
           <!--Items-->
@@ -102,7 +102,7 @@
             </div>
           </div>
           <!--costos-->
-          <hr />
+          <hr style="background-color: var(--orange)" />
           <!-- <div class="row ml-1 container text-center">
             <div class="col">
               <p style="text-align: left; margin-left: 2%">
