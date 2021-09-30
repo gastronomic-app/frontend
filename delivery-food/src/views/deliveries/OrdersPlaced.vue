@@ -3,7 +3,15 @@
     <h3><b>Mis Pedidos</b></h3>
 
     <div v-if="!isReady">
-      <LoadingGraphql />
+      <div v-if="!exitsOrders">
+        <h4>
+          No has realizado ningún pedido, <b>¡animate a comprar!</b>
+          <not-found></not-found>
+        </h4>
+      </div>
+      <div v-else>
+        <LoadingGraphql />
+      </div>
     </div>
 
     <div v-else>
@@ -72,10 +80,6 @@
           Seguir Pedido
         </button>
       </div>
-      <h4 v-show="exitsOrders">
-        No has realizado ningún pedido, <b>¡animate a comprar!</b>
-        <not-found></not-found>
-      </h4>
       <br />
       <div v-show="showmap">
         <div class="map" ref="map"></div>
@@ -145,12 +149,17 @@ export default {
           query: require("@/graphql/deliveries/ordersPlaced.gql"),
         })
         .then((response) => {
+    
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
+          
             if (value) {
               // this.getCompleteAddress();
               this.getDurationDistance().then(() => {
                 this.isReady = true;
               });
+            }
+            else{
+              this.exitsOrders=false;
             }
 
             //
@@ -337,10 +346,12 @@ export default {
           newOrder.preparationTime = order.node.estimatedTime;
           newOrder.route.destination = order.node.location;
           this.orders.push(newOrder);
+         
         }
         return true;
       } else {
-        this.exitsOrders = false;
+        console.log("No hay ordenes")
+        return false;
       }
     },
     secondsToString(seconds) {
