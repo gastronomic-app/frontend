@@ -65,10 +65,7 @@
           </template>
         </template>
         <div class="container text-center">
-          <button
-            class="rounded-pill btn btn-success btn-sm"
-            v-on:click="confirmOrder()"
-          >
+          <button class="btn btn-success btn-sm" v-on:click="confirmOrder()">
             Enviar pedido
           </button>
         </div>
