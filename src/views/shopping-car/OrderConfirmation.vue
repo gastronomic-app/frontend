@@ -185,15 +185,12 @@ export default {
       this.msjError = "";
     },
     update() {
-      //console.log("creacion");
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
         let user = JSON.parse(localStorage.getItem("user"));
         this.emailUser = user.email;
         this.location = user.location;
         this.nameClient = user.names;
-
-        console.log("Datos:  ", user);
       }
     },
 
@@ -296,7 +293,6 @@ export default {
           })
           .then((response) => {
             this.orderId = response.data.createOrder.order.id;
-            console.log("creación de detalle:", response.data);
             for (var index = 1; index < this.items.length; index++) {
               this.productId = this.items[index].recoveredProduct.id;
               this.quantity = this.items[index].counter;

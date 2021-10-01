@@ -416,7 +416,6 @@ export default {
           this.allProducts.edges[key].node.enterprise.id == this.idRecovered
         ) {
           list_products_enterprise.push(this.allProducts.edges[key]);
-          //console.log(this.allProducts.edges[key].node);
         }
       }
       this.list_products_enterprise = list_products_enterprise;
