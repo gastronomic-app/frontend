@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="accordion" id="accordionExample">
+    <div class="accordion" id="accordionExample" >
       <div class="card">
         <div
           class="card-header"
@@ -13,13 +13,12 @@
           <h2 class="mb-0 flex">
             <button
               class="btn btn-block text-left btn-width shadow-none"
-              
               type="button"
               data-toggle="collapse"
               :data-target="'#collapse' + id"
               :aria-controls="'collapse' + id"
             >
-              Pedido realizado # {{ id + 1 }}
+              {{header}} {{ id + 1 }}
             </button>
             <span v-if="checkbox_use" class="force-left">
               <label class="container-checkbox">
@@ -39,7 +38,6 @@
           class="collapse"
           :aria-labelledby="'heading' + id"
           data-parent="#accordionExample"
-          
         >
           <slot></slot>
         </div>
@@ -52,12 +50,12 @@
 <script>
 export default {
   name: "Accordion",
-  props: ["item", "id", "checkbox_use"],
+  props: {item:Object, id:Number, checkbox_use:Boolean, header:{type: String,default:"Pedido realizado #"},}
 };
 </script>
 
 <style>
-:root{
+:root {
   --hover-selected: rgba(0, 0, 0, 0.9);
   --terce-color: orangered;
 }
@@ -127,12 +125,11 @@ export default {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-
 </style>
 
 <style scoped>
 .card-header:hover {
-  background-color:var(--hover-selected);
+  background-color: var(--hover-selected);
   color: black;
 }
 .selected {
