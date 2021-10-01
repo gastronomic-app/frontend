@@ -65,7 +65,7 @@
           </template>
         </template>
         <div class="container text-center">
-          <button class="btn btn-success btn-sm" v-on:click="confirmOrder()">
+          <button class="btn btn_order btn-sm" v-on:click="confirmOrder()">
             Enviar pedido
           </button>
         </div>
@@ -342,5 +342,16 @@ export default {
 .car {
   background-color: var(--dark);
   color: var(--light);
+}
+.btn_order {
+  background-color: var(--dark-xx);
+  color: var(--orange);
+}
+.btn_order:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
 }
 </style>

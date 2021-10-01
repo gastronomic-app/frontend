@@ -55,7 +55,7 @@
                     <span class="float-right mr-2">
                       <button
                         type="button"
-                        class="btn btn-success btn-sm"
+                        class="btn btn_order btn-sm"
                         data-toggle="modal"
                         data-target="#viewProductModal"
                         @click="showProduct(product.node.id)"
@@ -64,7 +64,7 @@
                       </button>
                       <button
                         type="button"
-                        class="btn btn-success btn-sm ml-2"
+                        class="btn btn_order btn-sm ml-2"
                         v-on:click="addItem(product)"
                       >
                         Añadir
@@ -117,6 +117,7 @@
                       pr-1
                       pl-1
                       alignment
+                      btn_order1
                     "
                   ></i>
                 </span>
@@ -158,7 +159,7 @@
               <div class="col-sm-2">
                 <label
                   type="button"
-                  class="btn orange p-0"
+                  class="btn orange btn_order1 p-0"
                   v-on:click="deleteItem(item.recoveredProduct.id)"
                 >
                   <strong>X</strong>
@@ -188,7 +189,7 @@
           </div>
           <div class="container text-center">
             <button
-              class="btn btn-success btn-sm mt-3"
+              class="btn btn_order btn-sm mt-3"
               v-on:click="continueOrder()"
             >
               continuar
@@ -229,12 +230,12 @@
             Está a punto de eliminar todo su pedido ¿Desea continuar?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
+            <button type="button" class="btn btn_order" data-dismiss="modal">
               Cerrar
             </button>
             <button
               type="button"
-              class="btn btn-danger"
+              class="btn btn_order"
               v-on:click="deleteCart()"
               data-dismiss="modal"
             >
@@ -286,7 +287,7 @@
             <p></p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
+            <button type="button" class="btn btn_order" data-dismiss="modal">
               Cerrar
             </button>
           </div>
@@ -572,19 +573,23 @@ export default {
 .bold {
   font-weight: bold;
 }
-.border-bottom {
-  background-color: var(--primary);
-}
 .btn_order {
-  background-color: var(--dark);
-  color: var(--white);
+  background-color: var(--dark-xx);
+  color: var(--orange);
+}
+.btn_order:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order1:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
 }
 .search {
   background: var(--muted);
-}
-.btn_order:hover {
-  background: var(--dark-xx);
-  color: var(--white);
 }
 .alignment {
   color: var(--orange);
