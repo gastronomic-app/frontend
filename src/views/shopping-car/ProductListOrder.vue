@@ -30,7 +30,10 @@
         <div v-else-if="error" class="d-flex justify-content-center">
           <ConnectionErrorGraphql />
         </div>
+
         <div class="row" v-if="list_products_enterprise !== undefined">
+          <!-- <pagination ref="paginator" name="products" :list="products" :per="5">
+          </pagination> -->
           <div
             class="col-xl-4 col-lg-3 col-md-4 col-sm-12"
             v-for="product in list_products_enterprise.filter(
@@ -73,6 +76,20 @@
               </template>
             </div>
           </div>
+
+          <!-- <div class="div-paginate">
+            <paginate-links
+              for="products"
+              :classes="{ ul: 'pagination' }"
+              :show-step-links="true"
+            ></paginate-links>
+          </div>
+
+          <div class="div-paginate">
+            <span v-if="$refs.paginator">
+              Viendo {{ $refs.paginator.pageItemsCount }} resultados
+            </span>
+          </div> -->
         </div>
       </div>
       <!--Carrito-->
@@ -307,6 +324,8 @@ export default {
       estimatedTime: 0,
       idRecovered: "",
       enterpriseName: "",
+      prods: [],
+      paginate: ["products"],
       // Variable que recibe el error de la consulta
       error: null,
 
@@ -389,7 +408,6 @@ export default {
   },
   methods: {
     showProductEnterprise() {
-      //var idRecovered = "RW50ZXJwcmlzZU5vZGU6MQ==";
       var list_products_enterprise = [];
 
       for (const key in this.allProducts.edges) {
@@ -425,7 +443,6 @@ export default {
 
     addItem(product) {
       var bandera = false;
-      //console.log(product.node.id);
       if (this.items.length == 0) {
         this.items.push({ recoveredProduct: product.node, counter: 1 });
       } else {
@@ -488,14 +505,11 @@ export default {
     },
 
     deleteCart() {
-      //if (window.confirm("¿Desea eliminar todos los items?")) {
       this.items.splice(1, this.items.length);
       localStorage.removeItem("items");
       this.deleteVariables();
-      //}
     },
     continueOrder() {
-      //console.log("redirigir");
       this.$router.push({
         name: "OrderConfirmation",
         params: { listado: this.items, enterpriseName: this.enterpriseName },
@@ -603,6 +617,34 @@ export default {
 .car {
   background-color: var(--dark);
   color: var(--light);
+}
+/* Paginación */
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-color {
+  background-color: var(--dark-x);
+  color: whitesmoke;
+}
+
+.div-paginate {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.div-width {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.padding-label {
+  padding-bottom: 2px;
+}
+.div {
+  margin-left: 81%;
 }
 </style>
 
