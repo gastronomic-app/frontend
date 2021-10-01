@@ -187,12 +187,6 @@ export default {
     cleanError() {
       this.msjError = "";
     },
-    btnComments() {
-      //console.log("redirigir");
-      this.$router.push({
-        name: "CommentsList",
-      });
-    },
     update() {
       //console.log("creacion");
       this.ok = localStorage.getItem("existUser");
