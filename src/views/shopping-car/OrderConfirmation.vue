@@ -65,10 +65,7 @@
           </template>
         </template>
         <div class="container text-center">
-          <button
-            class="rounded-pill btn btn-success btn-sm"
-            v-on:click="confirmOrder()"
-          >
+          <button class="btn btn_order btn-sm" v-on:click="confirmOrder()">
             Enviar pedido
           </button>
         </div>
@@ -80,7 +77,7 @@
           <div class="row">
             <div class="col mt-3 container text-center">
               <span style="font-weight: bold">Mi pedido</span>
-              <hr />
+              <hr style="background-color: var(--orange)" />
             </div>
           </div>
           <!--Items-->
@@ -102,7 +99,7 @@
             </div>
           </div>
           <!--costos-->
-          <hr />
+          <hr style="background-color: var(--orange)" />
           <!-- <div class="row ml-1 container text-center">
             <div class="col">
               <p style="text-align: left; margin-left: 2%">
@@ -187,22 +184,13 @@ export default {
     cleanError() {
       this.msjError = "";
     },
-    btnComments() {
-      //console.log("redirigir");
-      this.$router.push({
-        name: "CommentsList",
-      });
-    },
     update() {
-      //console.log("creacion");
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
         let user = JSON.parse(localStorage.getItem("user"));
         this.emailUser = user.email;
         this.location = user.location;
         this.nameClient = user.names;
-
-        console.log("Datos:  ", user);
       }
     },
 
@@ -234,7 +222,6 @@ export default {
     },
 
     decrementCounter(id) {
-      //console.log(id);
       for (var index = 1; index < this.items.length; index++) {
         if (
           id == this.items[index].recoveredProduct.id &&
@@ -273,8 +260,6 @@ export default {
         return false;
       }
       if (this.location.length == 0) {
-        // console.log("MIMD: " + this.location.trim().length);
-        // console.log("MIMD2: " + this.location + "; ");
         this.msjError = "Ingrese una direccion o seleccione en el mapa";
         return false;
       }
@@ -294,8 +279,6 @@ export default {
           this.emailUser = user.email;
           //this.location = user.location;
         }
-        // console.log("Pasando por confirmando pedido");
-        // console.log("My location: ", this.location);
 
         this.$apollo
           .mutate({
@@ -310,13 +293,9 @@ export default {
           })
           .then((response) => {
             this.orderId = response.data.createOrder.order.id;
-            console.log("creación de detalle:", response.data);
             for (var index = 1; index < this.items.length; index++) {
               this.productId = this.items[index].recoveredProduct.id;
               this.quantity = this.items[index].counter;
-              // console.log("idorden", this.orderId);
-              // console.log("cantidad", this.quantity);
-              // console.log("idproducto", this.productId);
 
               this.$apollo
                 .mutate({
@@ -352,9 +331,23 @@ export default {
   created() {
     this.items = this.$route.params.listado;
     this.enterpriseName = this.$route.params.enterpriseName;
-    console.log("Nombre empresa:", this.enterpriseName);
   },
 };
 </script>
 <style scoped>
+.car {
+  background-color: var(--dark);
+  color: var(--light);
+}
+.btn_order {
+  background-color: var(--dark-xx);
+  color: var(--orange);
+}
+.btn_order:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
+}
 </style>

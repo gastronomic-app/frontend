@@ -2,7 +2,6 @@ query enterprise($id: ID!) {
   enterprise(id: $id)  {
     name
       products{
-
         edges{
           node{
             orders{
