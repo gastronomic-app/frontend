@@ -1,0 +1,21 @@
+query couriersEnterprise($id: ID!){
+  enterprise(id: $id) {
+    couriers {
+      edges {
+        node {
+          id,
+          email,
+          isAvailable,
+          contact {
+            edges {
+              node {
+                names,
+                lastnames,
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

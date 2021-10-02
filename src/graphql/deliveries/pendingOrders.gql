@@ -1,0 +1,26 @@
+{
+  allOrders(status: "nuevo") {
+    edges {
+      node {
+        id
+        status
+        location
+        details {
+          edges {
+            node {
+              quantity
+              product {
+                name
+                price
+                enterprise {
+                  id,
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

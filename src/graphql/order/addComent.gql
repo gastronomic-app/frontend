@@ -1,0 +1,30 @@
+mutation createReview(
+  $qualityService: String!
+	$presentation: String!
+  $preparation: String!
+  $ingredients: String!
+  $price: String!
+  $textures: String!
+  $cookingPoint: String!
+  $comments: String!
+  $orderId: ID!
+) {
+ createReview(
+    input: {
+        qualityService:$qualityService
+        presentation:$presentation
+        preparation:$preparation
+        ingredients:$ingredients
+        price:$price
+        textures:$textures
+        cookingPoint:$cookingPoint
+        comments:$comments
+        orderId : $orderId
+      }
+  ) {
+    review {
+      id
+      comments
+    }
+  }
+}
