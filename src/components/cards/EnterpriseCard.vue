@@ -109,11 +109,12 @@ export default {
     makeOrder(Enterprise) {
       localStorage.removeItem("items");
       localStorage.removeItem("idRecovered");
+      localStorage.removeItem("car");
       localStorage.idEnterprise = "";
       localStorage.enterpriseName = "";
       this.$router.push({
         name: "ProductListOrder",
-        params: { selectedEnterprise: Enterprise },
+        params: { id: Enterprise.id, name: Enterprise.name },
       });
     },
     valnum(texto) {
@@ -141,7 +142,7 @@ export default {
       for (const product in this.allReviews.products.edges) {
         for (const order in this.allReviews.products.edges[product].node.orders
           .edges.review) {
-           comments.push(
+          comments.push(
             this.allReviews.products.edges[product].node.orders.edges[order]
               .node.review.comments
           );

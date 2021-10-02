@@ -296,6 +296,7 @@
     </div>
   </div>
 </template>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
 
 <script>
 import ProductCard from "@/components/order/CardProduct.vue";
@@ -323,6 +324,7 @@ export default {
       total: 0,
       envio: 4000,
       estimatedTime: 0,
+      counting: 0,
       idRecovered: "",
       enterpriseName: "",
       prods: [],
@@ -385,6 +387,7 @@ export default {
     };
   },
   mounted() {
+    //this.itemExists();
     if (localStorage.getItem("idEnterprise")) {
       this.idRecovered = localStorage.idEnterprise;
     }
@@ -443,20 +446,27 @@ export default {
 
     addItem(product) {
       var bandera = false;
-      if (this.items.length == 0) {
-        this.items.push({ recoveredProduct: product.node, counter: 1 });
-      } else {
-        for (var index = 1; index < this.items.length; index++) {
-          if (product.node.id == this.items[index].recoveredProduct.id) {
-            this.items[index].counter++;
-            bandera = true;
+      if (localStorage.getItem("existUser")) {
+        if (this.items.length == 0) {
+          this.items.push({ recoveredProduct: product.node, counter: 1 });
+        } else {
+          for (var index = 1; index < this.items.length; index++) {
+            if (product.node.id == this.items[index].recoveredProduct.id) {
+              this.items[index].counter++;
+              bandera = true;
+            }
+          }
+          if (bandera == false) {
+            this.items.push({ recoveredProduct: product.node, counter: 1 });
           }
         }
-        if (bandera == false) {
-          this.items.push({ recoveredProduct: product.node, counter: 1 });
-        }
+        this.saveItems();
+        this.itemExists();
+      } else {
+        this.$router.push({
+          name: "Login",
+        });
       }
-      this.saveItems();
     },
 
     deleteItem(id) {
@@ -464,6 +474,7 @@ export default {
         if (id == this.items[index].recoveredProduct.id) {
           this.items.splice(index, 1);
           this.saveItems();
+          this.itemExists();
         }
       }
     },
@@ -474,6 +485,7 @@ export default {
         }
       }
       this.saveItems();
+      this.itemExists();
     },
     updateTotal() {
       var sumatoria = 0;
@@ -492,12 +504,14 @@ export default {
           this.items[index].counter < 2
         ) {
           this.items.splice(index, 1);
+          this.itemExists();
         } else {
           if (
             id == this.items[index].recoveredProduct.id &&
             this.items[index].counter >= 2
           ) {
             this.items[index].counter--;
+            this.itemExists();
           }
         }
       }
@@ -508,6 +522,7 @@ export default {
       this.items.splice(1, this.items.length);
       localStorage.removeItem("items");
       this.deleteVariables();
+      this.itemExists();
     },
     continueOrder() {
       this.$router.push({
@@ -516,12 +531,24 @@ export default {
       });
     },
 
+    //Actualizar el contador de productos adicionado en el carro
     itemExists() {
-      if (this.items.nombreItem != "Pizza") {
-        this.addItem();
+      location.reload();
+      //$("#counting").load();
+      var itemsCar = new Object();
+      var count = 0;
+      if (localStorage.getItem("items")) {
+        itemsCar = JSON.parse(localStorage.getItem("items")); //lo que habia antes de recargar
+        itemsCar.shift(); //Eliminar primer elemento vacio
+        itemsCar.forEach((item) => {
+          count += item.counter;
+        });
+        this.counting = count;
       } else {
-        this.incrimentarContador();
+        this.counting = 0;
       }
+      localStorage.car = parseInt(this.counting);
+      //console.log("->" + this.counting);
     },
 
     deleteVariables() {
@@ -558,8 +585,8 @@ export default {
       localStorage.getItem("idEnterprise") == "" &&
       localStorage.getItem("enterpriseName") == ""
     ) {
-      this.idRecovered = this.$route.params.selectedEnterprise.id;
-      this.enterpriseName = this.$route.params.selectedEnterprise.name;
+      this.idRecovered = this.$route.params.id;
+      this.enterpriseName = this.$route.params.name;
       //Guardar en localStorage datos recuperados.
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;

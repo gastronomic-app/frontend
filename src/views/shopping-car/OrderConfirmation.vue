@@ -321,6 +321,7 @@ export default {
         localStorage.removeItem("total");
         localStorage.removeItem("enterpriseName");
         localStorage.removeItem("idEnterprise");
+        localStorage.removeItem("car");
       }
     },
   },

@@ -31,6 +31,7 @@
             <li class="nav-item mr-3" v-show="ok">
               <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
             </li>
+            <Count></Count>
             <li class="nav-item mr-3">
               <span class="nav-link separator" href="#">|</span>
             </li>
@@ -158,10 +159,12 @@
  * Barra de navegación común
  */
 import GoogleLogin from "vue-google-login";
+import Count from "@/views/shopping-car/count.vue";
 export default {
   name: "NavBar",
   components: {
     GoogleLogin,
+    Count,
   },
 
   data: () => ({
@@ -170,9 +173,16 @@ export default {
     role: "",
     email: "",
     id: "",
+    count: 0,
     params: {},
     // only needed if you want to render the button with the google ui
   }),
+  // mounted() {
+  //   if(localStorage.getItem("car")){
+  //     this.count = parseInt(localStorage.getItem("car"));
+  //   }
+  //   console.log("# " + this.count)
+  // },
   methods: {
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
