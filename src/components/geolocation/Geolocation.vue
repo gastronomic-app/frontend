@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="input-group mb-3 input-container" :style="{ width: input_width }">
+    <div
+      class="input-group mb-3 input-container"
+      :style="{ width: input_width }"
+    >
       <div class="input-group-prepend">
         <button
           class="input-group-text btn btn-dark"
@@ -11,12 +14,12 @@
         </button>
       </div>
       <input
+        :disabled="disable_input"
         id="autocomplete"
         type="text"
         class="form-control"
         :placeholder="placeholder"
         v-model="address"
-        
       />
     </div>
     <div v-show="showmap" :style="{ width: map_width, height: map_height }">
@@ -37,7 +40,15 @@ export default {
       map: Object, //Objeto de google maps para el mapa
     };
   },
-  props: ["showinput", "showmap", "placeholder","map_height", "map_width", "input_width"], //Showinput: Muestra un elemento input html- showmap: true para mostrar el mapa; false de lo contrario
+  props: {
+    showinput: { type: Boolean, default: true },
+    showmap: { default: false },
+    placeholder: { type: String, default: "Ingrese su dirección" },
+    map_height: {},
+    map_width: {},
+    input_width: {},
+    disable_input: { type: Boolean, default: false },
+  }, //Showinput: Muestra un elemento input html- showmap: true para mostrar el mapa; false de lo contrario
   mounted() {
     this.showUserLocation(2.45, -76.6167);
     const autocomplete = new google.maps.places.Autocomplete(
