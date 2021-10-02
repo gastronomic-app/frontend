@@ -48,6 +48,9 @@
               </h5>
               <h5>Lugar de entrega: {{ order.route.destination }}</h5>
               <h5>
+                Tiempo estimado de preparation: {{order.preparationTime}} minutos.
+              </h5>
+              <h5>
                 Tu pedido llegara en:
                 <b style="color: var(--orange)"
                   ><Countdown
@@ -152,13 +155,11 @@ export default {
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
             if (value) {
               // this.getCompleteAddress();
-              this.getDurationDistance().then(() => {
-                this.exitsOrders = true;
-              });
+              this.getDurationDistance(this.orders);
             } else {
               this.exitsOrders = false;
             }
-            this.isReady = true;
+
             //
           });
         });
@@ -204,8 +205,9 @@ export default {
       }
       return { origins: origins, destinations: destinations };
     },
-    async getDurationDistance() {
+    async getDurationDistance(orders) {
       const objRoute = this.getOriginsDestinations();
+
       const distanceMatrix = new google.maps.DistanceMatrixService();
       distanceMatrix.getDistanceMatrix(
         {
@@ -215,20 +217,23 @@ export default {
         },
         async (response) => {
           for (let i = 0; i < response.rows.length; i++) {
-            if (response.rows[i].elements[i].status === "OK") {
+            if (response.rows[0].elements[0].status === "OK") {
               let elements = await response.rows[i].elements[i];
-              this.orders[i].route.distance = elements.distance.text;
-              this.orders[i].route.duration.durationFormatted =
-                elements.duration.text;
-              this.orders[i].route.duration.durationInSec =
-                elements.duration.value;
+
+              orders[i].route.distance = await elements.distance.text;
+              orders[i].route.duration.durationFormatted = await elements
+                .duration.text;
+              orders[i].route.duration.durationInSec = await elements.duration
+                .value;
             } else {
-              this.error = "No results found";
+              orders[i].route.distance = 0;
+              orders[i].route.duration.durationFormatted = 0;
+              orders[i].route.duration.durationInSec = 0;
             }
           }
+          this.getEstimatedTime();
         }
       );
-      this.getEstimatedTime();
     },
     showRoute(routes) {
       const directionsService = new google.maps.DirectionsService();
@@ -382,8 +387,11 @@ export default {
             order.route.duration.durationInSec + preparation
           );
           order.estimatedTime = time;
+        
         }
       }
+      this.exitsOrders = true;
+      this.isReady = true;
     },
     thereisTime(time) {
       const date = new Date();
