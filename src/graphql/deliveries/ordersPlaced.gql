@@ -3,7 +3,8 @@
     edges{
       node{
         client{
-          id
+          id,
+          email
         }
         id
         date,
