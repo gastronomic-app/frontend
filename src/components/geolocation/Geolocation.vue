@@ -3,19 +3,20 @@
     <div class="input-group mb-3 input-container" :style="{ width: input_width }">
       <div class="input-group-prepend">
         <button
-        class="input-group-text btn btn-dark"
-        type="button"
-        @click="getUserLocation"> <span class="text-danger">*</span>
+          class="input-group-text btn btn-dark"
+          type="button"
+          @click="getUserLocation"
+        >
           <b-icon icon="geo-alt-fill"></b-icon>
         </button>
       </div>
       <input
-        :disabled="true"
         id="autocomplete"
         type="text"
         class="form-control"
         :placeholder="placeholder"
         v-model="address"
+        
       />
     </div>
     <div v-show="showmap" :style="{ width: map_width, height: map_height }">
@@ -68,22 +69,23 @@ export default {
     });
   },
   methods: {
+    //Se captura la ubicación (lat y lng) del usuario solo si el mismo permite acceder a la unicación
     getUserLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              let latitud = position.coords.latitude;
-              let longitud = position.coords.longitude;
-              this.getAddressFrom(latitud, longitud);
-              this.showUserLocation(latitud, longitud);
-            },
-            (error) => {
-              this.error = error.message;
-            }
-          );
-        } else {
-          console.log("Su navegador no soporta geolocation API");
-        }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let latitud = position.coords.latitude;
+            let longitud = position.coords.longitude;
+            this.getAddressFrom(latitud, longitud);
+            this.showUserLocation(latitud, longitud);
+          },
+          (error) => {
+            this.error = error.message;
+          }
+        );
+      } else {
+        console.log("Su navegador no soporta geolocation API");
+      }
     },
     getAddressFrom(lat, lng) {
       const latlng = {
@@ -96,7 +98,6 @@ export default {
       geocoder.geocode({ location: latlng }, (response, status) => {
         if (status === "OK") {
           this.address = response[0].formatted_address;
-          this.$emit ('value',this.address)
           //Se emite el evento con la inforación de la dirección formateada
           this.returnValue();
         } else {
@@ -127,7 +128,7 @@ export default {
           document.getElementById("autocomplete").value = direction;
         }
       });
-      },
+    },
     returnValue() {
       this.$emit("value", this.address);
     },
