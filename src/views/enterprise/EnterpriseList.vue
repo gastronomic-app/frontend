@@ -72,12 +72,15 @@ export default {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
       allEnterprises: Object,
-      // Variable que recibe el error de la consulta
+      allProducts: Object,
+
       currentPage: 1,
       page: 1,
       perpage: 3,
       Enterprises: [],
-      paginate: ["Enterprises"],
+      Products: [],
+      paginate: ["Enterprises","Products"],
+      // Variable que recibe el error de la consulta
       error: null,
     };
   },
