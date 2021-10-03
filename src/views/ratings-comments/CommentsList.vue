@@ -76,7 +76,9 @@
         </div>
 
         <div v-for="(item, indice) in this.comments" v-bind:key="indice">
+
           <TextArea
+
             :email="item.client.email"
             :comment="item.review.comments"
           />
@@ -136,7 +138,6 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-
           this.allReviewsMeth1();
         });
     },
