@@ -1,0 +1,8 @@
+mutation disableProduct($id: ID!){
+  disableProduct(input: $id) {
+    product {
+      id
+      name
+    }
+  }
+}

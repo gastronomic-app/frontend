@@ -1,9 +1,9 @@
 <template>
   <div class="about">
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-3 bg-cart color-black search-side">
         <div class="form-group">
-          <div class="row mt-3">
+          <div class="row mt-3 correct-align">
             <h3 class="text-center">Busqueda</h3>
             <input
               type="text"
@@ -16,7 +16,7 @@
               <button
                 @click="leaveType = ''"
                 type="button"
-                class="btn btn-link"
+                class="btn btn-link orange"
               >
                 Todos los productos
               </button>
@@ -30,7 +30,7 @@
                   v-for="type in groupType[1]"
                   v-on:click="leaveType = type[1]"
                   type="button"
-                  class="btn btn-link btn-block m-0 p-0 text-left"
+                  class="btn btn-link btn-block m-0 p-0 text-left orange"
                   :key="type[0]"
                 >
                   {{ type[0] }}
@@ -47,7 +47,7 @@
         <br />
         <button
           type="button"
-          class="btn btn-primary btn-lg btn-block"
+          class="btn btn-dark btn-lg orange font-weight-bold btn-block bg-cart"
           @click="redirectProductAdd"
         >
           Crear Producto
@@ -65,7 +65,8 @@
             v-for="product in allProducts.edges.filter(
               (element) =>
                 element.node.productType.includes(leaveType) &&
-                element.node.name.includes(searchString.toLowerCase())
+                element.node.name.includes(searchString.toLowerCase()) &&
+                element.node.active == true
             )"
             :key="product.node.id"
           >
@@ -78,23 +79,23 @@
                 <br />
                 <button
                   type="button"
-                  class="btn btn-success btn-sm mr-4"
+                  class="btn btn-outline-success btn-sm mr-4"
                   @click="redirectProductEdit(product.node.id)"
                 >
                   Editar
                 </button>
                 <button
                   type="button"
-                  class="btn btn-danger btn-sm mr-4"
+                  class="btn btn-outline-danger btn-sm mr-4"
                   data-toggle="modal"
                   data-target="#deleteConfirmationModal"
-                  @click="productToDelete = product.node.id"
+                  @click="productToDisable = product.node.id"
                 >
-                  Eliminar
+                  Deshabilitar
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary btn-sm"
+                  class="btn btn-outline-dark btn-sm"
                   data-toggle="modal"
                   data-target="#viewProductModal"
                   @click="showProduct(product.node.id)"
@@ -124,7 +125,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="deleteConfirmationModalLabel">
-              Eliminar producto
+              Deshabilitar producto
             </h5>
             <button
               type="button"
@@ -136,19 +137,23 @@
             </button>
           </div>
           <div class="modal-body">
-            Está a punto de eliminar un producto ¿Desea continuar?
+            Está a punto de deshabilitar un producto ¿Desea continuar?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              data-dismiss="modal"
+            >
               Cerrar
             </button>
             <button
               type="button"
-              class="btn btn-primary"
-              @click="removeProduct(productToDelete)"
+              class="btn btn-outline-dark"
+              @click="disableProduct(productToDisable)"
               data-dismiss="modal"
             >
-              Eliminar
+              Deshabilitar
             </button>
           </div>
         </div>
@@ -158,9 +163,11 @@
     <!--Product preview  modal-->
     <div class="modal" id="viewProductModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content bg-cart color-black">
           <div class="modal-header">
-            <h5 class="modal-title">{{ productView.name | capitalize }}</h5>
+            <h5 class="modal-title orange font-weight-bold">
+              {{ productView.name | capitalize }}
+            </h5>
             <button
               type="button"
               class="close"
@@ -188,7 +195,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-dark orange bg-cart"
               data-dismiss="modal"
             >
               Cerrar
@@ -222,7 +229,7 @@ export default {
 
       leaveType: "",
       searchString: "",
-      productToDelete: "",
+      productToDisable: "",
 
       productsTypes: [
         [
@@ -275,6 +282,14 @@ export default {
     };
   },
   methods: {
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
     redirectProductAdd() {
       this.$router.push({ name: "ProductAdd" });
     },
@@ -293,11 +308,11 @@ export default {
     /**
      * Elimina una empresa y actualiza el cache con refetchQueries
      */
-    async removeProduct(idProduct) {
+    async disableProduct(idProduct) {
       console.log("enviar id por url", idProduct);
       await this.$apollo.mutate({
         // Establece la consulta a realizar
-        mutation: require("@/graphql/product/deleteProduct.gql"),
+        mutation: require("@/graphql/product/disableProduct.gql"),
         // Define la variable
         variables: {
           id: idProduct,
@@ -307,7 +322,13 @@ export default {
         refetchQueries: [
           { query: require("@/graphql/product/allProducts.gql") },
         ],
-      }); alert(JSON.stringify("El producto se eliminó exitosamente"));
+      });
+      this.makeToast(
+        "success",
+        "Deshabilitar producto",
+        "El producto ha sido deshabilitado.",
+        4000
+      );
     },
     showProduct(idProduct) {
       var producto = this.allProducts.edges.filter(
@@ -345,3 +366,29 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.name-app {
+  color: var(--primary-x);
+}
+.bg-cart {
+  background-color: var(--dark-x);
+}
+.navbar-orange-text {
+  color: var(--orange);
+}
+.color-black {
+  color: white;
+}
+.orange {
+  color: orange;
+}
+.search-side {
+  left: -113px;
+  margin-right: -98px;
+}
+.correct-align {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+</style>
