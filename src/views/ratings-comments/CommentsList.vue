@@ -7,24 +7,6 @@
     >
     </Enterprise>
 
-<<<<<<< HEAD
-    <div class="row mt-2">
-      <div class="col-6">
-        <div class="row">
-          <div class="col-sm-autor mt-4">
-            <b-form-rating
-              class="puntuacion"
-              variant="warning"
-              v-model="calculo"
-              readonly
-            ></b-form-rating>
-          </div>
-        </div>
-      </div>
-    </div>
-    <SubTitle content="Comentarios y calificaciones"></SubTitle>
-=======
->>>>>>> 1727391aac8e5c0cb8776844e631849aa7265eb9
     <div class="row">
       <div class="col-5 mt-2">
         <div>
@@ -282,10 +264,7 @@ export default {
       this.calculo = calculo;
     },
   },
-<<<<<<< HEAD
-=======
   apollo: {},
->>>>>>> 1727391aac8e5c0cb8776844e631849aa7265eb9
   created() {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
