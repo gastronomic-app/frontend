@@ -3,7 +3,7 @@
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
       <!-- <input id="car_2" type="text " :v-model="localStorage.getItem('car')" /> -->
       <h6 id="counting" class="count" v-if="total != 0">
-        {{ total }}
+        {{ $store.getters.getCount }}
       </h6>
       <b-icon
         icon="cart4"
