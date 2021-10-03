@@ -1,11 +1,11 @@
 <template>
   <div>
+    {{ getNickName() }}
     <div class="row ml-1">
       <h6 class="font-weight-bold">{{ user }}</h6>
     </div>
-    {{ getNickName() }}
-    <div class="row ml-1 mb-4 font-weight-light text-justify">
-      {{ review.comments }}
+    <div class="row ml-4 mb-4 font-weight-light text-justify">
+      {{ comment }}
     </div>
     <hr />
   </div>
@@ -21,11 +21,12 @@ export default {
   },
   methods: {
     getNickName() {
-      this.user = this.review.order.client.email.split("@")[0];
+      this.user = this.email.split("@")[0];
     },
   },
   props: {
-    review: Object,
+    email: String,
+    comment: String,
   },
 };
 </script>

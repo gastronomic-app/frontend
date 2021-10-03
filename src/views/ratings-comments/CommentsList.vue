@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <Enterprise
-      name="enterpriseName"
+      :name="enterprise.name"
       :image="'@/assets/enterprise.jpg'"
       section="Valoraciones y Comentarios"
     ></Enterprise>
@@ -9,20 +9,11 @@
     <div class="row mt-2">
       <div class="col-6">
         <div class="row">
-          <div class="col-lg-4 pl-0">
-            <img
-              src="@/assets/enterprise.jpg"
-              class="card-img-top"
-              alt="logo establecimiento"
-            />
-          </div>
           <div class="col-sm-autor mt-4">
-            {{ allReviewsMeth1() }}
-            <h3>{{ this.enterprise.name }}</h3>
             <b-form-rating
               class="puntuacion"
               variant="warning"
-              v-model="this.calculo"
+              v-model="calculo"
               readonly
             ></b-form-rating>
           </div>
@@ -43,12 +34,12 @@
         <progress max="5" :value="aux1"></progress>
         {{ "(" }}{{ this.aux1 }}
         {{ "/5)" }}
-        <h5>Presentacion</h5>
+        <h5>Presentación</h5>
 
         <progress max="5" :value="aux2"></progress>
         {{ "(" }}{{ this.aux2 }}
         {{ "/5)" }}
-        <h5>Preparacion</h5>
+        <h5>Preparación</h5>
 
         <progress max="5" :value="aux3"></progress>
         {{ "(" }}{{ this.aux3 }}
@@ -68,7 +59,7 @@
         <progress max="5" :value="aux6"></progress>
         {{ "(" }}{{ this.aux6 }}
         {{ "/5)" }}
-        <h5>Punto de coccion</h5>
+        <h5>Punto de cocción</h5>
 
         <progress max="5" :value="aux7"></progress>
         {{ "(" }}{{ this.aux7 }}
@@ -92,11 +83,10 @@
         </div>
 
         <div v-for="(item, indice) in this.comments" v-bind:key="indice">
-          <TextArea
-            :usuario="item.client.email"
-            :comentario="item.review.comments"
+         <TextArea
+            :email="item.client.email"
+            :comment="item.review.comments"
           />
-          <h4>{{ item.review.comments }}</h4>
         </div>
         <div>
           <a href="../add-Rating"> Agregar comentario</a>
@@ -107,7 +97,7 @@
 </template>
 
 <script>
-//import TextArea from "@/components/cards/TextArea.vue";
+import TextArea from "@/components/cards/TextArea.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import Enterprise from "@/components/order/Enterprise.vue";
@@ -116,23 +106,48 @@ import SubTitle from "@/components/cards/SubTitles.vue";
 export default {
   name: "CommentsList",
   components: {
-    //TextArea,
+    TextArea,
     SubTitle,
     LoadingGraphql,
     ConnectionErrorGraphql,
     Enterprise,
   },
+  data() {
+    return {
+      // Variable que recibe los resultados
+      // de la consulta definida en la sección apollo
+      enterprise: Object,
+      enterpriseName: "",
+      id: "",
+      // Variable que recibe el error de la consulta
+      error: null,
+      calculo: 0,
+      auxcont: 0,
+      comments: [],
+      aux1: 0,
+      aux2: 0,
+      aux3: 0,
+      aux4: 0,
+      aux5: 0,
+      aux6: 0,
+      aux7: 0,
+      conttam: 0,
+    };
+  },
   methods: {
-    prueba(){
-      this.$apollo.query({
-        query: require("@/graphql/comments/allReviews.gql"),
-      variables:{
-        id: this.id,
-      },
-      })
-      .then((response)=>{
-        this.enterprise = response.data.enterprise;
-      });
+    async prueba() {
+      await this.$apollo
+        .query({
+          query: require("@/graphql/comments/allReviews.gql"),
+          variables: {
+            id: this.id,
+          },
+        })
+        .then((response) => {
+          this.enterprise = response.data.enterprise;
+          console.log(this.enterprise);
+          this.allReviewsMeth1();
+        });
     },
     valnum(texto) {
       var aux = 1;
@@ -155,7 +170,9 @@ export default {
       var aux7 = 0;
       var conttam = 0;
       //var users = [];
-      console.log(this.enterprise.products);
+
+      console.log(this.enterprise);
+      console.log("entré");
       if (this.enterprise.products.edges.length === 0) {
         return;
       }
@@ -177,7 +194,7 @@ export default {
             //console.log(this.enterprise.products.edges[product].node.orders.edges[order])
             if (
               this.enterprise.products.edges[product].node.orders.edges[order]
-                .node.review.comments !== null
+                .node.review !== null
             ) {
               console.log(
                 this.enterprise.products.edges[product].node.orders.edges[order]
@@ -273,42 +290,12 @@ export default {
       console.log("tamaño array", comments.length);
     },
   },
-  data() {
-    return {
-      // Variable que recibe los resultados
-      // de la consulta definida en la sección apollo
-      enterprise: Object,
-      id: "",
-      // Variable que recibe el error de la consulta
-      error: null,
-      calculo: 0,
-      auxcont: 0,
-    };
-  },
-  /*apollo: {
-    enterprise: {
-      // Consulta
-      query: require("@/graphql/comments/allReviews.gql"),
-      variables:{
-        id: this.id,
-      },
-      //línea para actualizar
-      fetchPolicy: "no-cache",
-      // Asigna el error a la variable definida en data
-      error(error) {
-        this.error = JSON.stringify(error.message);
-      },
-    },
-  },*/
   created() {
-    
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
       localStorage.idCaught = this.id;
-      console.log(this.id);
       this.prueba();
     }
-    
   },
 };
 </script>
