@@ -81,9 +81,9 @@ const routes = [
     props: { deliveryId: "RGVsaXZlcnlOb2RlOjM=", enterprise: "Dom Burger" },
   },
   {
-    path: "/countdown",
-    name: "Countdown",
-    component: () => import("@/views/deliveries/Countdown.vue"),
+    path: "/my-deliveries",
+    name: "DeliveryDone",
+    component: () => import("@/views/couriers/DeliveryDone.vue"),
   },
   {
     path: "/password",

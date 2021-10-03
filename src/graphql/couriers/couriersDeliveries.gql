@@ -1,26 +1,34 @@
 {
-  allOrders(status: "nuevo") {
+	allDeliveries{
     edges {
       node {
+        deliveryTime
         id
-        status
-        location
+        courier{
+          id
+          email
+          
+        }
+        order{
+          
+          id
+          status
         details {
           edges {
             node {
-              quantity
               product {
                 name
                 price
                 enterprise {
-                  id,
                   name
                 }
               }
+              quantity
             }
           }
         }
       }
     }
   }
+}
 }

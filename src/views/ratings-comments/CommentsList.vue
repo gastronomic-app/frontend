@@ -4,8 +4,10 @@
       :name="enterprise.name"
       :image="'@/assets/enterprise.jpg'"
       section="Valoraciones y Comentarios"
-    ></Enterprise>
+    >
+    </Enterprise>
 
+<<<<<<< HEAD
     <div class="row mt-2">
       <div class="col-6">
         <div class="row">
@@ -21,54 +23,63 @@
       </div>
     </div>
     <SubTitle content="Comentarios y calificaciones"></SubTitle>
+=======
+>>>>>>> 1727391aac8e5c0cb8776844e631849aa7265eb9
     <div class="row">
       <div class="col-5 mt-2">
-        <div></div>
         <div>
-          <h2>Puntuacion {{ this.calculo }}</h2>
-          <h5>Basado en la valoracion de {{ auxcont }} usuarios</h5>
+          <h5>
+            <b>Puntuacion {{ this.calculo }}</b>
+          </h5>
+          <b-form-rating
+            class="puntuacion mb-4 mb-0 p-0"
+            variant="warning"
+            v-model="this.calculo"
+            readonly
+          ></b-form-rating>
+          <h6>Basado en la valoracion de {{ auxcont }} usuarios</h6>
         </div>
         <br />
         <h5>Calidad de servicios</h5>
 
-        <progress max="5" :value="aux1"></progress>
+        <progress max="5" :value="aux1" style="width:80%"></progress>
         {{ "(" }}{{ this.aux1 }}
         {{ "/5)" }}
         <h5>Presentación</h5>
 
-        <progress max="5" :value="aux2"></progress>
+        <progress max="5" :value="aux2" style="width:80%"></progress>
         {{ "(" }}{{ this.aux2 }}
         {{ "/5)" }}
         <h5>Preparación</h5>
 
-        <progress max="5" :value="aux3"></progress>
+        <progress max="5" :value="aux3" style="width:80%"></progress>
         {{ "(" }}{{ this.aux3 }}
         {{ "/5)" }}
         <h5>Ingredientes</h5>
 
-        <progress max="5" :value="aux4"></progress>
+        <progress max="5" :value="aux4" style="width:80%"></progress>
         {{ "(" }}{{ this.aux4 }}
         {{ "/5)" }}
         <h5>Precio</h5>
 
-        <progress max="5" :value="aux5"></progress>
+        <progress max="5" :value="aux5" style="width:80%"></progress>
         {{ "(" }}{{ this.aux5 }}
         {{ "/5)" }}
         <h5>Textura</h5>
 
-        <progress max="5" :value="aux6"></progress>
+        <progress max="5" :value="aux6" style="width:80%"></progress>
         {{ "(" }}{{ this.aux6 }}
         {{ "/5)" }}
         <h5>Punto de cocción</h5>
 
-        <progress max="5" :value="aux7"></progress>
+        <progress max="5" :value="aux7" style="width:80%"></progress>
         {{ "(" }}{{ this.aux7 }}
         {{ "/5)" }}
         <br />
         <br />
       </div>
       <div class="col-7 mt-2">
-        <h2>Comentarios</h2>
+        <h5><b>Comentarios</b></h5>
         <div class="container">
           <div class="row justify-content-center align-items-center">
             <div v-if="$apollo.loading" class="center">
@@ -83,7 +94,9 @@
         </div>
 
         <div v-for="(item, indice) in this.comments" v-bind:key="indice">
-         <TextArea
+
+          <TextArea
+
             :email="item.client.email"
             :comment="item.review.comments"
           />
@@ -101,13 +114,11 @@ import TextArea from "@/components/cards/TextArea.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import Enterprise from "@/components/order/Enterprise.vue";
-import SubTitle from "@/components/cards/SubTitles.vue";
 
 export default {
   name: "CommentsList",
   components: {
     TextArea,
-    SubTitle,
     LoadingGraphql,
     ConnectionErrorGraphql,
     Enterprise,
@@ -145,7 +156,6 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-          console.log(this.enterprise);
           this.allReviewsMeth1();
         });
     },
@@ -169,10 +179,6 @@ export default {
       var aux6 = 0;
       var aux7 = 0;
       var conttam = 0;
-      //var users = [];
-
-      console.log(this.enterprise);
-      console.log("entré");
       if (this.enterprise.products.edges.length === 0) {
         return;
       }
@@ -190,16 +196,10 @@ export default {
             this.enterprise.products.edges[product].node.orders.edges.length;
             order++
           ) {
-            //console.log("order")
-            //console.log(this.enterprise.products.edges[product].node.orders.edges[order])
             if (
               this.enterprise.products.edges[product].node.orders.edges[order]
                 .node.review !== null
             ) {
-              console.log(
-                this.enterprise.products.edges[product].node.orders.edges[order]
-                  .node.review.comments
-              );
               comments.push(
                 this.enterprise.products.edges[product].node.orders.edges[order]
                   .node
@@ -264,32 +264,28 @@ export default {
       this.auxcont = conttam;
       aux1 = Math.round(aux1 / conttam);
       this.aux1 = aux1;
-      console.log("prom ", aux1);
       aux2 = Math.round(aux2 / conttam);
       this.aux2 = aux2;
-      console.log("prom ", aux2);
       aux3 = Math.round(aux3 / conttam);
       this.aux3 = aux3;
-      console.log("prom ", aux3);
       aux4 = Math.round(aux4 / conttam);
       this.aux4 = aux4;
-      console.log("prom ", aux4);
       aux5 = Math.round(aux5 / conttam);
       this.aux5 = aux5;
-      console.log("prom ", aux5);
       aux6 = Math.round(aux6 / conttam);
       this.aux6 = aux6;
-      console.log("prom ", aux6);
       aux7 = Math.round(aux7 / conttam);
       this.aux7 = aux7;
-      console.log("prom ", aux7);
       this.comments = comments;
       var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
-      console.log(calculo);
+
       this.calculo = calculo;
-      console.log("tamaño array", comments.length);
     },
   },
+<<<<<<< HEAD
+=======
+  apollo: {},
+>>>>>>> 1727391aac8e5c0cb8776844e631849aa7265eb9
   created() {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
@@ -297,6 +293,7 @@ export default {
       this.prueba();
     }
   },
+  mounted() {},
 };
 </script>
 <style>

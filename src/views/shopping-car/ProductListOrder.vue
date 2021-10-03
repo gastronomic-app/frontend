@@ -30,7 +30,10 @@
         <div v-else-if="error" class="d-flex justify-content-center">
           <ConnectionErrorGraphql />
         </div>
+
         <div class="row" v-if="list_products_enterprise !== undefined">
+          <!-- <pagination ref="paginator" name="products" :list="products" :per="5">
+          </pagination> -->
           <div
             class="col-xl-4 col-lg-3 col-md-4 col-sm-12"
             v-for="product in list_products_enterprise.filter(
@@ -52,7 +55,7 @@
                     <span class="float-right mr-2">
                       <button
                         type="button"
-                        class="btn btn-success btn-sm"
+                        class="btn btn_order btn-sm"
                         data-toggle="modal"
                         data-target="#viewProductModal"
                         @click="showProduct(product.node.id)"
@@ -61,7 +64,7 @@
                       </button>
                       <button
                         type="button"
-                        class="btn btn-success btn-sm ml-2"
+                        class="btn btn_order btn-sm ml-2"
                         v-on:click="addItem(product)"
                       >
                         Añadir
@@ -73,6 +76,20 @@
               </template>
             </div>
           </div>
+
+          <!-- <div class="div-paginate">
+            <paginate-links
+              for="products"
+              :classes="{ ul: 'pagination' }"
+              :show-step-links="true"
+            ></paginate-links>
+          </div>
+
+          <div class="div-paginate">
+            <span v-if="$refs.paginator">
+              Viendo {{ $refs.paginator.pageItemsCount }} resultados
+            </span>
+          </div> -->
         </div>
       </div>
       <!--Carrito-->
@@ -100,6 +117,7 @@
                       pr-1
                       pl-1
                       alignment
+                      btn_order1
                     "
                   ></i>
                 </span>
@@ -141,7 +159,7 @@
               <div class="col-sm-2">
                 <label
                   type="button"
-                  class="btn orange p-0"
+                  class="btn orange btn_order1 p-0"
                   v-on:click="deleteItem(item.recoveredProduct.id)"
                 >
                   <strong>X</strong>
@@ -171,7 +189,7 @@
           </div>
           <div class="container text-center">
             <button
-              class="btn btn-success btn-sm mt-3"
+              class="btn btn_order btn-sm mt-3"
               v-on:click="continueOrder()"
             >
               continuar
@@ -212,12 +230,12 @@
             Está a punto de eliminar todo su pedido ¿Desea continuar?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
+            <button type="button" class="btn btn_order" data-dismiss="modal">
               Cerrar
             </button>
             <button
               type="button"
-              class="btn btn-danger"
+              class="btn btn_order"
               v-on:click="deleteCart()"
               data-dismiss="modal"
             >
@@ -269,7 +287,7 @@
             <p></p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
+            <button type="button" class="btn btn_order" data-dismiss="modal">
               Cerrar
             </button>
           </div>
@@ -307,6 +325,8 @@ export default {
       estimatedTime: 0,
       idRecovered: "",
       enterpriseName: "",
+      prods: [],
+      paginate: ["products"],
       // Variable que recibe el error de la consulta
       error: null,
 
@@ -389,7 +409,6 @@ export default {
   },
   methods: {
     showProductEnterprise() {
-      //var idRecovered = "RW50ZXJwcmlzZU5vZGU6MQ==";
       var list_products_enterprise = [];
 
       for (const key in this.allProducts.edges) {
@@ -397,7 +416,6 @@ export default {
           this.allProducts.edges[key].node.enterprise.id == this.idRecovered
         ) {
           list_products_enterprise.push(this.allProducts.edges[key]);
-          //console.log(this.allProducts.edges[key].node);
         }
       }
       this.list_products_enterprise = list_products_enterprise;
@@ -425,7 +443,6 @@ export default {
 
     addItem(product) {
       var bandera = false;
-      //console.log(product.node.id);
       if (this.items.length == 0) {
         this.items.push({ recoveredProduct: product.node, counter: 1 });
       } else {
@@ -488,14 +505,11 @@ export default {
     },
 
     deleteCart() {
-      //if (window.confirm("¿Desea eliminar todos los items?")) {
       this.items.splice(1, this.items.length);
       localStorage.removeItem("items");
       this.deleteVariables();
-      //}
     },
     continueOrder() {
-      //console.log("redirigir");
       this.$router.push({
         name: "OrderConfirmation",
         params: { listado: this.items, enterpriseName: this.enterpriseName },
@@ -558,19 +572,23 @@ export default {
 .bold {
   font-weight: bold;
 }
-.border-bottom {
-  background-color: var(--primary);
-}
 .btn_order {
-  background-color: var(--dark);
-  color: var(--white);
+  background-color: var(--dark-xx);
+  color: var(--orange);
+}
+.btn_order:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order1:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
 }
 .search {
   background: var(--muted);
-}
-.btn_order:hover {
-  background: var(--dark-xx);
-  color: var(--white);
 }
 .alignment {
   color: var(--orange);
@@ -600,10 +618,37 @@ export default {
   padding-bottom: 0%;
   border-radius: 5px;
 }
-</style>
-<style>
 .car {
   background-color: var(--dark);
   color: var(--light);
 }
+/* Paginación */
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-color {
+  background-color: var(--dark-x);
+  color: whitesmoke;
+}
+
+.div-paginate {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.div-width {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.padding-label {
+  padding-bottom: 2px;
+}
+.div {
+  margin-left: 81%;
+}
 </style>
+

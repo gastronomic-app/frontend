@@ -1,8 +1,11 @@
 <template>
   <div>
     <br />
+
     <div class="div-width">
-      <h2><b>DOM BURGUER</b></h2>
+      <h2>
+        <b>{{ enterpriseName }}</b>
+      </h2>
       <h4>Pedidos por despachar</h4>
 
       <!--SELECCIONAR TODOS-->
@@ -22,13 +25,13 @@
       </div>
 
       <!--PAGINACIÓN-->
-      <paginate name="orders" :list="orders" :per="5">
-        <template v-for="(order, index) in paginated('orders')">
+      <paginate ref="paginator" name="orders" :list="orders" :per="5">
+        <template v-for="(order) in paginated('orders')">
           <!--LISTADO DE PEDIDOS-->
           <accordion
             :key="order.id"
             :item="order"
-            :id="index"
+            :id="order.idx"
             :checkbox_use="true"
             v-if="order.status"
           >
@@ -51,14 +54,19 @@
         ></paginate-links>
       </div>
 
+      <div class="div-paginate">
+        <span v-if="$refs.paginator">
+          Viendo {{ $refs.paginator.pageItemsCount }} resultados
+        </span>
+      </div>
+
       <!--BOTON DESPACHAR PEDIDOS-->
       <span class="d-flex justify-content-end">
         <button type="button" class="btn btn-color" v-on:click="dispatch()">
           Despachar Pedidos
         </button>
       </span>
-
-      <br />
+      <br>
     </div>
   </div>
 </template>
@@ -73,14 +81,16 @@ export default {
   components: {
     Accordion,
     LoadingGraphql,
-    ConnectionErrorGraphql,
+    ConnectionErrorGraphql
   },
   data() {
     return {
-      currentPage: 1,
+      enterpriseId: "RW50ZXJwcmlzZU5vZGU6MQ==",
+      enterpriseName: "",
       checked_all: false,
       allOrders: Object, //Todas las ordenes de un establecimiento
       enterprise: Object, //Mensajeros adjuntos a un establecimiento
+      couriers: [],
       error: null,
       orders: [], //Para guardar las órdenes realizadas a un establecimiento transformadas
       paginate: ["orders"],
@@ -88,6 +98,9 @@ export default {
   },
 
   methods: {
+    //TODO: Get the enterprise that is being managed.
+    getEnterpise() {},
+
     /*Despachar los pedidos seleccionados*/
     dispatch() {
       let selectedOrders = this.orders.filter((order) => order.selected);
@@ -110,12 +123,13 @@ export default {
           courier.contact.edges[0].node.names,
           courier.contact.edges[0].node.lastnames
         );
+        //this.emitNotificationCostumer(orderId, courier);
       }
     },
 
     /*Obtener los mensajeros disponibles*/
     getAvailableCouriers() {
-      return this.enterprise.couriers.edges.filter(
+      return this.couriers.filter(
         (courier) => courier.node.isAvailable
       );
     },
@@ -130,10 +144,12 @@ export default {
 
     /**Transformar el formato las órdenes que vienen de la base de datos */
     transform(result) {
+      let count = 0;
       for (let order of result.edges) {
         let productsOrder = this.transformProducts(order.node.details);
         if (productsOrder.belongs) {
           this.orders.push({
+            idx: count,
             id: order.node.id,
             status: order.node.status,
             location: order.node.location,
@@ -141,19 +157,23 @@ export default {
             price: productsOrder.price,
             selected: false,
           });
+          count++;
         }
       }
     },
 
     /**Transformar el formato de los productos provenientes de la BD */
     transformProducts(details) {
+      this.enterpriseId = "RW50ZXJwcmlzZU5vZGU6MQ==";
       let detailsOrder = details.edges.filter(
-        (detail) => detail.node.product.enterprise.name === "dom burguer"
+        (detail) => detail.node.product.enterprise.id === this.enterpriseId
       );
       let prodNames = "",
         prodTotal = 0,
         belong = false;
+
       if (detailsOrder.length > 0) {
+        this.enterpriseName = detailsOrder[0].node.product.enterprise.name;
         belong = true;
         detailsOrder.forEach((detail) => {
           prodNames +=
@@ -174,7 +194,7 @@ export default {
         "¡No se pudo despachar el pedido!",
         "Lo sentimos, no hay mensajeros disponibles para despachar la orden :c",
         "danger",
-        `<i class='bx bx-error' ></i>`,
+        null,
         7000,
         "top-right"
       );
@@ -182,16 +202,12 @@ export default {
 
     /**Construye el toast para despacho exitoso*/
     toastDispatchSuccessful(id, name, lastname) {
+      let text = `La orden #${id} ha sido asignada al mensajero ${name} ${lastname}`;
       this.makeNotification(
-        "¡Pedido despachado exitosamente!",
-        "La orden #" +
-          id +
-          " ha sido asignada al mensajero " +
-          name +
-          " " +
-          lastname,
-        "dark",
-        `<i class='bx bx-select-multiple' ></i>`,
+        "¡El pedido ha sido despachado!",
+        text,
+        "#222222",
+        null,
         7000,
         "top-right"
       );
@@ -199,6 +215,9 @@ export default {
 
     /*Actualizar el estado del mensajero*/
     updateStatusCourier(courierId, status) {
+
+      let idx = this.couriers.findIndex((courier) => courier.node.id === courierId);
+      this.couriers[idx].node.isAvailable = status;
       this.$apollo
         .mutate({
           mutation: require("@/graphql/deliveries/updateCourier.gql"),
@@ -207,12 +226,18 @@ export default {
             isAvailable: status,
           },
           refetchQueries: [
-            { query: require("@/graphql/deliveries/couriersEnterprise.gql") },
+            {
+              query: require("@/graphql/deliveries/couriersEnterprise.gql"),
+              variables: {
+                id: this.enterpriseId,
+              },
+            },
           ],
         })
         .then((response) => {
           console.log("actualización de courier:", response.data);
         });
+
     },
 
     /*Actualizar el estado de la orden*/
@@ -236,26 +261,16 @@ export default {
       this.orders.splice(idx, 1);
     },
 
-    notificationNewOrder() {
-      this.makeNotification(
-        "¡Nuevo pedido registrado!",
-        "Un nuevo pedido ha sido registrado",
-        "dark",
-        `<i class='bx bx-bell' ></i>`,
-        9000,
-        "top-left"
-      );
-    },
-
-    makeNotification(title, text, color, icon, duration, position) {
+    /**Notification with vuesax */
+    makeNotification(titleN, textN, colorN, iconN, durationN, positionN) {
       this.$vs.notification({
-        icon: icon,
-        color: color,
-        position: position,
-        duration: duration,
+        icon: iconN,
+        color: colorN,
+        position: positionN,
+        duration: durationN,
         progress: "auto",
-        title: title,
-        text: text,
+        title: titleN,
+        text: textN,
       });
     },
 
@@ -270,15 +285,32 @@ export default {
           this.transform(response.data.allOrders);
         });
     },
+
+    queryCouriers() {
+      this.$apollo
+        .query({
+          query: require("@/graphql/deliveries/couriersEnterprise.gql"),
+          variables: {
+            id: this.enterpriseId,
+          },
+        })
+        .then((response) => {
+          this.couriers = response.data.enterprise.couriers.edges;
+        });
+    },
   },
 
   mounted() {
+    this.queryCouriers();
     this.queryOrders();
   },
 
   apollo: {
-    enterprise: {
+    /*enterprise: {
       query: require("@/graphql/deliveries/couriersEnterprise.gql"),
+      variables: {
+        id: this.enterpriseId
+      },
       error(error) {
         this.error = JSON.stringify(error.message);
       },
@@ -288,172 +320,10 @@ export default {
       error(error) {
         this.error = JSON.stringify(error.message);
       },
-    },
+    },*/
   },
 };
 </script>
-
-<style>
-.pagination {
-  height: 36px;
-  margin: 18px 0;
-  color: #6c58bf;
-}
-
-.pagination ul {
-  display: inline-block;
-  *display: inline;
-  /* IE7 inline-block hack */
-  *zoom: 1;
-  margin-left: 0;
-  color: #ffffff;
-  margin-bottom: 0;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.pagination li {
-  display: inline;
-  color: var(--orange);
-}
-
-.pagination a {
-  float: left;
-  padding: 0 14px;
-  line-height: 34px;
-  color: var(--orange);
-  text-decoration: none;
-  border: 1px solid #ddd;
-  border-left-width: 0;
-}
-
-.pagination a:hover,
-.pagination .active a {
-  background-color: var(--primary-x);
-  color: #ffffff;
-}
-
-.pagination a:focus {
-  background-color: var(--primary-x);
-  color: #ffffff;
-}
-
-.pagination .active a {
-  color: #ffffff;
-  cursor: default;
-}
-
-.pagination .disabled span,
-.pagination .disabled a,
-.pagination .disabled a:hover {
-  color: #999999;
-  background-color: transparent;
-  cursor: default;
-}
-
-.pagination li:first-child a {
-  border-left-width: 1px;
-  -webkit-border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  border-radius: 3px 0 0 3px;
-}
-
-.pagination li:last-child a {
-  -webkit-border-radius: 0 3px 3px 0;
-  -moz-border-radius: 0 3px 3px 0;
-  border-radius: 0 3px 3px 0;
-}
-
-.pagination-centered {
-  text-align: center;
-}
-
-.pagination-right {
-  text-align: right;
-}
-
-.pager {
-  margin-left: 0;
-  margin-bottom: 18px;
-  list-style: none;
-  text-align: center;
-  color: var(--orange);
-  *zoom: 1;
-}
-
-.pager:before,
-.pager:after {
-  display: table;
-  content: "";
-}
-
-.pager:after {
-  clear: both;
-}
-
-.pager li {
-  display: inline;
-  color: var(--orange);
-}
-
-.pager a {
-  display: inline-block;
-  padding: 5px 14px;
-  color: var(--orange);
-  background-color: #fff;
-  border: 1px solid #ddd;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  border-radius: 15px;
-}
-
-.pager a:hover {
-  text-decoration: none;
-  background-color: #f5f5f5;
-}
-
-.pager .next a {
-  float: right;
-}
-
-.pager .previous a {
-  float: left;
-}
-
-.pager .disabled a,
-.pager .disabled a:hover {
-  color: #999999;
-}
-.pagination > li > a {
-  background-color: white;
-  color: var(--orange);
-}
-
-.pagination > li > a:focus,
-.pagination > li > a:hover,
-.pagination > li > span:focus,
-.pagination > li > span:hover {
-  color: #5a5a5a;
-  background-color: #eee;
-  border-color: #ddd;
-}
-
-.pagination > .active > a {
-  color: white;
-  background-color: var(--orange) !important;
-  border: solid 1px var(--orange) !important;
-}
-
-.pagination > .active > a:hover {
-  background-color: var(--orange) !important;
-  border: solid 1px var(--orange);
-  color: var(--dark);
-}
-</style>
 
 <style scoped>
 .container {
@@ -468,7 +338,6 @@ export default {
 
 .div-paginate {
   margin: 0 auto;
-  text-align: center;
   display: flex;
   justify-content: center;
 }

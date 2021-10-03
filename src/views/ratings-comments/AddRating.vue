@@ -155,19 +155,12 @@
         <b-row>
           <b-col lg="6" class="ml-5 text-center">
             <b-button
-              class="mr-3"
+              class="mr-3 btn_order"
               v-on:click="redirectComments()"
               size="sm"
-              variant="warning"
-              style="background: yellow"
               >Cancelar</b-button
             >
-            <b-button
-              size="sm"
-              variant="warning"
-              style="background: orange"
-              v-on:click="save()"
-            >
+            <b-button class="btn_order" size="sm" v-on:click="save()">
               Guardar
             </b-button></b-col
           >
@@ -281,3 +274,16 @@ export default {
   },
 };
 </script>
+<style scoped>
+.btn_order {
+  background-color: var(--dark-xx);
+  color: var(--orange);
+}
+.btn_order:hover {
+  background: var(--grey-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
+}
+</style>
