@@ -84,7 +84,13 @@
           />
         </div>
         <div>
-          <a href="../add-Rating"> Agregar comentario</a>
+          <button
+        v-on:click=link()
+        type="button"
+        class="btn btn-success btn-sm mr-4"
+      >
+        agregar comentario
+      </button>
         </div>
       </div>
     </div>
@@ -128,6 +134,12 @@ export default {
     };
   },
   methods: {
+    link(){
+      localStorage.idComment = "";
+      localStorage.enterpriseN = "";
+      console.log("datos : ",this.id,this.enterpriseName)
+      this.$router.push({ name: "AddRating", params:{enterpriseId:this.id,enterpriseName:this.enterpriseName}});
+    },
     async prueba() {
       await this.$apollo
         .query({
@@ -135,6 +147,7 @@ export default {
           variables: {
             id: this.id,
           },
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
