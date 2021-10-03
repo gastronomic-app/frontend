@@ -17,9 +17,6 @@
 export default {
   name: "CountCar",
   components: {},
-  // props: {
-  //   total: Number,
-  // },
   data() {
     return {
       ok: "",

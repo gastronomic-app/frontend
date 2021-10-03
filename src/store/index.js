@@ -8,10 +8,19 @@ export default new Vuex.Store({
     count: 0
   },
   mutations: {
-    incrementCount(state){
-      state.count++;
-    }
+    setCount(state, value) {
+      state.count-=value;
+    },
   },
-  actions: {},
+  actions: {
+    setCountAction(context, value) {
+      context.commit("setCount", value);
+    },
+  },
+  getters: {
+    getCount(state) {
+      return state.count;
+    },
+  },
   modules: {},
 });
