@@ -1,7 +1,6 @@
 <template>
   <li id="counting" class="nav-item" v-show="ok">
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
-      <!-- <input id="car_2" type="text " :v-model="localStorage.getItem('car')" /> -->
       <h6 id="counting" class="count" v-if="total != 0">
         {{ $store.getters.getCount }}
       </h6>
@@ -24,10 +23,10 @@ export default {
     };
   },
   mounted() {
-    if (localStorage.getItem("car")) {
+    /*if (localStorage.getItem("car")) {
       this.total = localStorage.getItem("car");
     }
-    console.log("# " + this.total);
+    console.log("# " + this.total);*/
   },
   methods: {
     order() {

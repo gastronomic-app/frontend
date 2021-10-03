@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setCount(state, value) {
-      state.count-=value;
+      state.count=value;
     },
   },
   actions: {

@@ -533,9 +533,6 @@ export default {
 
     //Actualizar el contador de productos adicionado en el carro
     itemExists() {
-      location.reload();
-      //this.$fourceUpdate();
-      //$("#counting").load();
       var itemsCar = new Object();
       var count = 0;
       if (localStorage.getItem("items")) {
@@ -548,8 +545,7 @@ export default {
       } else {
         this.counting = 0;
       }
-      //this.$emit("eventCount", this.counting);
-
+      this.$store.dispatch("setCountAction", this.counting);
       localStorage.car = parseInt(this.counting);
       //console.log("->" + this.counting);
     },
