@@ -1,0 +1,16 @@
+mutation addAccompaniment($fromProductId: ID!, $toProductId: ID!) {
+  addAccompaniment(
+    input: { fromProductId: $fromProductId, toProductId: $toProductId }
+  ) {
+    product {
+      id
+      accompaniments {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  }
+}

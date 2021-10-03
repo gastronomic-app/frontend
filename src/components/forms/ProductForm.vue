@@ -17,11 +17,16 @@
       <!-- Imagen -->
       <div class="input-group">
         <div class="custom-file">
-          <input type="file" @change="uploadFiles" accept="image/*" />
+          <input
+            id="product-image"
+            type="file"
+            @change="uploadFiles"
+            accept="image/*"
+          />
         </div>
       </div>
       <div class="form-group">
-        <button @click="previewImages" class="btn btn-primary mb-2 mt-2 mr-2">
+        <button @click="previewImages" class="btn btn-dark mb-2 mt-2 mr-2">
           {{ show_images ? "Ocultar imagen" : "Visualizar imagen" }}
         </button>
       </div>
@@ -124,21 +129,114 @@
         <label for="btnAddRecommendations"> Acompañamientos </label>
         <br />
         <button
+          v-b-modal.modal-Recommendations
           type="button"
-          class="btn btn-info mb-3"
+          class="btn btn-dark mb-3 mr-3"
           id="btnAddRecommendations"
         >
-          Agregar Acompañamientos
+          Gestionar acompañamientos
         </button>
-        <br />
-        <textarea
-          class="form-control"
-          id="TxtArea-Recomendations"
-          rows="4"
-          placeholder="Por ahora no hay recomendaciones para el producto"
-          v-model="form.accompaniment"
-          readonly
-        ></textarea>
+        <button @click="previewAccompaniments" class="btn btn-dark mb-3">
+          {{
+            this.show_accompaniments
+              ? "Ocultar acompañamientos"
+              : "Visualizar acompañamientos"
+          }}
+        </button>
+        <ol
+          id="lista-recomendaciones"
+          v-if="this.show_accompaniments"
+          class="list-group list-group-numbered"
+        >
+          <li
+            v-for="recommendation in this.recommendation_list"
+            class="
+              list-group-item
+              d-flex
+              justify-content-between
+              align-items-start
+            "
+            :key="recommendation.node.id"
+          >
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">{{ recommendation.node.name }}</div>
+              Ingredientes: {{ recommendation.node.ingredients }}
+            </div>
+            <span
+              class="badge bg-outline-primary rounded-pill orange-background"
+              >$ {{ recommendation.node.price }}</span
+            >
+          </li>
+        </ol>
+      </div>
+
+      <div>
+        <b-modal
+          id="modal-Recommendations"
+          title="Agregar acompañamientos"
+          hide-footer
+        >
+          <div v-for="(groupType, index) in product_types" :key="groupType[0]">
+            <div>
+              <b-card no-body class="mb-1">
+                <b-card-header header-tag="header" class="p-1" role="tab">
+                  <b-button
+                    block
+                    v-b-toggle="'accordion-' + index"
+                    variant="info"
+                    >{{ groupType[0] }}
+                  </b-button>
+                </b-card-header>
+                <b-collapse
+                  :id="'accordion-' + index"
+                  accordion="my-accordion"
+                  role="tabpanel"
+                >
+                  <b-card-body>
+                    <div v-if="allProducts.edges !== undefined">
+                      <div v-for="type in groupType[1]" :key="type[0]">
+                        <b-form-group
+                          :label="type[0]"
+                          v-if="
+                            allProducts.edges.filter(
+                              (element) =>
+                                element.node.productType.includes(type[2]) &&
+                                element.node.active == true &&
+                                element.node.id !== id
+                            ).length > 0
+                          "
+                        >
+                          <b-form-checkbox-group
+                            v-model="recommendation_id_list"
+                          >
+                            <b-form-checkbox
+                              @change="fillRecommendations"
+                              v-for="product in allProducts.edges.filter(
+                                (element) =>
+                                  element.node.productType.includes(type[2]) &&
+                                  element.node.active == true &&
+                                  element.node.id !== id
+                              )"
+                              :value="product.node.id"
+                              :key="product.node.id"
+                              >{{ product.node.name }}</b-form-checkbox
+                            >
+                          </b-form-checkbox-group>
+                        </b-form-group>
+                      </div>
+                    </div>
+                  </b-card-body>
+                </b-collapse>
+              </b-card>
+            </div>
+          </div>
+          <b-button
+            class="mt-3"
+            block
+            @click="$bvModal.hide('modal-Recommendations')"
+            >Cerrar</b-button
+          >
+        </b-modal>
       </div>
 
       <button
@@ -155,7 +253,7 @@
         v-if="id !== null"
         type="submit"
         @click="checkProduct"
-        class="btn btn-success mr-3 mb-2"
+        class="btn btn-outline-success mr-3 mb-2"
         :disabled="inputsEmpty"
       >
         Actualizar producto
@@ -163,7 +261,7 @@
 
       <button
         type="button"
-        class="btn btn-primary mb-2"
+        class="btn btn-outline-dark mb-2"
         @click="redirectProductList"
       >
         Volver
@@ -191,6 +289,9 @@ export default {
       allProducts: Object,
       images_urls: [],
       producto: null,
+      recommendation_id_list: [],
+      recommendation_list: [],
+      edit_recommendation_list: [],
       form: {
         name: "",
         images: [],
@@ -206,44 +307,45 @@ export default {
         [
           "Comidas rapidas",
           [
-            ["Hamburguesa", "hamburguesa"],
-            ["Pizza", "pizza"],
-            ["Sandwich", "sandwich"],
-            ["Pollo", "pollo"],
-            ["Carne", "carne"],
-            ["Otra Comida Rapida", "otra rapida"],
+            ["Hamburguesa", "hamburguesa", "HAMBURGUESA"],
+            ["Pizza", "pizza", "PIZZA"],
+            ["Sandwich", "sandwich", "SANDWICH"],
+            ["Pollo", "pollo", "POLLO"],
+            ["Carne", "carne", "CARNE"],
+            ["Otra Comida Rapida", "otra rapida", "OTRA_RAPIDA"],
           ],
         ],
         [
           "Comidas Tradicionales",
           [
-            ["Mexicana", "mexicana"],
-            ["Asiatica", "asiatica"],
-            ["Italiana", "italiana"],
-            ["Colombiana", "colombiana"],
-            ["Otra Comida Tradicional", "otra tradicional"],
+            ["Mexicana", "mexicana", "MEXICANA"],
+            ["Asiatica", "asiatica", "ASIATICA"],
+            ["Italiana", "italiana", "ITALIANA"],
+            ["Colombiana", "colombiana", "COLOMBIANA"],
+            ["Otra Comida Tradicional", "otra tradicional", "OTRA_TRADICIONAL"],
           ],
         ],
         [
           "Saludables",
           [
-            ["Ensalada", "ensalada"],
-            ["Vegana", "vegana"],
+            ["Ensalada", "ensalada", "ENSALADA"],
+            ["Vegana", "vegana", "VEGANA"],
           ],
         ],
         [
           "Bebidas",
           [
-            ["Gaseosa", "gaseosa"],
-            ["Jugo o Batido", "jugo o batido"],
-            ["Alcoholica", "alcoholica"],
-            ["Infusion", "infusion"],
+            ["Gaseosa", "gaseosa", "GASEOSA"],
+            ["Jugo o Batido", "jugo o batido", "JUGO_O_BATIDO"],
+            ["Alcoholica", "alcoholica", "ALCOHOLICA"],
+            ["Infusion", "infusion", "INFUSION"],
           ],
         ],
       ],
 
       show: true,
       show_images: false,
+      show_accompaniments: ~false,
     };
   },
 
@@ -276,10 +378,25 @@ export default {
       });
       this.form.imageId = producto.images.edges[0].node.id;
       this.images_urls.push(producto.images.edges[0].node.url);
+      producto.accompaniments.edges.forEach((accompaniment) => {
+        if (accompaniment.node.active) {
+          this.recommendation_id_list.push(accompaniment.node.id);
+        }
+      });
+      this.edit_recommendation_list = this.recommendation_id_list;
+      this.fillRecommendations();
     }
   },
 
   methods: {
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
     redirectProductList() {
       this.$router.push({ name: "ProductsList" });
     },
@@ -298,9 +415,18 @@ export default {
         (producto.length == 1 && this.id == producto[0].node.id)
       ) {
         this.editProduct();
+        this.makeToast(
+          "success",
+          "Producto actualizado",
+          "El producto ha sido actualizado",
+          4000
+        );
       } else {
-        alert(
-          JSON.stringify("Ya se encuentra un producto con ese mismo nombre")
+        this.makeToast(
+          "warning",
+          "Datos incorrectos",
+          "Ya se encuentra un producto con el mismo nombre",
+          4000
         );
       }
     },
@@ -332,9 +458,19 @@ export default {
         .then((response) => {
           console.log("creación de producto:", response.data);
           this.uploadImage(response.data.createProduct.product.id);
+          this.recommendation_id_list.forEach((recommendation) => {
+            this.addRecommendations(
+              response.data.createProduct.product.id,
+              recommendation
+            );
+          });
+          this.makeToast(
+            "success",
+            "Producto creado",
+            "Producto " + this.form.name + " ha sido creado",
+            4000
+          );
         });
-      alert(JSON.stringify("El producto se creó exitosamente"));
-
       this.$router.push({ name: "ProductsList" });
     },
 
@@ -360,30 +496,57 @@ export default {
         })
         .then((response) => {
           console.log("actualización de producto:", response.data);
+          console.log(this.recommendation_id_list);
+
           if (this.form.images.length != 0) {
             this.updateImage(this.form.imageId);
-          } else {
-            this.$router.push({ name: "ProductsList" });
           }
-          alert(JSON.stringify("El producto se actualizó exitosamente"));
+
+          const added_recommendations = this.recommendation_id_list.filter(
+            (x) => !this.edit_recommendation_list.includes(x)
+          );
+          const removed_recommendations = this.edit_recommendation_list.filter(
+            (x) => !this.recommendation_id_list.includes(x)
+          );
+
+          added_recommendations.forEach((recommendation) => {
+            this.addRecommendations(this.id, recommendation);
+          });
+          removed_recommendations.forEach((recommendation) => {
+            this.deleteRecommendations(this.id, recommendation);
+          });
+          this.$router.push({ name: "ProductsList" });
         });
-    },
-    onCancel(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.form));
     },
     uploadFiles(event) {
       event.preventDefault();
-      this.form.images = event.target.files;
-      this.images_urls = [];
-      this.form.images.forEach((file) => {
-        const fileImage = file;
-        this.images_urls.push(URL.createObjectURL(fileImage));
-      });
+      const fileName = document.getElementById("product-image").value;
+      const idxDot = fileName.lastIndexOf(".") + 1;
+      const extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+      if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+        this.form.images = event.target.files;
+        this.images_urls = [];
+        this.form.images.forEach((file) => {
+          const fileImage = file;
+          this.images_urls.push(URL.createObjectURL(fileImage));
+        });
+      } else {
+        this.form.images = [];
+        this.makeToast(
+          "warning",
+          "Datos incorrectos",
+          "Solo jpg/jpeg y png estan permitidos.",
+          4000
+        );
+      }
     },
     previewImages(event) {
       event.preventDefault();
       this.show_images = ~this.show_images;
+    },
+    previewAccompaniments(event) {
+      event.preventDefault();
+      this.show_accompaniments = ~this.show_accompaniments;
     },
 
     uploadImage(id) {
@@ -402,7 +565,6 @@ export default {
           { query: require("@/graphql/product/allProducts.gql") },
         ],
       });
-
     },
     updateImage(id) {
       if (!this.form.images.length) {
@@ -420,8 +582,45 @@ export default {
           { query: require("@/graphql/product/allProducts.gql") },
         ],
       });
+    },
+    fillRecommendations() {
+      this.recommendation_list = [];
+      this.recommendation_id_list.forEach((id_product) =>
+        this.recommendation_list.push(
+          this.allProducts.edges.filter(
+            (element) => element.node.id == id_product
+          )[0]
+        )
+      );
+    },
+    deleteRecommendations(idProducto, idRecomendacion) {
+      this.$apollo.mutate({
+        // Establece la mutación de eliminar recomendaciones
+        mutation: require("@/graphql/product/deleteAccompaniment.gql"),
+        // Define las variables
+        variables: {
+          fromProductId: idProducto,
+          toProductId: idRecomendacion,
+        },
+        refetchQueries: [
+          { query: require("@/graphql/product/allProducts.gql") },
+        ],
+      });
+    },
 
-      this.$router.push({ name: "ProductsList" });
+    addRecommendations(idProducto, idRecomendacion) {
+      this.$apollo.mutate({
+        // Establece la mutación de editar
+        mutation: require("@/graphql/product/addAccompaniment.gql"),
+        // Define las variables
+        variables: {
+          fromProductId: idProducto,
+          toProductId: idRecomendacion,
+        },
+        refetchQueries: [
+          { query: require("@/graphql/product/allProducts.gql") },
+        ],
+      });
     },
   },
   apollo: {
@@ -448,7 +647,6 @@ export default {
         this.form.preparation_time.trim() === "" ||
         this.form.product_type.trim() === "" ||
         (!this.form.images.length && this.id == null)
-
       ) {
         return true;
       }
@@ -457,3 +655,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.bg-cart {
+  background-color: var(--dark-x);
+}
+.color-black {
+  color: white;
+}
+.orange {
+  color: orange;
+}
+.orange-background {
+  background-color: orange;
+}
+</style>
