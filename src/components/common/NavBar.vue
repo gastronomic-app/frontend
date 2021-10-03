@@ -31,7 +31,7 @@
             <li class="nav-item mr-3" v-show="ok">
               <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
             </li>
-            <Count></Count>
+            <Count :total="count"></Count>
             <li class="nav-item mr-3">
               <span class="nav-link separator" href="#">|</span>
             </li>
@@ -184,6 +184,10 @@ export default {
   //   console.log("# " + this.count)
   // },
   methods: {
+    /*getCount(value) {
+      this.count = value;
+      debugger;
+    },*/
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
