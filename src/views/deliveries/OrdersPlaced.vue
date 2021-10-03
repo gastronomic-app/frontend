@@ -46,7 +46,10 @@
               <h5>
                 Establecimiento: <b>{{ order.enterprise }}</b>
               </h5>
-              <h5>Lugar de entrega: {{ order.route.destination.address }}</h5>
+              <h5>Lugar de entrega: {{ order.route.destination }}</h5>
+              <h5>
+                Tiempo estimado de preparation: {{order.preparationTime}} minutos.
+              </h5>
               <h5>
                 Tu pedido llegara en:
                 <b style="color: var(--orange)"
@@ -129,7 +132,7 @@ export default {
   },
   data() {
     return {
-      exitsOrders: false,
+      exitsOrders: true,
       existsTimes: false,
       isReady: false,
       user: {},
@@ -149,17 +152,12 @@ export default {
           query: require("@/graphql/deliveries/ordersPlaced.gql"),
         })
         .then((response) => {
-    
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
-          
             if (value) {
               // this.getCompleteAddress();
-              this.getDurationDistance().then(() => {
-                this.isReady = true;
-              });
-            }
-            else{
-              this.exitsOrders=false;
+              this.getDurationDistance(this.orders);
+            } else {
+              this.exitsOrders = false;
             }
 
             //
@@ -207,8 +205,9 @@ export default {
       }
       return { origins: origins, destinations: destinations };
     },
-    async getDurationDistance() {
+    async getDurationDistance(orders) {
       const objRoute = this.getOriginsDestinations();
+
       const distanceMatrix = new google.maps.DistanceMatrixService();
       distanceMatrix.getDistanceMatrix(
         {
@@ -218,20 +217,23 @@ export default {
         },
         async (response) => {
           for (let i = 0; i < response.rows.length; i++) {
-            if (response.rows[i].elements[i].status === "OK") {
+            if (response.rows[0].elements[0].status === "OK") {
               let elements = await response.rows[i].elements[i];
-              this.orders[i].route.distance = elements.distance.text;
-              this.orders[i].route.duration.durationFormatted =
-                elements.duration.text;
-              this.orders[i].route.duration.durationInSec =
-                elements.duration.value;
+
+              orders[i].route.distance = await elements.distance.text;
+              orders[i].route.duration.durationFormatted = await elements
+                .duration.text;
+              orders[i].route.duration.durationInSec = await elements.duration
+                .value;
             } else {
-              this.error = "No results found";
+              orders[i].route.distance = 0;
+              orders[i].route.duration.durationFormatted = 0;
+              orders[i].route.duration.durationInSec = 0;
             }
           }
+          this.getEstimatedTime();
         }
       );
-      this.getEstimatedTime();
     },
     showRoute(routes) {
       const directionsService = new google.maps.DirectionsService();
@@ -259,8 +261,8 @@ export default {
                   content: `<i class ="bi-geo-alt-fill alternate icon"></i> ${route.origin}`,
                   position: new google.maps.LatLng(value.lat, value.lng),
                 });
-                
-                 originLabel.open(map, null);
+
+                originLabel.open(map, null);
               });
 
               this.getCompleteAddress(route.destination).then((value) => {
@@ -312,6 +314,7 @@ export default {
       let allOrders = data.filter(
         (user) => user.node.client.email === this.user.email
       );
+
       if (allOrders.length > 0) {
         for (let order of allOrders) {
           let newOrder = {
@@ -319,9 +322,9 @@ export default {
             date: order.node.date,
             products: [],
             enterprise: "",
-            cost: "",
+            cost: 0,
             selected: false,
-            estimatedTime: { hours: "", min: "", sec: "" },
+            estimatedTime: { hours: 0, min: 0, sec: 0 },
             preparationTime: "",
             route: {
               origin: {},
@@ -346,7 +349,6 @@ export default {
           newOrder.preparationTime = order.node.estimatedTime;
           newOrder.route.destination = order.node.location;
           this.orders.push(newOrder);
-         
         }
         return true;
       } else {
@@ -363,14 +365,19 @@ export default {
       return { hours: hours, min: minute, sec: second };
     },
     getCurrentUser() {
-      this.user = JSON.parse(localStorage.getItem("user"));
+      let localUser = JSON.parse(localStorage.getItem("user"));
+      if (localUser.type === "CLIENT") {
+        this.user = localUser;
+      } else {
+        this.$destroy();
+        this.$router.push({ path: "/" });
+      }
     },
     getEstimatedTime() {
       for (const order of this.orders) {
         if (this.existsTimes) {
-          order.estimatedTime = this.currentTimes.find(
-            ({ id }) => id === order.id
-          );
+          const localtime = this.currentTimes.find(({ id }) => id === order.id);
+          order.estimatedTime = this.thereisTime(localtime) ? localtime : 0;
         } else {
           let preparation =
             order.preparationTime > 0
@@ -380,8 +387,26 @@ export default {
             order.route.duration.durationInSec + preparation
           );
           order.estimatedTime = time;
+        
         }
       }
+      this.exitsOrders = true;
+      this.isReady = true;
+    },
+    thereisTime(time) {
+      const date = new Date();
+      const currenttime = {
+        hours: date.getHours(),
+        min: date.getMinutes(),
+        sec: date.getSeconds(),
+      };
+      let hours = currenttime.hours - parseInt(time.hours);
+      let min = currenttime.min - parseInt(time.min);
+      let sec = currenttime.sec - parseInt(time.sec);
+      if (hours <= 0 && min <= 0 && sec <= 0) {
+        return false;
+      }
+      return true;
     },
     getCurrentTime(time) {
       let idx = this.currentTimes.findIndex((element, idx) => {

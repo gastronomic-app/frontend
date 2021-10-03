@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ getNickName() }}
     <div class="row ml-1">
       <h6 class="font-weight-bold">{{ user }}</h6>
     </div>
