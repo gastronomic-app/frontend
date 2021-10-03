@@ -1,7 +1,7 @@
 {
-  allProducts{
-    edges{
-      node{
+  allProducts {
+    edges {
+      node {
         id
         productType
         name
@@ -9,12 +9,26 @@
         ingredients
         preparation
         estimatedTime
-        enterprise{
+        active
+        accompaniments {
+          edges {
+            node {            
+              id
+              name
+              productType
+              price
+              ingredients
+              preparation
+              active
+            }
+          }
+        }
+        enterprise {
           id
         }
-        images{
-          edges{
-            node{
+        images {
+          edges {
+            node {
               id
               url
             }

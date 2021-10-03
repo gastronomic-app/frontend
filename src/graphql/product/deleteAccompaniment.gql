@@ -1,0 +1,15 @@
+mutation deleteAccompaniment($fromProductId: ID!, $toProductId: ID!) {
+  deleteAccompaniment(
+    input: { fromProductId: $fromProductId, toProductId: $toProductId }
+  ) {
+    product {
+      accompaniments {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+}
