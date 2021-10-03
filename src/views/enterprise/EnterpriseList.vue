@@ -30,7 +30,7 @@
             <a class="dropdown-item" href="#">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
             <a class="dropdown-item" href="#">Gestionar pedidos</a>
-            <a class="dropdown-item" href="#">Obtener informes</a>
+            <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
           </div>
 
           </div>
@@ -96,6 +96,14 @@ export default {
   methods: {
     redirectExampleAdd() {
       this.$router.push({ name: "ExampleAdd" });
+    },
+    redirectEnterpriseReport(idEnterprise){
+      console.log("enviar id por url", idEnterprise);
+
+      this.$router.push({
+        name: "reportEnterprise",
+        params: { id: idEnterprise },
+      });
     },
     /**
      * Redirige a la vista de editar empresa

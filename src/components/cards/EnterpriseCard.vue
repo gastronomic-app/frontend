@@ -21,6 +21,7 @@
       <h5 class="card-title font-weight-bold">
         {{ enterprise.name | capitalize }}
       </h5>
+      <p class="card-text">{{ enterprise.historicalReview | capitalize }}</p>
       <p class="card-text">{{ enterprise.location | capitalize }}</p>
       <p class="card-text">Horario de atención:</p>
       <p class="card-text">

@@ -21,6 +21,7 @@
             class="form-control"
             id="enterpriseInputLocation"
             placeholder="Ubicación del establecimiento"
+            readonly
             v-model="location"
         />
         </div>
@@ -76,7 +77,7 @@
                 <th scope="row " id="thead__H">Lunes</th>
                 <td>
                     <label class="custom-checkbox" tab-index="0">
-                        <input type="checkbox" checked />
+                        <input id="checkboxLunes" type="checkbox" checked />
                         <span class="checkmark"></span>
                     </label>
                 </td>
@@ -332,7 +333,8 @@ methods: {
     editEnterprise() {
 
         /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
-
+        //let lunesStatus = document.getElementById("checkboxDay").checked;
+        //console.log(lunesStatus);
         let lunesI = document.getElementById("lunesInicio").value;
         let lunesC = document.getElementById("lunesCierre").value;
 
