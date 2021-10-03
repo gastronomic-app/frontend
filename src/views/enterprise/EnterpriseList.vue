@@ -72,14 +72,11 @@ export default {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
       allEnterprises: Object,
-      allProducts: Object,
-
       currentPage: 1,
       page: 1,
       perpage: 3,
       Enterprises: [],
-      Products: [],
-      paginate: ["Enterprises","Products"],
+      paginate: ["Enterprises"],
       // Variable que recibe el error de la consulta
       error: null,
     };
@@ -142,7 +139,7 @@ export default {
   /**
    * Consulta simple que debe definir el mismo nombre en la sección data
    */
-  /*apollo: {
+  apollo: {
     allEnterprises: {
       // Consulta
       query: require("@/graphql/enterprise/allEnterprises.gql"),
@@ -151,7 +148,15 @@ export default {
         this.error = JSON.stringify(error.message);
       },
     },
-  },*/
+    allProducts: {
+      // Consulta
+      query: require("@/graphql/product/allProducts.gql"),
+      // Asigna el error a la variable definida en data
+      error(error) {
+        this.error = JSON.stringify(error.message);
+      },
+    },
+  },
 };
 </script>
 
