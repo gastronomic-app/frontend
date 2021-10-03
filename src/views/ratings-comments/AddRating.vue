@@ -156,11 +156,14 @@
           <b-col lg="6" class="ml-5 text-center">
             <b-button
               class="mr-3 btn_order"
-              v-on:click="redirectComments()"
+              v-on:click="link()"
               size="sm"
               >Cancelar</b-button
             >
-            <b-button class="btn_order" size="sm" v-on:click="save()">
+            <b-button class="btn_order"
+              size="sm"
+              v-on:click="save()"
+            >
               Guardar
             </b-button></b-col
           >
@@ -183,6 +186,9 @@ export default {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
       allReviews: Object,
+      enterprise: Object,
+      enterpriseName: "",
+      ok: localStorage.getItem("existUser"),
       // Variable que recibe el error de la consulta
       error: null,
       quality: 0,
@@ -194,11 +200,26 @@ export default {
       cooking: 0,
       comment: "",
       idOrder: "",
+      idClient: "",
+      emailUser:"",
     };
   },
   methods: {
-    redirectComments() {
-      this.$router.push({ name: "CommentsList" });
+    async showComent() {
+      await this.$apollo
+        .query({
+          query: require("@/graphql/comments/allOrder.gql"),
+          variables: {
+            id: this.id,
+          },
+          //línea para actualizar
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          this.enterprise = response.data.enterprise;
+          
+          //this.save();
+        });
     },
     mostrarValores() {
       //método no funcional, solo para comprobar
@@ -229,10 +250,21 @@ export default {
         return "bueno";
       }
     },
-    save() {
-      console.log("Pasando por Guardar");
-      this.idOrder = "T3JkZXJOb2RlOjEz";
-      this.mostrarValores();
+    update() {
+      //console.log("creacion");
+      this.ok = localStorage.getItem("existUser");
+      if (this.ok) {
+        let user = JSON.parse(localStorage.getItem("user"));
+        this.idClient = user.id;
+        this.emailUser = user.email;
+        console.log("Email: ",user.email)
+        console.log("Id Cliente:  ", this.idClient);
+      }
+    },
+    sendData(){
+       console.log("Pasando por Guardar");
+      //this.idOrder = "T3JkZXJOb2RlOjEz";
+      //this.mostrarValores();
       this.$apollo
         .mutate({
           // Establece la mutación de crear
@@ -249,28 +281,103 @@ export default {
             comments: this.comment,
             orderId: this.idOrder,
           },
+          //línea para actualizar
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           console.log("creación de Comment:", response.data);
         });
-      //Redirigir a lista de comentarios.
-      this.redirectComments();
+        
     },
+    link(){
+      localStorage.idCaught= "";
+      //localStorage.enterpriseC = "";
+      console.log("datos : ",this.id)
+      this.$router.push({ name: "CommentsList", params:{idCaught:this.id} });
+    },
+    save() {
+      let bnd_comment=0;
+      let bnd_review=0;
+      console.log("Entro en save");
+      //if (this.enterprise.products.edges.length == 0) {
+        //console.log("Empresa no tiene productos");
+        //}else{
+        for (
+        var product = 0;
+        product < this.enterprise.products.edges.length;
+        product++
+      ) {
+        console.log("Número empresa: ",product);
+        if (
+          this.enterprise.products.edges[product].node.orders.edges.length !== 0
+        ) {
+          for (
+            var order = 0;
+            order <
+            this.enterprise.products.edges[product].node.orders.edges.length;
+            order++
+          ) {
+            if (
+              this.enterprise.products.edges[product].node.orders.edges[order]
+                .node !== null
+            ) {
+              this.update();
+                //Condición para validar que el usuario registrado tenga ordenes
+                if((this.emailUser == this.enterprise.products.
+                edges[product].node.orders.edges[order].node.client.email)){
+                    //Guardo id de la orden
+                    console.log("TIENE ORDEN")
+                    this.idOrder=this.enterprise.products.edges[product].node.orders
+                    .edges[order].node.id
+                    //Mostramos review
+                    if(this.enterprise.products.edges[product].node.orders.edges[order].node.review!=null){
+                      bnd_review++;
+                    }
+                    //Aumentamos Bandera de que tiene orden
+                    bnd_comment++;
+                }else{
+                  console.log("No entró");
+                }              
+            }
+            
+          }
+        }
+      }
+     
+      if(bnd_review==0 && bnd_comment!=0){
+        //console.log("Entro en sendData")
+        this.sendData();
+        this.link();
+      }
+      if(bnd_review!=0){
+        confirm("Ya tiene un comentario");
+        this.link();
+      }
+ 
+      if(bnd_comment==0){
+        confirm("No tiene orden");
+        this.link();
+      }
+      }
+      //confirm("Empresa no tiene producto");
+      //this.link();
+      //},
   },
   computed: {
     commentState() {
       return this.comment.length > 2 ? true : false;
     },
   },
-  apollo: {
-    allReviews: {
-      // Consulta
-      query: require("@/graphql/comments/allReviews.gql"),
-      // Asigna el error a la variable definida en data
-      error(error) {
-        this.error = JSON.stringify(error.message);
-      },
-    },
+  created() {
+    if ((localStorage.getItem("idComment") == "" ) && (localStorage.getItem("enterpriseN")=="")) {
+
+      this.id = this.$route.params.enterpriseId;
+      this.enterpriseName = this.$route.params.enterpriseName;
+      localStorage.idComment = this.id;
+      localStorage.enterpriseN = this.enterpriseName;
+      console.log("Id Recibido : ",this.id,"---",this.enterpriseName);
+      this.showComent();
+    }
   },
 };
 </script>
