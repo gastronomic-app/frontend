@@ -40,10 +40,6 @@ export default new Vuex.Store({
   },
   getters: {
     getCount(state) {
-      /*if (localStorage.getItem("car")) {
-        state.count = parseInt(localStorage.getItem("car"));
-        return state.count;
-      } else {}*/
       return state.count;
     },
   },

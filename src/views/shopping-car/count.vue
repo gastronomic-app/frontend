@@ -38,7 +38,44 @@ export default {
       var current_url = window.location.href;
       var page = current_url.split("/");
       page = page[page.length - 1];
-      if (
+      console.log(page);
+
+      if (page != "products-order") {
+        if (page != "") {
+          this.$router.push({
+            name: "catalogSearch",
+          });
+        }
+        if (this.$store.getters.getCount != 0) {
+          this.$router.push({
+            name: "ProductListOrder",
+            params: {
+              id: localStorage.getItem("idEnterprise"),
+              name: localStorage.getItem("enterpriseName"),
+            },
+          });
+        }
+      }
+
+      /*  if (this.$store.getters.getCount != 0 && page != "products-order") {
+        this.$router.push({
+          name: "ProductListOrder",
+          params: {
+            id: localStorage.getItem("idEnterprise"),
+            name: localStorage.getItem("enterpriseName"),
+          },
+        });
+        console.log("Tenemos");
+      } else {
+        if (page != "") {
+          this.$router.push({
+            name: "catalogSearch",
+          });
+        }
+        console.log("No Tenemos");
+      }
+
+       if (
         localStorage.getItem("idEnterprise") &&
         localStorage.getItem("enterpriseName")
       ) {
@@ -52,7 +89,13 @@ export default {
             },
           });
         }
-      }
+
+        if (page != "products-order") {
+          this.$router.push({
+            name: "catalogSearch",
+          });
+        }
+      }*/
     },
   },
   created() {

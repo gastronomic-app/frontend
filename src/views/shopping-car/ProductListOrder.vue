@@ -538,7 +538,7 @@ export default {
 
     //Actualizar el contador de productos adicionado en el carro
     itemExists() {
-      /*var itemsCar = new Object();
+      var itemsCar = new Object();
       var count = 0;
       if (localStorage.getItem("items")) {
         itemsCar = JSON.parse(localStorage.getItem("items")); //lo que habia antes de recargar
@@ -549,7 +549,10 @@ export default {
         this.counting = count;
       } else {
         this.counting = 0;
-      }*/
+      }
+      if (this.counting == 0) {
+        localStorage.removeItem("items");
+      }
       localStorage.car = parseInt(this.$store.getters.getCount);
       //console.log("->" + this.counting);
     },
@@ -558,6 +561,7 @@ export default {
       localStorage.removeItem("items");
       localStorage.removeItem("envio");
       localStorage.removeItem("total");
+      localStorage.removeItem("car");
     },
     saveItems() {
       const parsed = JSON.stringify(this.items);
