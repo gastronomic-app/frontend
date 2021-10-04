@@ -24,15 +24,12 @@ export default {
       this.total = parseInt(localStorage.getItem("car"));
       this.$store.dispatch("setStorageCountAction", this.total);
     }
-    console.log("# " + this.total);
   },
   methods: {
     order() {
       var current_url = window.location.href;
       var page = current_url.split("/");
       page = page[page.length - 1];
-      console.log(page);
-
       if (page != "products-order") {
         if (page != "" && this.$store.getters.getCount == 0) {
           this.$router.push({

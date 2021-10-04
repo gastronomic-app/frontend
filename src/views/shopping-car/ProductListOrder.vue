@@ -296,7 +296,6 @@
     </div>
   </div>
 </template>
-<script src="https://code.jquery.com/jquery-latest.js"></script>
 
 <script>
 import ProductCard from "@/components/order/CardProduct.vue";
@@ -532,7 +531,6 @@ export default {
       this.deleteVariables();
       this.itemExists();
       this.$store.dispatch("setStorageCountAction", 0);
-      console.log("Eliminado todo: " + this.$store.getters.getCount);
       localStorage.car = 0;
     },
     continueOrder() {

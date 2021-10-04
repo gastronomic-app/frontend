@@ -10,15 +10,12 @@ export default new Vuex.Store({
   mutations: {
     decrementCount(state) {
       state.count = state.count - 1;
-      console.log("Dec... " + state.count + " (" + typeof this.state.count + ") ");
     },
     incrementCount(state) {
       state.count = state.count + 1;
-      console.log("Inc... " + state.count + " (" + typeof this.state.count + ") ");
     },
     setCount(state, value) {
       state.count = state.count - value;
-      console.log("Set... " + state.count + " (" + typeof this.state.count + ") ");
     },
     setCountStorage(state, value) {
       state.count = value;
