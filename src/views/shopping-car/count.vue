@@ -16,14 +16,13 @@ export default {
   data() {
     return {
       ok: "",
+      total: 0,
     };
   },
   mounted() {
     if (localStorage.getItem("car")) {
-      this.$store.dispatch(
-        "setStorageCountAction",
-        parseInt(localStorage.getItem("car")) + 1
-      );
+      this.total = parseInt(localStorage.getItem("car"));
+      this.$store.dispatch("setStorageCountAction", this.total);
     }
     console.log("# " + this.total);
   },

@@ -463,6 +463,7 @@ export default {
         this.saveItems();
         this.itemExists();
         this.$store.dispatch("incrementCountAction");
+        localStorage.car =  this.$store.getters.getCount;
       } else {
         this.$router.push({
           name: "Login",
@@ -474,6 +475,7 @@ export default {
       for (var index = 1; index < this.items.length; index++) {
         if (id == this.items[index].recoveredProduct.id) {
           this.$store.dispatch("setCountAction", this.items[index].counter);
+          localStorage.car = this.$store.getters.getCount;
           this.items.splice(index, 1);
           this.saveItems();
           this.itemExists();
@@ -489,6 +491,7 @@ export default {
       this.saveItems();
       this.itemExists();
       this.$store.dispatch("incrementCountAction");
+      localStorage.car = this.$store.getters.getCount;
     },
     updateTotal() {
       var sumatoria = 0;
@@ -520,6 +523,7 @@ export default {
       }
       this.saveItems();
       this.$store.dispatch("decrementCountAction");
+      localStorage.car = this.$store.getters.getCount;
     },
 
     deleteCart() {
@@ -529,6 +533,7 @@ export default {
       this.itemExists();
       this.$store.dispatch("setStorageCountAction", 0);
       console.log("Eliminado todo: " + this.$store.getters.getCount);
+      localStorage.car = 0;
     },
     continueOrder() {
       this.$router.push({
@@ -539,7 +544,7 @@ export default {
 
     //Actualizar el contador de productos adicionado en el carro
     itemExists() {
-      var itemsCar = new Object();
+      /*var itemsCar = new Object();
       var count = 0;
       if (localStorage.getItem("items")) {
         itemsCar = JSON.parse(localStorage.getItem("items")); //lo que habia antes de recargar
@@ -555,7 +560,7 @@ export default {
         localStorage.removeItem("items");
       }
       localStorage.car = parseInt(this.$store.getters.getCount);
-      console.log("->" + localStorage.car);
+      console.log("->" + localStorage.car);*/
     },
 
     deleteVariables() {
