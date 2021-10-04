@@ -51,8 +51,14 @@
 export default {
   name: "Report",
   props: {
-    deliveryId: String,
-    enterprise: String,
+    deliveryId: {
+      type: String,
+      required: true,
+    },
+    enterprise: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -60,14 +66,8 @@ export default {
         type: Array,
         default: null,
       },
-      optionSelected: {
-        type: Object,
-        default: null,
-      },
-      messageWrite: {
-        type: String,
-        default: "Escriba un comentario con su inconveniente"
-      }
+      optionSelected: null,
+      messageWrite: null,
     };
   },
   created() {
@@ -91,25 +91,54 @@ export default {
     }
   },
   methods: {
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
+    validate() {
+      // Decide que valor enviar
+      if (this.optionSelected) {
+        return this.optionSelected;
+      } else if (this.messageWrite) {
+        return this.messageWrite;
+      }
+    },
     sendReport() {
-      // this.$apollo.mutate({
-      //   mutation: require("@/graphql/"),
-      //   variables: {
-      //     id: this.id,
-      //     report: this.optionSelected,
-      //   },
-      // });
+      let value = this.validate();
 
-      this.$router.push({ name: "ExampleList" });
+      // Generar reporte a la orden de pedido
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/deliveries/generateReport.gql"),
+          variables: {
+            id: this.deliveryId,
+            complaint: value,
+          },
+        })
+        .then(() => {
+          this.makeToast(
+            "success",
+            "Reporte",
+            "El reporte ha sido enviado con exito.",
+            5000
+          );
+        });
+
+      // Redirección a otra página
+      this.$router.push({ name: "catalogSearch" });
     },
   },
   computed: {
+    // Deshabilita el botón de enviar
     inputEmpty() {
-      console.log(this.optionSelected);
-      if (this.optionSelected === null) {
-        return true;
+      if (this.optionSelected || this.messageWrite) {
+        return false;
       }
-      return false;
+      return true;
     },
   },
 };
