@@ -1,0 +1,13 @@
+query all_reports($id:String,$sDate:DateTime,$fDate:DateTime){
+  
+  reports(enterprise: $id, startDate: $ sDate, finalDate:$fDate) {
+    enterprise
+    reportList{
+      reportDate
+      paymentValue
+    }
+    finalDate
+    startDate
+    totalValue
+  }
+}
