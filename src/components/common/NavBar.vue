@@ -31,7 +31,7 @@
             <li class="nav-item mr-3" v-show="ok">
               <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
             </li>
-            <Count :total="count"></Count>
+            <Count></Count>
             <li class="nav-item mr-3">
               <span class="nav-link separator" href="#">|</span>
             </li>
@@ -159,7 +159,7 @@
  * Barra de navegación común
  */
 import GoogleLogin from "vue-google-login";
-import Count from "@/views/shopping-car/count.vue";
+import Count from "@/views/shopping-car/Count.vue";
 export default {
   name: "NavBar",
   components: {

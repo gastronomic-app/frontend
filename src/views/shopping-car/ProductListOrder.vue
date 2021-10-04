@@ -462,6 +462,7 @@ export default {
         }
         this.saveItems();
         this.itemExists();
+        this.$store.dispatch("incrementCountAction");
       } else {
         this.$router.push({
           name: "Login",
@@ -472,6 +473,7 @@ export default {
     deleteItem(id) {
       for (var index = 1; index < this.items.length; index++) {
         if (id == this.items[index].recoveredProduct.id) {
+          this.$store.dispatch("setCountAction", this.items[index].counter);
           this.items.splice(index, 1);
           this.saveItems();
           this.itemExists();
@@ -486,6 +488,7 @@ export default {
       }
       this.saveItems();
       this.itemExists();
+      this.$store.dispatch("incrementCountAction");
     },
     updateTotal() {
       var sumatoria = 0;
@@ -516,6 +519,7 @@ export default {
         }
       }
       this.saveItems();
+      this.$store.dispatch("decrementCountAction");
     },
 
     deleteCart() {
@@ -523,6 +527,7 @@ export default {
       localStorage.removeItem("items");
       this.deleteVariables();
       this.itemExists();
+      this.$store.dispatch("setCountAction", this.$store.getters.getCount);
     },
     continueOrder() {
       this.$router.push({
@@ -533,7 +538,7 @@ export default {
 
     //Actualizar el contador de productos adicionado en el carro
     itemExists() {
-      var itemsCar = new Object();
+      /*var itemsCar = new Object();
       var count = 0;
       if (localStorage.getItem("items")) {
         itemsCar = JSON.parse(localStorage.getItem("items")); //lo que habia antes de recargar
@@ -544,9 +549,8 @@ export default {
         this.counting = count;
       } else {
         this.counting = 0;
-      }
-      this.$store.dispatch("setCountAction", this.counting);
-      localStorage.car = parseInt(this.counting);
+      }*/
+      localStorage.car = parseInt(this.$store.getters.getCount);
       //console.log("->" + this.counting);
     },
 

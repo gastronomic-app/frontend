@@ -1,13 +1,14 @@
 <template>
   <li id="counting" class="nav-item" v-show="ok">
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
-      <h6 id="counting" class="count" v-if="total != 0">
+      <h6
+        id="counting"
+        class="count"
+        v-if="$store.getters.getCount != 0 || total > 0"
+      >
         {{ $store.getters.getCount }}
       </h6>
-      <b-icon
-        icon="cart4"
-        style="color: #e37b2a; width: 26; height: 26"
-      ></b-icon>
+      <b-icon icon="cart4" class="icon-cart"></b-icon>
     </a>
   </li>
 </template>
@@ -23,18 +24,20 @@ export default {
     };
   },
   mounted() {
-    /*if (localStorage.getItem("car")) {
+    if (localStorage.getItem("car")) {
       this.total = localStorage.getItem("car");
+      this.$store.dispatch(
+        "setStorageCountAction",
+        parseInt(localStorage.getItem("car"))
+      );
     }
-    console.log("# " + this.total);*/
+    console.log("# " + this.total);
   },
   methods: {
     order() {
       var current_url = window.location.href;
-      // console.log(current_url);
       var page = current_url.split("/");
       page = page[page.length - 1];
-      //console.log(page);
       if (
         localStorage.getItem("idEnterprise") &&
         localStorage.getItem("enterpriseName")
@@ -59,14 +62,33 @@ export default {
 </script>
 
 <style scoped>
+.icon-cart {
+  color: var(--orange-x);
+  width: 50;
+  height: 50;
+}
+.icon-cart:hover {
+  color: var(--orange-x-hover);
+  width: 26;
+  height: 26;
+}
 .count {
   font-size: 80%;
   float: right;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   padding: 0px 2px 0px 2px;
-  border: 2px solid var(--orange);
-  color: var(--orange);
+  border: 2px solid var(--orange-x);
+  color: var(--orange-x);
+}
+.count:hover {
+  font-size: 80%;
+  float: right;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 0px 2px 0px 2px;
+  border: 2px solid var(--orange-x-hover);
+  color: var(--orange-x-hover);
 }
 @media only screen and (max-width: 992px) {
   .count {
@@ -75,8 +97,8 @@ export default {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     padding: 1px 2px 1px 2px;
-    border: 2px solid var(--orange);
-    color: var(--orange);
+    border: 2px solid var(--orange-x);
+    color: var(--orange-x);
     display: inline;
   }
 }
