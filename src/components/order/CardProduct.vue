@@ -6,10 +6,11 @@
       :alt="'Imagen de ' + product.name"
     />
     <div class="card-body footer_descripcion pb-1">
-      <h5 class="card-title">{{ product.name | capitalize }}</h5>
+      <h6 class="card-title">
+        <b style="color: #f2ae30">{{ product.name | capitalize }}</b>
+      </h6>
       <span class="card-text">Precio: ${{ product.price | capitalize }}</span>
       <br />
-      <!--<span class="card-text">Ingredientes: {{ product.ingredients }}</span>-->
     </div>
   </div>
 </template>
@@ -30,7 +31,8 @@ export default {
 
 <style scoped>
 .content {
-  background-color: var(--dark);
+  background-color: var(--dark-x);
+  /*background-color: #0d0d0d;*/
   margin-bottom: 0;
   padding-bottom: 0;
   color: var(--light);
