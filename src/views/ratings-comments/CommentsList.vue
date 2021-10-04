@@ -29,7 +29,6 @@
         </div>
       </div>
     </div>
-    <SubTitle content="Comentarios y calificaciones"></SubTitle>
     <div class="row">
       <div class="col-5 mt-2">
         <div></div>
@@ -96,15 +95,9 @@
             :email="item.client.email"
             :comment="item.review.comments"
           />
-          <h4>{{ item.review.comments }}</h4>
         </div>
         <div>
-          <a
-            v-on:click="link()"
-            type="button"
-          >
-            agregar comentario
-          </a>
+          <a v-on:click="link()" type="button"> agregar comentario </a>
         </div>
       </div>
     </div>
