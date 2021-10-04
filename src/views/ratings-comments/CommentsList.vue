@@ -7,54 +7,70 @@
     >
     </Enterprise>
 
+    <div class="row mt-2">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-lg-4 pl-0">
+            <img
+              src="@/assets/enterprise.jpg"
+              class="card-img-top"
+              alt="logo establecimiento"
+            />
+          </div>
+          <div class="col-sm-autor mt-4">
+            <h3>{{ enterprise.name }}</h3>
+            <b-form-rating
+              class="puntuacion"
+              variant="warning"
+              v-model="calculo"
+              readonly
+            ></b-form-rating>
+          </div>
+        </div>
+      </div>
+    </div>
+    <SubTitle content="Comentarios y calificaciones"></SubTitle>
     <div class="row">
       <div class="col-5 mt-2">
+        <div></div>
         <div>
-          <h5>
-            <b>Puntuacion {{ this.calculo }}</b>
-          </h5>
-          <b-form-rating
-            class="puntuacion mb-4 mb-0 p-0"
-            variant="warning"
-            v-model="this.calculo"
-            readonly
-          ></b-form-rating>
-          <h6>Basado en la valoracion de {{ auxcont }} usuarios</h6>
+          <h2>Puntuacion {{ this.calculo }}</h2>
+          <h5>Basado en la valoracion de {{ auxcont }} usuarios</h5>
         </div>
         <br />
         <h5>Calidad de servicios</h5>
 
-        <progress max="5" :value="aux1" style="width:80%"></progress>
+        <progress max="5" :value="aux1" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux1 }}
         {{ "/5)" }}
         <h5>Presentación</h5>
 
-        <progress max="5" :value="aux2" style="width:80%"></progress>
+        <progress max="5" :value="aux2" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux2 }}
         {{ "/5)" }}
         <h5>Preparación</h5>
 
-        <progress max="5" :value="aux3" style="width:80%"></progress>
+        <progress max="5" :value="aux3" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux3 }}
         {{ "/5)" }}
         <h5>Ingredientes</h5>
 
-        <progress max="5" :value="aux4" style="width:80%"></progress>
+        <progress max="5" :value="aux4" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux4 }}
         {{ "/5)" }}
         <h5>Precio</h5>
 
-        <progress max="5" :value="aux5" style="width:80%"></progress>
+        <progress max="5" :value="aux5" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux5 }}
         {{ "/5)" }}
         <h5>Textura</h5>
 
-        <progress max="5" :value="aux6" style="width:80%"></progress>
+        <progress max="5" :value="aux6" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux6 }}
         {{ "/5)" }}
         <h5>Punto de cocción</h5>
 
-        <progress max="5" :value="aux7" style="width:80%"></progress>
+        <progress max="5" :value="aux7" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux7 }}
         {{ "/5)" }}
         <br />
@@ -76,21 +92,19 @@
         </div>
 
         <div v-for="(item, indice) in this.comments" v-bind:key="indice">
-
           <TextArea
-
             :email="item.client.email"
             :comment="item.review.comments"
           />
+          <h4>{{ item.review.comments }}</h4>
         </div>
         <div>
-          <button
-        v-on:click=link()
-        type="button"
-        class="btn btn-success btn-sm mr-4"
-      >
-        agregar comentario
-      </button>
+          <a
+            v-on:click="link()"
+            type="button"
+          >
+            agregar comentario
+          </a>
         </div>
       </div>
     </div>
@@ -134,11 +148,13 @@ export default {
     };
   },
   methods: {
-    link(){
+    link() {
       localStorage.idComment = "";
       localStorage.enterpriseN = "";
-      console.log("datos : ",this.id,this.enterpriseName)
-      this.$router.push({ name: "AddRating", params:{enterpriseId:this.id,enterpriseName:this.enterpriseName}});
+      this.$router.push({
+        name: "AddRating",
+        params: { enterpriseId: this.id, enterpriseName: this.enterpriseName },
+      });
     },
     async prueba() {
       await this.$apollo
