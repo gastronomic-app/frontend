@@ -239,60 +239,74 @@ export default {
       let dia = dias[hoy.getDay()];
 
       if (dia == "lunes") {
-        if (diasSemana.lunes.horaI != "") {
+        if (diasSemana.lunes.horaI != "" && diasSemana.lunes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.lunes.horaI +
             " Cierre: " +
             diasSemana.lunes.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "martes") {
-        if (diasSemana.martes.horaI != "") {
+        if (diasSemana.martes.horaI != "" && diasSemana.martes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.martes.horaI +
             " Cierre: " +
             diasSemana.martes.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "miercoles") {
-        if (diasSemana.miercoles.horaI != "") {
+        if (diasSemana.miercoles.horaI != "" && diasSemana.miercoles.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.miercoles.horaI +
             " Cierre: " +
             diasSemana.miercoles.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "jueves") {
-        if (diasSemana.jueves.horaI != "") {
+        if (diasSemana.jueves.horaI != "" && diasSemana.jueves.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.jueves.horaI +
             " Cierre: " +
             diasSemana.jueves.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "viernes") {
-        if (diasSemana.viernes.horaI != "") {
+        if (diasSemana.viernes.horaI != "" && diasSemana.viernes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.viernes.horaI +
             " Cierre: " +
             diasSemana.viernes.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "sabado") {
-        if (diasSemana.sabado.horaI != "") {
+        if (diasSemana.sabado.horaI != "" && diasSemana.sabado.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.sabado.horaI +
             " Cierre: " +
             diasSemana.sabado.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "domingo") {
-        if (diasSemana.domingo.horaI != "") {
+        if (diasSemana.domingo.horaI != "" && diasSemana.domingo.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.domingo.horaI +
             " Cierre: " +
             diasSemana.domingo.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       }
     },

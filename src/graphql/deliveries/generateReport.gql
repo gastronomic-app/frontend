@@ -1,0 +1,8 @@
+mutation generateReport($id: ID!, $complaint: String!) {
+  updateOrder(input: { id: $id, complaint: $complaint}) {
+    order {
+      id
+      complaint
+    }
+  }
+}

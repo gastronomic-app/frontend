@@ -22,19 +22,18 @@
         <template>
           <EnterpriseCard :enterprise="enterprise.node" :key="enterprise.node.id"/>
           <div class="dropdown" >
-            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Administrar Establecimiento
             </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <!--Redireccion de componentes-->
             <a class="dropdown-item puntero"  @click= redirectEnterpriseEdit(enterprise.node.id)>Modificar Informacion basica</a>
             <a class="dropdown-item" href="#">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
             <a class="dropdown-item" href="#">Gestionar pedidos</a>
             <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
           </div>
-
           </div>
-          <hr />
         </template>
       </div>
     </div>
@@ -86,6 +85,7 @@ export default {
       .query({
         // Consulta
         query: require("@/graphql/enterprise/allEnterprises.gql"),
+        fetchPolicy: "no-cache",
       })
       .then((response) => {
         this.Enterprises = response.data.allEnterprises.edges;
@@ -128,10 +128,12 @@ export default {
         variables: {
           id: idEnterprise,
         },
+
         // Actualiza el cache de GraphQL para visualizar la eliminación
         // al momento de cargar la vista
         refetchQueries: [
-          { query: require("@/graphql/enterprise/allEnterprises.gql") },
+          {
+            query: require("@/graphql/enterprise/allEnterprises.gql") },
         ],
       });
     },
@@ -143,14 +145,6 @@ export default {
     allEnterprises: {
       // Consulta
       query: require("@/graphql/enterprise/allEnterprises.gql"),
-      // Asigna el error a la variable definida en data
-      error(error) {
-        this.error = JSON.stringify(error.message);
-      },
-    },
-    allProducts: {
-      // Consulta
-      query: require("@/graphql/product/allProducts.gql"),
       // Asigna el error a la variable definida en data
       error(error) {
         this.error = JSON.stringify(error.message);
