@@ -1,11 +1,7 @@
 <template>
   <li id="counting" class="nav-item" v-show="ok">
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
-      <h6
-        id="counting"
-        class="count"
-        v-if="$store.getters.getCount != 0 || total > 0"
-      >
+      <h6 id="counting" class="count" v-if="$store.getters.getCount != 0">
         {{ $store.getters.getCount }}
       </h6>
       <b-icon icon="cart4" class="icon-cart"></b-icon>
@@ -20,15 +16,13 @@ export default {
   data() {
     return {
       ok: "",
-      total: 0,
     };
   },
   mounted() {
     if (localStorage.getItem("car")) {
-      this.total = localStorage.getItem("car");
       this.$store.dispatch(
         "setStorageCountAction",
-        parseInt(localStorage.getItem("car"))
+        parseInt(localStorage.getItem("car")) + 1
       );
     }
     console.log("# " + this.total);
@@ -41,12 +35,11 @@ export default {
       console.log(page);
 
       if (page != "products-order") {
-        if (page != "") {
+        if (page != "" && this.$store.getters.getCount == 0) {
           this.$router.push({
             name: "catalogSearch",
           });
-        }
-        if (this.$store.getters.getCount != 0) {
+        } else {
           this.$router.push({
             name: "ProductListOrder",
             params: {
@@ -56,46 +49,6 @@ export default {
           });
         }
       }
-
-      /*  if (this.$store.getters.getCount != 0 && page != "products-order") {
-        this.$router.push({
-          name: "ProductListOrder",
-          params: {
-            id: localStorage.getItem("idEnterprise"),
-            name: localStorage.getItem("enterpriseName"),
-          },
-        });
-        console.log("Tenemos");
-      } else {
-        if (page != "") {
-          this.$router.push({
-            name: "catalogSearch",
-          });
-        }
-        console.log("No Tenemos");
-      }
-
-       if (
-        localStorage.getItem("idEnterprise") &&
-        localStorage.getItem("enterpriseName")
-      ) {
-        //Evitar redigirir al lugar actual
-        if (page != "products-order") {
-          this.$router.push({
-            name: "ProductListOrder",
-            params: {
-              id: localStorage.getItem("idEnterprise"),
-              name: localStorage.getItem("enterpriseName"),
-            },
-          });
-        }
-
-        if (page != "products-order") {
-          this.$router.push({
-            name: "catalogSearch",
-          });
-        }
-      }*/
     },
   },
   created() {

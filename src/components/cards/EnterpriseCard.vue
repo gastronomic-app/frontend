@@ -107,15 +107,24 @@ export default {
       });
     },
     makeOrder(Enterprise) {
-      localStorage.removeItem("items");
-      localStorage.removeItem("idRecovered");
-      localStorage.removeItem("car");
-      localStorage.idEnterprise = "";
-      localStorage.enterpriseName = "";
-      this.$router.push({
+      if(Enterprise.id==localStorage.idEnterprise){
+        this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car"))+1);
+        this.$router.push({
         name: "ProductListOrder",
         params: { id: Enterprise.id, name: Enterprise.name },
       });
+      }else{
+        this.$store.dispatch("setCountAction", this.$store.getters.getCount);
+        localStorage.removeItem("items");
+        localStorage.removeItem("idRecovered");
+        localStorage.removeItem("car");
+        localStorage.idEnterprise = "";
+        localStorage.enterpriseName = "";
+        this.$router.push({
+          name: "ProductListOrder",
+          params: { id: Enterprise.id, name: Enterprise.name },
+        });
+      }
     },
     valnum(texto) {
       var aux = 1;

@@ -527,7 +527,8 @@ export default {
       localStorage.removeItem("items");
       this.deleteVariables();
       this.itemExists();
-      this.$store.dispatch("setCountAction", this.$store.getters.getCount);
+      this.$store.dispatch("setStorageCountAction", 0);
+      console.log("Eliminado todo: " + this.$store.getters.getCount);
     },
     continueOrder() {
       this.$router.push({
@@ -554,7 +555,7 @@ export default {
         localStorage.removeItem("items");
       }
       localStorage.car = parseInt(this.$store.getters.getCount);
-      //console.log("->" + this.counting);
+      console.log("->" + localStorage.car);
     },
 
     deleteVariables() {
