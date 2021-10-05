@@ -47,7 +47,7 @@
         <br />
         <button
           type="button"
-          class="btn btn-dark btn-lg orange font-weight-bold btn-block bg-cart"
+          class="btn black-button btn-lg orange font-weight-bold btn-block bg-cart"
           @click="redirectProductAdd"
         >
           Crear Producto
@@ -79,14 +79,14 @@
                 <br />
                 <button
                   type="button"
-                  class="btn btn-outline-success btn-sm mr-4"
+                  class="btn btn-dark btn-sm mr-4 orange-button"
                   @click="redirectProductEdit(product.node.id)"
                 >
                   Editar
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-danger btn-sm mr-4"
+                  class="btn black-button btn-sm mr-4"
                   data-toggle="modal"
                   data-target="#deleteConfirmationModal"
                   @click="productToDisable = product.node.id"
@@ -95,7 +95,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-dark btn-sm"
+                  class="btn black-button btn-sm"
                   data-toggle="modal"
                   data-target="#viewProductModal"
                   @click="showProduct(product.node.id)"
@@ -142,14 +142,14 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-danger"
+              class="btn black-button"
               data-dismiss="modal"
             >
               Cerrar
             </button>
             <button
               type="button"
-              class="btn btn-outline-dark"
+              class="btn orange-button"
               @click="disableProduct(productToDisable)"
               data-dismiss="modal"
             >
@@ -368,6 +368,9 @@ export default {
 </script>
 
 <style scoped>
+
+h1 { color:black; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 4; }
+
 .name-app {
   color: var(--primary-x);
 }
@@ -390,5 +393,22 @@ export default {
 .correct-align {
   padding-left: 15px;
   padding-right: 15px;
+}
+.orange-button {
+  background-color: orange;
+  color: black;
+  font-weight: bold;
+}
+
+.black-button {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+}
+
+.orange-button:hover,
+.black-button:hover {
+  box-shadow: 0 4px 16px rgb(201, 132, 30);
+  transition: all 0.2s ease;
 }
 </style>
