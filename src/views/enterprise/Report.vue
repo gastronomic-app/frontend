@@ -313,7 +313,7 @@ export default {
       finalDate;
       this.$apollo
         .query({
-          query: require("@/graphql/user/enterpriseReport.gql"),
+          query: require("@/graphql/enterprise/enterpriseReport.gql"),
           variables: {
             //id: aux1.split("EnterpriseNode:")[1],
             id: "2",
