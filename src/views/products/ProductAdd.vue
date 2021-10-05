@@ -15,3 +15,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  h1 { color:black; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 4; }
+</style>

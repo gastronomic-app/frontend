@@ -1,0 +1,19 @@
+mutation createPayment(
+  $deliveryId: ID!
+  $paymentValue: String!
+  $paymentType: String!
+) {
+  createPayment(
+    input: {
+      deliveryId: $deliveryId
+      paymentValue: $paymentValue
+      paymentType: $paymentType
+    }
+  ) {
+    payment {
+      id
+      paymentType
+      paymentValue
+    }
+  }
+}
