@@ -156,6 +156,11 @@
           aria-controls="my-table"
         ></b-pagination>
       </div>
+      <div>
+        <button id="btnPdf" class="btn btn-primary" @click="generatePDF()">
+          Generar PDF
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -163,6 +168,8 @@
 <script>
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 export default {
   name: "Report",
   components: { DatePicker },
@@ -173,9 +180,13 @@ export default {
         { key: "reportDate", label: "Fecha del pedido" },
         { key: "paymentValue", label: "Costo del pedido" },
       ],
+      doc: new jsPDF({
+        orientation: "portrait",
+        unit: "in",
+        format: "letter",
+      }),
       oderList: [],
       total: "",
-      idEnterprise: String,
       perPage: 5,
       currentPage: 1,
       window: false,
@@ -197,12 +208,34 @@ export default {
      * Objeto establecimiento enviado
      * como prop desde una vista
      */
-  },
-  created() {
-    this.idEnterprise = this.$route.params.id;
-    console.log("obtener id por url:", this.idEnterprise);
+    //enterprise: Object,
   },
   methods: {
+    generatePDF() {
+      var description = this.reportEnterprise.enterprise;
+      description =
+        "Informe para el establecimineto: " +
+        description +
+        "\nEntre las fechas: " +
+        this.reportEnterprise.startDate +
+        " - " +
+        this.reportEnterprise.finalDate +
+        "\nRecaudo total: " +
+        this.total;
+      this.doc.setFontSize(15).text(description, 0.5, 1.0);
+      this.doc.setLineWidth(0.01).line(0.5, 1.6, 8.0, 1.6);
+      var dataTable = [];
+      this.reportEnterprise.reportList.forEach((element) => {
+        dataTable.push([element.reportDate, element.paymentValue]);
+      });
+
+      this.doc.autoTable({
+        head: [["Fecha del pedido", "Costo del pedido"]],
+        body: dataTable,
+        margin: { left: 0.5, top: 2 },
+      });
+      this.doc.save("a4.pdf");
+    },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
@@ -245,7 +278,7 @@ export default {
         var today = new Date();
         today.setUTCHours(0); //primera hora de hoy
         today.setUTCMinutes(0);
-        this.consult(today.toISOString(),current.toISOString());
+        this.consult(today.toISOString(), current.toISOString());
       } else if (op == 2) {
         var tmp1 = new Date(yesterday);
         tmp1.setUTCHours(0); //primera hora de ayer 00:00
@@ -266,42 +299,46 @@ export default {
         monthLastDay = new Date(current.getFullYear(), current.getMonth(), 0);
         this.consult(monthFirstDay.toISOString(), monthLastDay.toISOString());
       }
-
     },
     periodReport() {
       this.consult(this.date1, this.date2);
       this.isHidden = false;
     },
     consult(startDate, finalDate) {
-      var auxid = atob(this.idEnterprise);
-      var aux = auxid.split("EnterpriseNode:")[1]
+      var aux = "RW50ZXJwcmlzZU5vZGU6Mg==";
+      var aux1 = atob(aux);
+
+      console.log(aux1.split("EnterpriseNode:")[1]);
+      startDate;
+      finalDate;
       this.$apollo
         .query({
-          query: require("@/graphql/enterprise/enterpriseReport.gql"),
+          query: require("@/graphql/user/enterpriseReport.gql"),
           variables: {
-            id: aux,
+            //id: aux1.split("EnterpriseNode:")[1],
+            id: "2",
+            //sDate: "2021-09-11T23:52:05.568000+00:00",
+            //fDate: "2021-09-20T23:52:05.568000+00:00",
             sDate: startDate,
             fDate: finalDate,
           },
         })
         .then((response) => {
-
-          if(response.data.reports == null){
+          if (response.data.reports == null) {
             this.makeToast(
-                  //"success",
-                  "primary",
-                  "Resultado",
-                  "La consulta no arrojo resultados",
-                  5000
-                );
+              //"success",
+              "primary",
+              "Resultado",
+              "La consulta no arrojo resultados",
+              5000
+            );
             this.isHidden = true;
-          }else{
+          } else {
             this.reportEnterprise = response.data.reports;
             this.oderList = this.reportEnterprise.reportList;
             this.total = this.reportEnterprise.totalValue;
             this.isHidden = false;
           }
-
 
           //this.pages = response.data.allEnterprises.edges.length;
         });
@@ -313,6 +350,9 @@ export default {
 <style scoped>
 #tablePagination {
   margin-left: 40%;
+}
+#btnPdf {
+  float: right;
 }
 #range {
   width: 100%;
