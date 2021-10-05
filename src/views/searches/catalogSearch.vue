@@ -11,7 +11,7 @@
             v-model="searchString"
           />
           <button
-            class="btn btn-outline-success my-2 my-sm-0 ion-ios-search"
+            class="btn btn-success my-2 my-sm-0 ion-ios-search"
             type="submit"
           >
             Buscar
