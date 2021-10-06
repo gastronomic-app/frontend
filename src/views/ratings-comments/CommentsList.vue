@@ -7,34 +7,19 @@
     >
     </Enterprise>
 
-    <div class="row mt-2">
-      <div class="col-6">
-        <div class="row">
-          <div class="col-lg-4 pl-0">
-            <img
-              src="@/assets/enterprise.jpg"
-              class="card-img-top"
-              alt="logo establecimiento"
-            />
-          </div>
-          <div class="col-sm-autor mt-4">
-            <h3>{{ enterprise.name }}</h3>
-            <b-form-rating
-              class="puntuacion"
-              variant="warning"
-              v-model="calculo"
-              readonly
-            ></b-form-rating>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="row">
       <div class="col-5 mt-2">
-        <div></div>
         <div>
-          <h2>Puntuacion {{ this.calculo }}</h2>
-          <h5>Basado en la valoracion de {{ auxcont }} usuarios</h5>
+          <h5>
+            <b>Puntuacion {{ calculo }}</b>
+          </h5>
+          <b-form-rating
+            class="puntuacion mb-4 mb-0 p-0"
+            variant="warning"
+            v-model="calculo"
+            readonly
+          ></b-form-rating>
+          <h6>Basado en la valoracion de {{ auxcont }} usuarios</h6>
         </div>
         <br />
         <h5>Calidad de servicios</h5>
@@ -91,13 +76,17 @@
         </div>
 
         <div v-for="(item, indice) in this.comments" v-bind:key="indice">
-          <TextArea
-            :email="item.client.email"
-            :comment="item.review.comments"
-          />
+          <div v-if="item.review.comments != ''">
+            <TextArea
+              :email="item.client.email"
+              :comment="item.review.comments"
+            />
+          </div>
         </div>
-        <div>
-          <a v-on:click="link()" type="button"> agregar comentario </a>
+        <div class="mb-2">
+          <a v-on:click="link()" type="button" class="nav-link mr-4">
+            Agregar comentario
+          </a>
         </div>
       </div>
     </div>
@@ -144,6 +133,7 @@ export default {
     link() {
       localStorage.idComment = "";
       localStorage.enterpriseN = "";
+      console.log("datos : ", this.id, this.enterpriseName);
       this.$router.push({
         name: "AddRating",
         params: { enterpriseId: this.id, enterpriseName: this.enterpriseName },
@@ -264,26 +254,30 @@ export default {
       }
 
       //promedios
-      conttam = comments.length;
-      this.auxcont = conttam;
-      aux1 = Math.round(aux1 / conttam);
-      this.aux1 = aux1;
-      aux2 = Math.round(aux2 / conttam);
-      this.aux2 = aux2;
-      aux3 = Math.round(aux3 / conttam);
-      this.aux3 = aux3;
-      aux4 = Math.round(aux4 / conttam);
-      this.aux4 = aux4;
-      aux5 = Math.round(aux5 / conttam);
-      this.aux5 = aux5;
-      aux6 = Math.round(aux6 / conttam);
-      this.aux6 = aux6;
-      aux7 = Math.round(aux7 / conttam);
-      this.aux7 = aux7;
-      this.comments = comments;
-      var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
+      if (comments.length > 0) {
+        conttam = comments.length;
+        this.auxcont = conttam;
+        aux1 = Math.round(aux1 / conttam);
+        this.aux1 = aux1;
+        aux2 = Math.round(aux2 / conttam);
+        this.aux2 = aux2;
+        aux3 = Math.round(aux3 / conttam);
+        this.aux3 = aux3;
+        aux4 = Math.round(aux4 / conttam);
+        this.aux4 = aux4;
+        aux5 = Math.round(aux5 / conttam);
+        this.aux5 = aux5;
+        aux6 = Math.round(aux6 / conttam);
+        this.aux6 = aux6;
+        aux7 = Math.round(aux7 / conttam);
+        this.aux7 = aux7;
+        this.comments = comments;
+        var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(
+          1
+        );
 
-      this.calculo = calculo;
+        this.calculo = calculo;
+      }
     },
   },
   apollo: {},
@@ -291,6 +285,9 @@ export default {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
       localStorage.idCaught = this.id;
+      this.prueba();
+    } else {
+      this.id = localStorage.getItem("idCaught");
       this.prueba();
     }
   },
