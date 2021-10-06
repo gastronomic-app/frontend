@@ -248,24 +248,34 @@
           <div class="modal-body">
             <img class="d-block w-100" :src="productView.imageUrl" />
             <div class="row">
-              <div class="col-6">
-                <b class="bold">Precio</b><br />
-                <b class="bold">Ingredientes</b><br />
-                <b class="bold">Preparación</b><br />
-                <b class="bold">Tiempo</b><br />
-                <b class="bold">Tipo de producto</b><br />
-              </div>
-              <div class="col-6">
-                ${{ productView.price }} <br />
-
-                {{ productView.ingredients | capitalize }} <br />
-
-                {{ productView.preparation | capitalize }} <br />
-
-                {{ productView.preparation_time }} <br />
-
-                {{ productView.product_type | capitalize }}
-                <br />
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Precio</th>
+                      <td>
+                        $
+                        {{ new Intl.NumberFormat().format(productView.price) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ingredientes</th>
+                      <td>{{ productView.ingredients | capitalize }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Preparación</th>
+                      <td>{{ productView.preparation | capitalize }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Tiempo</th>
+                      <td>{{ productView.preparation_time }} minutos</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Tipo de producto</th>
+                      <td>{{ productView.product_type | capitalize }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
             <p></p>
@@ -444,7 +454,7 @@ export default {
         }
         this.saveItems();
         this.$store.dispatch("incrementCountAction");
-        localStorage.car =  this.$store.getters.getCount;
+        localStorage.car = this.$store.getters.getCount;
       } else {
         this.$router.push({
           name: "Login",
