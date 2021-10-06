@@ -210,6 +210,9 @@ export default {
      */
     //enterprise: Object,
   },
+  created() {
+    this.idEnterprise = this.$route.params.id;
+  },
   methods: {
     generatePDF() {
       var description = this.reportEnterprise.enterprise;
@@ -305,7 +308,7 @@ export default {
       this.isHidden = false;
     },
     consult(startDate, finalDate) {
-      var auxid = atob(this.idEnterprise);
+      var auxid = window.atob(this.idEnterprise);
       var aux = auxid.split("EnterpriseNode:")[1]
       this.$apollo
         .query({
