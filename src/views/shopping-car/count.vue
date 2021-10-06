@@ -43,13 +43,21 @@ export default {
               name: "catalogSearch",
             });
           } else {
-            this.$router.push({
-              name: "ProductListOrder",
-              params: {
-                id: localStorage.getItem("idEnterprise"),
-                name: localStorage.getItem("enterpriseName"),
-              },
-            });
+            if (localStorage.getItem("enterpriseName")) {
+              this.$router.push({
+                name: "ProductListOrder",
+                params: {
+                  id: localStorage.getItem("idEnterprise"),
+                  name: localStorage.getItem("enterpriseName"),
+                },
+              });
+            } else {
+              if (page != "") {
+                this.$router.push({
+                  name: "catalogSearch",
+                });
+              }
+            }
           }
         }
       } else {
