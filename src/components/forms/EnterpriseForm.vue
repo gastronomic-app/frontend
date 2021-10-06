@@ -14,6 +14,14 @@
         </div>
         <div class="form-group">
         <label for="location">Direccion Establecimiento<span class="text-danger"></span></label>
+        <input
+            type="text"
+            class="form-control"
+            id="enterpriseInputLocation"
+            placeholder="Ubicación del establecimiento"
+            readonly
+            v-model="location"
+        />
         <Geolocation required v-on:value= "ral_Location" showmap="True"/>
         <br />
         </div>
