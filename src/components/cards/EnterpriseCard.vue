@@ -41,7 +41,7 @@
       <template v-if="$store.getters.getCount!=0 && recovered != enterprise.id">
  <button
         v-show="ok"
-       
+
         type="button"
         class="btn btn-success btn-sm mr-4"
         data-toggle="modal"
@@ -60,7 +60,7 @@
         Hacer Pedido
       </button>
       </template>
-     
+
     </div>
   </div>
 
@@ -91,7 +91,7 @@
             </button>
           </div>
           <div class="modal-body">
-            Está a punto de eliminar su ultimo pedido ¿Desea continuar?
+            Está a punto de eliminar su último pedido ¿Desea continuar?
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn_order" v-on:click="redirection()" data-dismiss="modal">
@@ -165,7 +165,6 @@ export default {
   methods: {
     btnComments(id) {
       localStorage.idCaught = "";
-      //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
         params: { idCaught: id },

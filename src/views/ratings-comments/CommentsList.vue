@@ -133,10 +133,9 @@ export default {
     link() {
       localStorage.idComment = "";
       localStorage.enterpriseN = "";
-      console.log("datos : ", this.id, this.enterpriseName);
       this.$router.push({
         name: "AddRating",
-        params: { enterpriseId: this.id, enterpriseName: this.enterpriseName },
+        params: { enterpriseId: this.id, enterpriseName: this.enterprise.name },
       });
     },
     async prueba() {
