@@ -1,0 +1,14 @@
+{
+  allPayments {
+    edges {
+      node {
+        id
+        paymentValue
+        paymentType
+        delivery {
+          id
+        }
+      }
+    }
+  }
+}

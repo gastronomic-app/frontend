@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="form-group">
-        <button @click="previewImages" class="btn btn-dark mb-2 mt-2 mr-2">
+        <button @click="previewImages" class="btn black-button mb-2 mt-2 mr-2">
           {{ show_images ? "Ocultar imagen" : "Visualizar imagen" }}
         </button>
       </div>
@@ -131,12 +131,12 @@
         <button
           v-b-modal.modal-Recommendations
           type="button"
-          class="btn btn-dark mb-3 mr-3"
+          class="btn black-button mb-3 mr-3"
           id="btnAddRecommendations"
         >
           Gestionar acompañamientos
         </button>
-        <button @click="previewAccompaniments" class="btn btn-dark mb-3">
+        <button @click="previewAccompaniments" class="btn black-button mb-3">
           {{
             this.show_accompaniments
               ? "Ocultar acompañamientos"
@@ -183,7 +183,7 @@
                   <b-button
                     block
                     v-b-toggle="'accordion-' + index"
-                    variant="info"
+                    class="black-button"
                     >{{ groupType[0] }}
                   </b-button>
                 </b-card-header>
@@ -231,7 +231,7 @@
             </div>
           </div>
           <b-button
-            class="mt-3"
+            class="mt-3 orange-button"
             block
             @click="$bvModal.hide('modal-Recommendations')"
             >Cerrar</b-button
@@ -243,7 +243,7 @@
         v-if="id === null"
         type="submit"
         @click="checkProduct"
-        class="btn btn-success mr-3 mb-2"
+        class="btnorange-button mr-3 mb-2"
         :disabled="inputsEmpty"
       >
         Crear producto
@@ -253,7 +253,7 @@
         v-if="id !== null"
         type="submit"
         @click="checkProduct"
-        class="btn btn-outline-success mr-3 mb-2"
+        class="btn orange-button mr-3 mb-2"
         :disabled="inputsEmpty"
       >
         Actualizar producto
@@ -261,7 +261,7 @@
 
       <button
         type="button"
-        class="btn btn-outline-dark mb-2"
+        class="btn black-button mb-2"
         @click="redirectProductList"
       >
         Volver
@@ -668,5 +668,23 @@ export default {
 }
 .orange-background {
   background-color: orange;
+}
+
+.orange-button {
+  background-color: orange;
+  color: black;
+  font-weight: bold;
+}
+
+.black-button {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+}
+
+.orange-button:hover,
+.black-button:hover {
+  box-shadow: 0 4px 16px rgb(201, 132, 30);
+  transition: all 0.2s ease;
 }
 </style>

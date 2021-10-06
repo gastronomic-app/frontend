@@ -30,7 +30,7 @@
             <a class="dropdown-item puntero"  @click= redirectEnterpriseEdit(enterprise.node.id)>Modificar Informacion basica</a>
             <a class="dropdown-item" href="#">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
-            <a class="dropdown-item" href="#">Gestionar pedidos</a>
+            <a class="dropdown-item puntero" @click= "redirectPendingOrders(enterprise.node.id, enterprise.node.name)">Gestionar pedidos</a>
             <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
           </div>
           </div>
@@ -115,6 +115,16 @@ export default {
       this.$router.push({
         name: "EnterpriseEdit",
         params: { id: idEnterprise },
+      });
+    },
+    /**
+     * Redirige a la vista de órdenes pendientes para
+     * gestionar los pedidos por despachar.
+     */
+    redirectPendingOrders(idEnterprise, enterpriseName){
+      this.$router.push({
+        name: "PendingOrders",
+        params: { id: idEnterprise, name: enterpriseName}
       });
     },
     /**
