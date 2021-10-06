@@ -12,6 +12,9 @@
     --primary-x: #FE3051;
     --muted: #e9e6e6;
     --orange: rgba(255, 68, 0, 0.877);
+    --orange-x: rgb(217,85,37);
+    --orange-x-hover: rgb(242,125,22);
+    --orange-x-focus:rgb(140,74,17);
     --grey:rgba(153, 151, 151, 0.836);
     --grey-hover:rgba(235, 235, 235, 0.959);
 

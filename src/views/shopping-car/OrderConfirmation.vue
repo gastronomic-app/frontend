@@ -269,6 +269,7 @@ export default {
       this.location = "";
     },
     confirmOrder() {
+      this.$store.dispatch("setStorageCountAction", 0);
       if (this.validate()) {
         this.calculateEstimatedTime();
         this.ok = localStorage.getItem("existUser");
@@ -321,6 +322,7 @@ export default {
         localStorage.removeItem("total");
         localStorage.removeItem("enterpriseName");
         localStorage.removeItem("idEnterprise");
+        localStorage.removeItem("car");
       }
     },
   },
@@ -340,14 +342,15 @@ export default {
   color: var(--light);
 }
 .btn_order {
-  background-color: var(--dark-xx);
-  color: var(--orange);
+  background-color: var(--orange-x);
+  color: var(--dark);
 }
 .btn_order:hover {
-  background: var(--grey-hover);
+  /*background: var(--grey-hover);*/
+  background: var(--orange-x-hover);
   color: var(--dark);
 }
 .btn_order:focus {
-  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
+  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 </style>

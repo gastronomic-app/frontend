@@ -8,15 +8,15 @@
     </Enterprise>
 
     <div class="row">
-      <div class="col-5 mt-2">
+      <div class="col-xl-5 col-sm-12 mt-2">
         <div>
           <h5>
-            <b>Puntuacion {{ this.calculo }}</b>
+            <b>Puntuacion {{ calculo }}</b>
           </h5>
           <b-form-rating
             class="puntuacion mb-4 mb-0 p-0"
             variant="warning"
-            v-model="this.calculo"
+            v-model="calculo"
             readonly
           ></b-form-rating>
           <h6>Basado en la valoracion de {{ auxcont }} usuarios</h6>
@@ -24,43 +24,43 @@
         <br />
         <h5>Calidad de servicios</h5>
 
-        <progress max="5" :value="aux1" style="width:80%"></progress>
+        <progress max="5" :value="aux1" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux1 }}
         {{ "/5)" }}
         <h5>Presentación</h5>
 
-        <progress max="5" :value="aux2" style="width:80%"></progress>
+        <progress max="5" :value="aux2" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux2 }}
         {{ "/5)" }}
         <h5>Preparación</h5>
 
-        <progress max="5" :value="aux3" style="width:80%"></progress>
+        <progress max="5" :value="aux3" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux3 }}
         {{ "/5)" }}
         <h5>Ingredientes</h5>
 
-        <progress max="5" :value="aux4" style="width:80%"></progress>
+        <progress max="5" :value="aux4" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux4 }}
         {{ "/5)" }}
         <h5>Precio</h5>
 
-        <progress max="5" :value="aux5" style="width:80%"></progress>
+        <progress max="5" :value="aux5" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux5 }}
         {{ "/5)" }}
         <h5>Textura</h5>
 
-        <progress max="5" :value="aux6" style="width:80%"></progress>
+        <progress max="5" :value="aux6" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux6 }}
         {{ "/5)" }}
         <h5>Punto de cocción</h5>
 
-        <progress max="5" :value="aux7" style="width:80%"></progress>
+        <progress max="5" :value="aux7" style="width: 80%"></progress>
         {{ "(" }}{{ this.aux7 }}
         {{ "/5)" }}
         <br />
         <br />
       </div>
-      <div class="col-7 mt-2">
+      <div class="col-xl-7 col-md-10 col-sm-12 mt-2">
         <h5><b>Comentarios</b></h5>
         <div class="container">
           <div class="row justify-content-center align-items-center">
@@ -75,22 +75,38 @@
           </div>
         </div>
 
-        <div v-for="(item, indice) in this.comments" v-bind:key="indice">
+        <paginate ref="paginator" name="comments" :list="comments" :per="3">
+          <div
+            v-for="comment in paginated('comments')"
+            :key="comment.id"
+            :item="comment"
+            :checkbox_use="true"
+          >
+            <div v-if="comment.review.comments != ''">
+              <TextArea
+                :email="comment.client.email"
+                :comment="comment.review.comments"
+              />
+            </div>
+          </div>
+          <div class="mb-2">
+            <a v-on:click="link()" type="button" class="nav-link mr-4">
+              Agregar comentario
+            </a>
+          </div>
+        </paginate>
 
-          <TextArea
-
-            :email="item.client.email"
-            :comment="item.review.comments"
-          />
+        <div class="div-paginate d-flex justify-content-center" >
+          <paginate-links
+            for="comments"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
         </div>
-        <div>
-          <button
-        v-on:click=link()
-        type="button"
-        class="btn btn-success btn-sm mr-4"
-      >
-        agregar comentario
-      </button>
+        <div class="div-paginate d-flex justify-content-center">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
         </div>
       </div>
     </div>
@@ -123,6 +139,8 @@ export default {
       calculo: 0,
       auxcont: 0,
       comments: [],
+      Comments: [],
+      paginate: ["comments"],
       aux1: 0,
       aux2: 0,
       aux3: 0,
@@ -134,11 +152,13 @@ export default {
     };
   },
   methods: {
-    link(){
+    link() {
       localStorage.idComment = "";
       localStorage.enterpriseN = "";
-      console.log("datos : ",this.id,this.enterpriseName)
-      this.$router.push({ name: "AddRating", params:{enterpriseId:this.id,enterpriseName:this.enterpriseName}});
+      this.$router.push({
+        name: "AddRating",
+        params: { enterpriseId: this.id, enterpriseName: this.enterprise.name },
+      });
     },
     async prueba() {
       await this.$apollo
@@ -255,26 +275,30 @@ export default {
       }
 
       //promedios
-      conttam = comments.length;
-      this.auxcont = conttam;
-      aux1 = Math.round(aux1 / conttam);
-      this.aux1 = aux1;
-      aux2 = Math.round(aux2 / conttam);
-      this.aux2 = aux2;
-      aux3 = Math.round(aux3 / conttam);
-      this.aux3 = aux3;
-      aux4 = Math.round(aux4 / conttam);
-      this.aux4 = aux4;
-      aux5 = Math.round(aux5 / conttam);
-      this.aux5 = aux5;
-      aux6 = Math.round(aux6 / conttam);
-      this.aux6 = aux6;
-      aux7 = Math.round(aux7 / conttam);
-      this.aux7 = aux7;
-      this.comments = comments;
-      var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
+      if (comments.length > 0) {
+        conttam = comments.length;
+        this.auxcont = conttam;
+        aux1 = Math.round(aux1 / conttam);
+        this.aux1 = aux1;
+        aux2 = Math.round(aux2 / conttam);
+        this.aux2 = aux2;
+        aux3 = Math.round(aux3 / conttam);
+        this.aux3 = aux3;
+        aux4 = Math.round(aux4 / conttam);
+        this.aux4 = aux4;
+        aux5 = Math.round(aux5 / conttam);
+        this.aux5 = aux5;
+        aux6 = Math.round(aux6 / conttam);
+        this.aux6 = aux6;
+        aux7 = Math.round(aux7 / conttam);
+        this.aux7 = aux7;
+        this.comments = comments;
+        var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(
+          1
+        );
 
-      this.calculo = calculo;
+        this.calculo = calculo;
+      }
     },
   },
   apollo: {},
@@ -282,6 +306,9 @@ export default {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
       localStorage.idCaught = this.id;
+      this.prueba();
+    } else {
+      this.id = localStorage.getItem("idCaught");
       this.prueba();
     }
   },
