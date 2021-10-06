@@ -1,107 +1,142 @@
 <template>
   <div class="card-body container align-self-center">
-    <h1>Registro</h1>
-    <b-form  validated v-on:submit.prevent="check()">
+    <h1>Regístrate</h1>
+    <div v-if="!google">
+      <GoogleLogin
+        class="buttonText"
+        :params="params"
+        :onSuccess="onSuccess"
+        :onFailure="onFailure"
+        >Registrar con Google
+      </GoogleLogin>
+    </div>
+     <br />
+    <form v-on:submit.prevent="check()">
       <div class="form-group">
         <label for="names">Nombres <span class="text-danger">*</span></label>
-        <input
+        <b-form-input
           :disabled="google"
+          :state="validateNames"
           type="text"
           class="form-control"
           id="names"
-          v-model.trim="names"
+          v-model="names"
           required
           aria-describedby="namesComplete"
-        />
-        <label for="lastNames">Apellidos <span class="text-danger">*</span></label>
-        <input
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validateNames">
+          El nombre debe ser valido.
+        </b-form-invalid-feedback>
+        <label for="lastNames"
+          >Apellidos <span class="text-danger">*</span></label
+        >
+        <b-form-input
           :disabled="google"
+          :state="validateLastNames"
           type="text"
           class="form-control"
           id="lastNames"
-          v-model.trim="lastNames"
+          v-model="lastNames"
           required
           aria-describedby="lastNames"
-        />
-
-        <label for="email">Correo electronico <span class="text-danger">*</span></label>
-        <input
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validateLastNames">
+          Los apellidos deben ser validos.
+        </b-form-invalid-feedback>
+        <label for="email"
+          >Correo electronico <span class="text-danger">*</span></label
+        >
+        <b-form-input
           :disabled="google"
+          :state="validateEmail"
           type="email"
           class="form-control"
           id="email"
-          v-model.trim="email"
-          required
-        />
-
-        <label for="phoneNumber">Número de telefono <span class="text-danger">*</span></label>
-        <input
+          v-model="email"
+          name="email"
+          required=""
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validateEmail">
+          Correo debe ser valido.
+        </b-form-invalid-feedback>
+        <label for="phoneNumber"
+          >Número de telefono <span class="text-danger">*</span></label
+        >
+        <b-form-input
           type="number"
           class="form-control"
+          :state="validateTelephone"
           id="phoneNumber"
-          v-model.trim="telephone"
+          v-model="telephone"
           required=""
-          pattern="[0-9]+"
-        />
-
+        ></b-form-input>
+        <b-form-invalid-feedback :state="validateTelephone">
+          Telefono debe ser valido (10 o 6 digitos).
+        </b-form-invalid-feedback>
         <div v-if="!google">
-            <label for="exampleInputPassword">Contraseña <span class="text-danger">*</span></label>
-            <input
-              @keydown.space.prevent
-              type="password"
-              class="form-control"
-              id="password"
-              v-model.trim="password"
-              required=""
-            />
-          <label for="confirmPassword">Confirmar contraseña <span class="text-danger">*</span></label>
-          <input
+          <label for="exampleInputPassword"
+            >Contraseña <span class="text-danger">*</span></label
+          >
+          <b-form-input
             @keydown.space.prevent
             type="password"
             class="form-control"
-            id="confirmPassword"
-            v-model.trim="passwordConfirmation"
+            :state="validationPassword"
+            id="password"
+            v-model="password"
             required=""
-          />
+          ></b-form-input>
+          <b-form-invalid-feedback :state="validationPassword">
+            La contraseña debe tener entre 5 y 12 caracteres.
+          </b-form-invalid-feedback>
+          <label for="confirmPassword"
+            >Confirmar contraseña <span class="text-danger">*</span></label
+          >
+          <b-form-input
+            @keydown.space.prevent
+            type="password"
+            class="form-control"
+            :state="equal"
+            id="confirmPassword"
+            v-model="passwordConfirmation"
+            required=""
+          ></b-form-input>
+          <b-form-text id="password-help-block">
+            La contraseña debe tener entre 5 y 12 caracteres
+          </b-form-text>
+          <b-form-invalid-feedback :state="equal">
+            Las contraseñas no son iguales.
+          </b-form-invalid-feedback>
         </div>
-        <label for="location">Direccion <span class="text-danger">*</span></label>
-        <Geolocation required v-on:value= "ral_Location" showmap="True"/>
         <br />
-        <p>Los campos marcados con <span class="text-danger">*</span> son Obligatorios </p>
+        <label for="location"
+          >Direccion <span class="text-danger">*</span></label
+        >
+        <Geolocation novalidate required="" v-on:value="ral_Location" :showmap="true"
+            :disable_input="true" />
+        <br />
+        <p>
+          Los campos marcados con <span class="text-danger">*</span> son
+          Obligatorios
+        </p>
         <input
-        type="submit"
-        class="btn btn-outline-primary"
-        value="Registrar"
-      />
-    <button @click="$router.push('/Login')" class="btn btn-outline-secondary">
-      Volver
-    </button>
-    <br />
+          type="submit"
+          class="btn btn-color"
+          value="Registrar"
+        />
       </div>
-
-    </b-form>
-    <div v-if="!google">
-    <GoogleLogin
-          class="buttonText"
-          :params="params"
-          :onSuccess="onSuccess"
-          :onFailure="onFailure"
-          >Registrar con Google
-        </GoogleLogin>
-
-    </div>
-
+    </form>
   </div>
 </template>
 
 <script>
 import GoogleLogin from "vue-google-login";
-import Geolocation from "@/components/geolocation/Geolocation.vue"
+import Geolocation from "@/components/geolocation/Geolocation.vue";
 export default {
   name: "Register",
   components: {
     GoogleLogin,
-    Geolocation
+    Geolocation,
   },
 
   data() {
@@ -113,15 +148,74 @@ export default {
       lastNames: null,
       email: null,
       telephone: null,
-      password: null,
-      passwordConfirmation: null,
+      password: "",
+      passwordConfirmation: "",
       location: null,
       login: null,
       params: {},
     };
   },
+  computed: {
+    validateEmail() {
+      if (this.email == null) {
+        return null;
+      }
+      const re =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(this.email).toLowerCase());
+    },
+    validateNames() {
+      if (this.names == null) {
+        return null;
+      }
+      const re = /^[a-zA-Z]+$/;
+      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      if (re.test(this.names)) {
+        return true;
+      }
+      return reL.test(this.names);
+    },
+    validateLastNames() {
+      if (this.lastNames == null) {
+        return null;
+      }
+      const re = /^[a-zA-Z]+$/;
+      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      if (re.test(this.lastNames)) {
+        return true;
+      }
+      return reL.test(this.lastNames);
+    },
+    validateTelephone() {
+      if (this.telephone == null) {
+        return null;
+      }
+      const re = /^\d{10}$/;
+      const reT = /^\d{6}$/;
+      if (reT.test(this.telephone)) {
+        return true;
+      }
+      return re.test(this.telephone);
+    },
+    validationPassword() {
+      if (this.password.length > 0) {
+        return this.password.length > 4 && this.password.length < 13;
+      }
+      return null;
+    },
+    equal() {
+      if (this.password.length > 4) {
+        if (this.password == this.passwordConfirmation) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return null;
+    },
+  },
   methods: {
-    ral_Location(value){
+    ral_Location(value) {
       this.location = value;
     },
     makeToast(variant = null, title, info, time) {
@@ -173,8 +267,8 @@ export default {
     },
     async check() {
       if (!this.google) {
-        if (this.names != null && this.lastNames!= null && this.email!= null && this.telephone!= null && this.location!= null && this.password!= null && this.passwordConfirmation!=null){
-          if (this.password.length>4){
+        if(this.validateNames && this.validateLastNames && this.validateTelephone && this.location != null) {
+          if (this.password.length > 4) {
             if (this.password === this.passwordConfirmation) {
               await this.checkEmail();
               if (this.flag === false) {
@@ -189,25 +283,25 @@ export default {
               }
             } else {
               this.makeToast(
-                  "danger",
-                  "Las contraseñas no coinciden",
-                  "Cuidado",
-                  3000
-                );
+                "danger",
+                "Las contraseñas no coinciden",
+                "Cuidado",
+                3000
+              );
             }
-          }else{
+          } else {
             this.makeToast(
-                  "danger",
-                  "Las contraseñas deben tener mas de 4 digitos",
-                  "Cuidado",
-                  3000
+              "danger",
+              "Las contraseñas deben tener mas de 4 digitos",
+              "Cuidado",
+              3000
             );
           }
         } else {
           this.makeToast(
             "danger",
-            "Llena todos los campos por favor ",
-            "Cuidado",
+            "Error",
+            "Datos invalidos",
             3000
           );
         }
@@ -218,21 +312,21 @@ export default {
           if (this.flag === false) {
             this.createRegister();
           } else if (this.flag === true) {
-              this.makeToast(
-                  "danger",
-                  "El correo ya ha sido usado por otra persona!!",
-                  "Cuidado",
-                  3000
-              );
+            this.makeToast(
+              "danger",
+              "El correo ya ha sido usado por otra persona!!",
+              "Cuidado",
+              3000
+            );
           }
-        }else{
+        } else {
           this.makeToast(
-                  "danger",
-                  "Llena todos los campos por favor",
-                  "Cuidado",
-                  3000
+            "danger",
+            "Llena todos los campos por favor",
+            "Cuidado",
+            3000
           );
-      }
+        }
       }
     },
     onSuccess(googleUser) {
@@ -241,12 +335,6 @@ export default {
       this.email = googleUser.getBasicProfile().getEmail();
       this.google = true;
       this.is_alternative = true;
-    },
-    redirectExampleEdit(idEnterprise) {
-      this.$router.push({
-        name: "ExampleEdit",
-        params: { id: idEnterprise },
-      });
     },
     onFailure(error) {
       console.log(error);
@@ -283,6 +371,7 @@ export default {
 </script>
 
 <style scoped>
+
 .buttonText:hover {
   cursor: pointer;
 }

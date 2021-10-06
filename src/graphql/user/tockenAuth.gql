@@ -1,0 +1,5 @@
+mutation TokenAuth($email: String!, $password: String!) {
+  tokenAuth(email: $email, password: $password) {
+    token
+  }
+}

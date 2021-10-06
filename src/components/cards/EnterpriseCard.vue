@@ -59,15 +59,7 @@ export default {
       valoration: 0,
       counter: 0,
       varShedule: "",
-      aux1: 0,
-      aux2: 0,
-      aux3: 0,
-      aux4: 0,
-      aux5: 0,
-      aux6: 0,
-      aux7: 0,
-      auxprom: 0,
-      auxcont: 0,
+      calculo:0
     };
   },
 
@@ -126,8 +118,8 @@ export default {
       }
       return aux;
     },
-
-    async allReviewsMeth1() {
+    allReviewsMeth1() {
+      var comments=[]
       var aux1 = 0;
       var aux2 = 0;
       var aux3 = 0;
@@ -136,73 +128,49 @@ export default {
       var aux6 = 0;
       var aux7 = 0;
       var conttam = 0;
-      var comments = [];
-      var users = [];
+      //var users = [];
 
-      for (const product in this.allReviews.products.edges) {
-        for (const order in this.allReviews.products.edges[product].node.orders
-          .edges.review) {
-           comments.push(
-            this.allReviews.products.edges[product].node.orders.edges[order]
-              .node.review.comments
-          );
-          users.push(
-            this.allReviews.products.edges[product].node.orders.edges[order]
-              .node.client.email
-          );
-          aux1 = Math.round(
-            aux1 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.qualityService
-              )
-          );
-          aux2 = Math.round(
-            aux2 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.preparation
-              )
-          );
-          aux3 = Math.round(
-            aux3 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.presentation
-              )
-          );
-          aux4 = Math.round(
-            aux4 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.ingredients
-              )
-          );
-          aux5 = Math.round(
-            aux5 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.price
-              )
-          );
-          aux6 = Math.round(
-            aux6 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.textures
-              )
-          );
-          aux7 = Math.round(
-            aux7 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.cookingPoint
-              )
-          );
-          conttam = conttam + 1;
+        if(this.allReviews.products.edges.length === 0) {
+            return;
         }
-      }
+        for (
+          var product = 0;
+          product < this.allReviews.products.edges.length;
+          product++
+        ) {
+
+          if(this.allReviews.products.edges[product].node.orders.edges.length !== 0){
+              for (
+              var order = 0;
+              order <
+              this.allReviews.products.edges[product].node.orders.edges.length;
+              order++
+            ){
+            if(this.allReviews.products.edges[product].node.orders.edges[order].node.review !== null){
+               comments.push(
+                  this.allReviews.products.edges[product].node.orders.edges[order].node
+                );
+                  aux1=aux1+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.qualityService)
+                  aux2=aux2+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.presentation)
+                  aux3=aux3+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.preparation)
+                  aux4=aux4+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.ingredients)
+                  aux5=aux5+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.price)
+                  aux6=aux6+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.textures)
+                  aux7=aux7+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.cookingPoint)
+            }
+
+
+
+            }
+
+          }
+
+
+        }
+
+
       //promedios
+      conttam=comments.length;
       this.auxcont = conttam;
       aux1 = Math.round(aux1 / conttam);
       this.aux1 = aux1;
@@ -219,11 +187,10 @@ export default {
       aux7 = Math.round(aux7 / conttam);
       this.aux7 = aux7;
       this.comments = comments;
-      this.users = users;
-      this.valoration = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(
-        1
-      );
+      var calculo=((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
+      this.valoration=calculo;
     },
+
     mostrar() {
       let diasSemana = JSON.parse(this.enterprise.businessHours);
       let dias = [

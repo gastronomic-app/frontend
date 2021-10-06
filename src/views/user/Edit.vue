@@ -1,192 +1,200 @@
 <template>
-    <div class="wrapper fadeInDown align-self-lg-center">
-        <h1>Actualización de datos</h1>
-          <div class="card-body container align-self-center">
-              <div class="form-group">
-                  <label for="validationName"
-                  >Nombre<span class="text-danger">*</span></label          >
-                  <input
-                      type="text"
-                      class="form-control"
-                      id="validationName"
-                      v-model="name"
-                      aria-describedby="name"
-                      required
-                  />
-                  <label for="validationLastname"
-                      >Apelido<span class="text-danger">*</span></label
-                  >
-                  <input
-                      type="text"
-                      class="form-control"
-                      id="validationLastname"
-                      v-model="lastname"
-                      required
-                  />
-                  <label for="validationTelephone"
-                      >Telefono<span class="text-danger">*</span></label
-                  >
-                  <input
-                      type="text"
-                      class="form-control"
-                      id="validationTelephone"
-                      v-model="telephone"
-                      required
-                  />
-                  <!-- geolocalizacion-->
-                  <label for="validationLocation"
-                      >Localización<span class="text-danger">*</span></label
-                  >
-                  <Geolocation v-on:value="newLocation" showmap="True" />
-                  <br>
-                  <!-- geolocalizacion  -->
-                  <button
-                      @click="editContact()"
-                      type="submit"
-                      class="btn btn-outline-primary"
-                      >
-                      Guardar información
-                  </button>
+  <div class="wrapper fadeInDown align-self-lg-center">
+    <h1>Actualización de datos</h1>
+    <div class="card-body container align-self-center">
+      <form v-on:submit.stop.prevent="editContact()">
+        <div>
+          <label for="validationName"
+            >Nombre<span class="text-danger">*</span></label
+          >
+          <b-form-input
+            type="text"
+            class="form-control"
+            id="validationName"
+            v-model="name"
+            :state="validateNames"
+            name="validationLastname"
+            required
+          ></b-form-input>
+          <b-form-invalid-feedback :state="validateNames">
+            El nombre debe ser valido.
+          </b-form-invalid-feedback>
 
-                  <button
-                      :disabled="disable()"
-                      type="button"
-                      class="btn btn-primary"
-                      data-toggle="modal"
-                      data-target="#exampleModalCenter"
-                      >
-                      Cambiar Contraseña
-                  </button>
-              </div>
-          </div>
-        <!-- Modal -->
-        <div
-            class="modal fade"
-            id="exampleModalCenter"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="exampleModalCenterTitle"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">
-                            Cambiar Contraseña
-                        </h5>
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <center>
-                            <form>
-                                <div class="col-md-6 mb-3">
-                                    <label for="inputContraseña">
-                                        Contraseña Antigua<span class="text-danger"
-                                        >*</span
-                                    ></label                                >
-                                    <input
-                                    type="password"
-                                    id="inputPassword5"
-                                    class="form-control"
-                                    aria-describedby="passwordHelpBlock"
-                                    required
-                                    v-model="passwordOld"
-                                    />
-                                    <div class="invalid-feedback">
-                                        Es necesario escribir la contraseña.
-                                    </div>
-                                    <small id="passwordHelpBlock" class="form-text text-muted">
-                                        Su contraseña debe tener entre 8 a 20 caracteres.
-                                    </small>
-                                    <div>
-                                        <label for="inputPasswordNew">
-                                            Nueva Contraseña<span class="text-danger"
-                                            >*</span
-                                        ></label>
-                                        <input
-                                            type="password"
-                                            id="inputPasswordNew"
-                                            class="form-control"
-                                            aria-describedby="passwordHelpBlock"
-                                            required
-                                            v-model="passwordNew"
-                                        />
-                                        <div class="invalid-feedback">
-                                            Es necesario escribir la nueva contraseña.
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="inputPasswordConfirmation">
-                                            Confirmar Nueva Contraseña<span class="text-danger"
-                                            >*</span>
-                                        </label>
-                                        <input
-                                            type="password"
-                                            id="inputPasswordConfirmation"
-                                            class="form-control"
-                                            aria-describedby="passwordHelpBlock"
-                                            required
-                                            v-model="passwordConfirmation"
-                                        />
-                                        <div class="invalid-feedback">
-                                            Es necesario escribir la confirmación nueva contraseña.
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    @click="checkPassword()"
-                                    type="button"
-                                    data-dismiss="modal"
-                                    class="btn btn-primary"
+          <label for="validationLastname"
+            >Apelido<span class="text-danger">*</span></label
+          >
+          <b-form-input
+            type="text"
+            class="form-control"
+            :state="validateLastNames"
+            id="validationLastname"
+            v-model="lastname"
+            aria-describedby="lastNames"
+            required
+            name="validationLastname"
+          ></b-form-input>
+          <b-form-invalid-feedback :state="validateLastNames">
+            Los apellidos deben ser validos.
+          </b-form-invalid-feedback>
+          <label for="validationTelephone"
+            >Telefono<span class="text-danger">*</span></label
+          >
+          <b-form-input
+            type="text"
+            class="form-control"
+            :state="validateTelephone"
+            id="validationTelephone"
+            v-model="telephone"
+            required
+          ></b-form-input>
+          <b-form-invalid-feedback :state="validateTelephone">
+            Telefono debe ser valido (10 o 6 digitos).
+          </b-form-invalid-feedback>
 
-                                >
-                                    Guardar cambios
-                                </button>
-                            </form>
-                        </center>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-dismiss="modal"
-                        >
-                            Cerrar
-                        </button>
-                    </div>
-                </div>
-            </div>
+          <!-- geolocalizacion-->
+          <label for="validationLocation"
+            >Localización<span class="text-danger">*</span></label
+          >
+          <Geolocation
+            ref="foo"
+            :showmap="true"
+            :disable_input="true"
+            :placeholder="location"
+          />
+          <br />
+          <!-- geolocalizacion  -->
+          <input type="submit" class="btn btn-color" value="Guardar Cambios" />
         </div>
+      </form>
+       <br />
+      <button
+        :disabled="disable()"
+        type="submit"
+        class="btn btn-black"
+        v-b-modal.ModalCenter
+        @click="show_modal = true"
+      >
+        Cambiar Contraseña
+      </button>
     </div>
+    <!-- Modal -->
+    <b-modal
+      v-model="show_modal"
+      id="ModalCenter"
+      hide-footer
+      title="Cambiar Contraseña"
+    >
+      <div class="modal-body">
+        <center>
+          <form v-on:submit.prevent="validatePassword()">
+            <div class="col-md-6 mb-3">
+              <label for="inputContraseña">
+                Contraseña Antigua<span class="text-danger">*</span></label
+              >
+              <b-form-input
+                @keydown.space.prevent
+                type="password"
+                id="inputPassword5"
+                class="form-control"
+                :state="validationOld"
+                aria-describedby="passwordHelpBlock"
+                required
+                v-model="passwordOld"
+              ></b-form-input>
+              <b-form-invalid-feedback :state="validationOld">
+                La contraseña debe tener entre 5 y 12 caracteres.
+              </b-form-invalid-feedback>
+
+              <div>
+                <label for="inputPasswordNew">
+                  Nueva Contraseña<span class="text-danger">*</span></label
+                >
+                <b-form-input
+                  @keydown.space.prevent
+                  type="password"
+                  id="inputPasswordNew"
+                  class="form-control"
+                  :state="validation"
+                  aria-describedby="passwordHelpBlock"
+                  required
+                  v-model="passwordNew"
+                ></b-form-input>
+                <b-form-invalid-feedback :state="validation">
+                  La contraseña debe tener entre 5 y 12 caracteres.
+                </b-form-invalid-feedback>
+                <b-form-invalid-feedback :state="validationEqual">
+                  Utilizaste esta contraseña. Elije una diferente.
+                </b-form-invalid-feedback>
+
+              </div>
+              <div>
+                <label for="confirmPassword"
+                  >Confirmar contraseña
+                  <span class="text-danger">*</span></label
+                >
+                <b-form-input
+                  @keydown.space.prevent
+                  type="password"
+                  id="inputPasswordConfirmation"
+                  :state="equal"
+                  class="form-control"
+                  aria-describedby="passwordHelpBlock"
+                  required
+                  v-model="passwordConfirmation"
+                ></b-form-input>
+                <b-form-text id="password-help-block">
+                  La contraseña debe tener entre 5 y 12 caracteres
+                </b-form-text>
+                <b-form-invalid-feedback :state="equal">
+                  Las contraseñas no son iguales.
+                </b-form-invalid-feedback>
+              </div>
+            </div>
+            <input
+              type="submit"
+              value="Guardar cambios"
+              class="btn btn-color"
+              id="save"
+            />
+          </form>
+        </center>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-black"
+          data-dismiss="modal"
+          @click="show_modal = false"
+        >
+          Cerrar
+        </button>
+      </div>
+    </b-modal>
+  </div>
 </template>
+<script src="https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyAYFB5yvCJzaZy09_qPCONtoT6-pPmCkns"></script>
 <script>
-import Geolocation from "@/components/geolocation/Geolocation.vue"
+
+import Geolocation from "@/components/geolocation/Geolocation.vue";
 export default {
   name: "Edit",
   components: {
-    Geolocation
+    Geolocation,
   },
   data() {
     return {
+      email: "",
       name: "",
       lastname: "",
       location: "",
       telephone: "",
-      password: "",
       passwordOld: "",
       passwordNew: "",
       passwordConfirmation: "",
       id: "",
       is_alternative: "",
       idAux: "",
-      go: false
+      show_modal: false,
     };
   },
   async mounted() {
@@ -194,7 +202,7 @@ export default {
       null === localStorage.getItem("existUser") ||
       false === localStorage.getItem("existUser")
     ) {
-      this.$router.push({ name: "catalogSearch" });
+      this.$router.push({ name: "catalog-search" });
     } else {
       if (this.id) {
         await this.$apollo
@@ -210,16 +218,105 @@ export default {
             this.location = response.data.user.contact.edges[0].node.location;
             this.telephone = response.data.user.contact.edges[0].node.telephone;
             this.is_alternative = response.data.user.isAlternative;
-
-            this.password = response.data.user.password;
+            this.email = response.data.user.email;
             this.idAux = response.data.user.contact.edges[0].node.id;
+          });
+          this.getCompleteAddress(this.location).then((value) => {
+            this.$refs.foo.showUserLocation(value.lat, value.lng);
           });
       }
     }
   },
+  computed: {
+    validateNames() {
+      if (this.name == null) {
+        return null;
+      } else {
+        const re = /^[a-zA-Z]+$/;
+        const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+        if (re.test(this.name) || reL.test(this.name)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    validateLastNames() {
+      if (this.lastname == null) {
+        return null;
+      }
+      const re = /^[a-zA-Z]+$/;
+      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      if (re.test(this.lastname) || reL.test(this.lastname)) {
+        return true;
+      }
+      return false;
+    },
+    validateTelephone() {
+      if (this.telephone == null) {
+        return null;
+      }
+      const re = /^\d{10}$/;
+      const reT = /^\d{6}$/;
+      if (reT.test(this.telephone) || re.test(this.telephone)) {
+        return true;
+      }
+      return null;
+    },
+    validation() {
+      if (this.passwordNew.length > 0) {
+        return this.passwordNew.length > 4 && this.passwordNew.length < 13;
+      }
+      return null;
+    },
+    validationOld() {
+      if (this.passwordOld.length > 0) {
+        return this.passwordOld.length > 4 && this.passwordOld.length < 13;
+      }
+      return null;
+    },
+    validationEqual() {
+      if (this.passwordNew.length > 4) {
+        if (this.passwordNew == this.passwordOld) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      return null;
+    },
+    equal() {
+      if (this.passwordNew.length > 4) {
+        if (this.passwordNew == this.passwordConfirmation) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return null;
+    },
+  },
   methods: {
-    newLocation(value){
-      this.location = value;
+
+    async getCompleteAddress(address) {
+      const geocoder = new google.maps.Geocoder();
+      var completeAddress = {
+        address: "",
+        lat: "",
+        lng: "",
+      };
+      await geocoder.geocode(
+        {
+          address: address,
+        },
+        (response, status) => {
+          if (status === "OK") {
+            (completeAddress.address = response[0].formatted_address),
+              (completeAddress.lat = response[0].geometry.location.lat()),
+              (completeAddress.lng = response[0].geometry.location.lng());
+          }
+        }
+      );
+      return completeAddress;
     },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
@@ -229,7 +326,13 @@ export default {
         solid: true,
       });
     },
+
     async editContact() {
+      if (
+        this.validateNames &&
+        this.validateLastNames &&
+        this.validateTelephone
+      ) {
         await this.$apollo
           .mutate({
             // Establece la mutación de editar
@@ -257,10 +360,11 @@ export default {
           // que puede usarse para agregar más logica
           .then((response) => {
             //Console necesario debido a que si se deja por fuera la logica se pierde lo asincrono
-            console.log("actualización de contacto:", response.data);
+            response.data;
             //Llenar cache
             let user = JSON.parse(localStorage.getItem("user"));
             user.names = this.name;
+            user.location = this.location;
             localStorage.setItem("user", JSON.stringify(user));
             this.$router.push({ name: "catalogSearch" }).then(() => {
               this.makeToast(
@@ -271,6 +375,42 @@ export default {
               );
             });
           });
+      } else {
+        this.makeToast("danger", "Error", "Datos invalidos", 3000);
+      }
+    },
+    async validatePassword() {
+      if (this.validation && this.validationOld && this.equal && this.validationEqual) {
+        try {
+          await this.$apollo
+            .mutate({
+              // Establece la mutación de editar
+              mutation: require("@/graphql/user/tockenAuth.gql"),
+              // Define las variables
+              variables: {
+                email: this.email,
+                password: this.passwordOld,
+              },
+            })
+            // El método query devuelve una promesa
+            // que puede usarse para agregar más logica
+            .then((response) => {
+              // En este caso se usa para cargar el formulario
+              // con los datos obtenidos
+              response.data;
+              this.editPassword();
+            });
+        } catch (error) {
+          this.makeToast(
+            "danger",
+            "Contraseña",
+            "No coincide la contraseña antigua",
+            3000
+          );
+        }
+      } else {
+        this.makeToast("danger", "Error", "Datos invalidos", 3000);
+      }
     },
     async editPassword() {
       await this.$apollo
@@ -295,7 +435,7 @@ export default {
         })
         .then((response) => {
           // No puedo eliminar el console
-          console.log("actualización de contrasenia:", response.data);
+          response.data;
           this.password = this.passwordNew;
           this.makeToast(
             "success",
@@ -303,32 +443,14 @@ export default {
             "La contraseña ha sido actualizada",
             3000
           );
+          this.passwordOld = "";
+          this.passwordNew = "";
+          this.passwordConfirmation = "";
+          this.show_modal = false;
         });
     },
-
     disable() {
       return this.is_alternative;
-    },
-    checkPassword() {
-      if (this.password == this.passwordOld) {
-        if (this.passwordNew == this.passwordConfirmation) {
-          this.editPassword();
-        } else {
-          this.makeToast(
-            "danger",
-            "Contraseñas",
-            "No coincide las contraseñas nuevas",
-            3000
-          );
-        }
-      } else {
-        this.makeToast(
-          "danger",
-          "Contraseña",
-          "No coinciden la contraseña antigua",
-          3000
-        );
-      }
     },
   },
   /**

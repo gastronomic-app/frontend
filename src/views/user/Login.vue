@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div>
     <div class="wrapper fadeInDown">
       <div id="formContent">
         <!-- Tabs Titles -->
@@ -179,13 +179,7 @@ export default {
     onFailure(error) {
       console.log(error);
     },
-    async startSesion() {
-      this.show_charging = true;
-      if (!this.google && this.password === "") {
-        this.error_msg = "Datos incorrectos";
-        this.error = true;
-        return false;
-      }
+    async getData() {
       await this.$apollo
         .query({
           // Establece la consulta para recuperar la empresa
@@ -193,28 +187,12 @@ export default {
           // Define las variables
           variables: {
             email: this.email,
-            password: this.password,
           },
         })
         // El método query devuelve una promesa
         // que puede usarse para agregar más logica
         .then((response) => {
-          // En este caso se usa para cargar el formulario
-          // con los datos obtenidos
-          if (response.data.allUsers.edges[0] == null) {
-            if (this.google) {
-              this.error_msg = "Usuario de Google no registrado";
-              localStorage.clear();
-              this.google = false;
-              this.email = "";
-              this.show_charging = false;
-            } else {
-              this.error_msg = "Datos inválidos";
-              this.show_charging = false;
-            }
-            this.error = true;
-          } else {
-            if (response.data.allUsers.edges[0].node.isActive) {
+             if (response.data.allUsers.edges[0].node.isActive) {
               this.user.id = response.data.allUsers.edges[0].node.id;
               this.user.email = response.data.allUsers.edges[0].node.email;
               //this.user.isalternative =  response.data.allUsers.edges[0].node.isalternative;
@@ -248,8 +226,54 @@ export default {
               this.error = true;
 
             }
+        });
+    },
+
+    async startSesion() {
+      this.show_charging = true;
+      if (!this.google && this.password === "") {
+        this.error_msg = "Datos incorrectos";
+        this.error = true;
+        return false;
+      }
+      try {
+        await this.$apollo
+        .mutate({
+            // Establece la mutación de editar
+            mutation: require("@/graphql/user/tockenAuth.gql"),
+          // Define las variables
+          variables: {
+            email: this.email,
+            password: this.password,
+          },
+        })
+        // El método query devuelve una promesa
+        // que puede usarse para agregar más logica
+        .then((response) => {
+          // En este caso se usa para cargar el formulario
+          // con los datos obtenidos
+          if (response.data.tokenAuth == null) {
+            if (this.google) {
+              this.error_msg = "Usuario de Google no registrado";
+              localStorage.clear();
+              this.google = false;
+              this.email = "";
+              this.show_charging = false;
+            } else {
+              this.error_msg = "Datos inválidos";
+              this.show_charging = false;
+            }
+            this.error = true;
+          } else {
+            this.getData();
           }
         });
+      } catch (error) {
+        this.error_msg = "Datos inválidos";
+        this.show_charging = false;
+        this.error = true;
+      }
+
     },
     async activateUser() {
       this.show_charging = true;
@@ -291,7 +315,7 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("existUser")) {
-      this.$router.push({ name: "catalogSearch" });
+      this.$router.push({ name: "catalog-search" });
     }
   },
 };
@@ -321,7 +345,7 @@ export default {
 }
 /* BASIC */
 html {
-  background-color: #ff6079;
+  background-color: var(--orange);
 }
 body {
   font-family: "Poppins", sans-serif;
@@ -379,13 +403,13 @@ h2.inactive {
 }
 h2.active {
   color: #0d0d0d;
-  border-bottom: 2px solid #ff6079;
+  border-bottom: 2px solid var(--orange);
 }
 /* FORM TYPOGRAPHY*/
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
-  background-color: #ff6079;
+  background-color: var(--orange);
   border: none;
   color: white;
   padding: 15px 80px;
@@ -408,7 +432,7 @@ input[type="reset"] {
 input[type="button"]:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover {
-  background-color: #ff6079;
+  background-color: var(--orange);
 }
 input[type="button"]:active,
 input[type="submit"]:active,
@@ -441,7 +465,7 @@ input {
 }
 input:focus {
   background-color: #fff;
-  border-bottom: 2px solid #ff6079;
+  border-bottom: 2px solid var(--orange);
 }
 input:placeholder {
   color: #cccccc;
@@ -544,7 +568,7 @@ input:placeholder {
   bottom: -10px;
   width: 0;
   height: 2px;
-  background-color: #ff6079;
+  background-color: var(--orange);
   content: "";
   transition: width 0.2s;
 }

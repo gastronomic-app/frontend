@@ -93,7 +93,7 @@ export default {
           // que puede usarse para agregar más logica
           .then((response) => {
             console.log("actualización de contrasenia:", response.data);
-            this.$router.push({ name: "catalogSearch" }).then(() => {
+            this.$router.push({ name: "catalog-search" }).then(() => {
               this.makeToast(
                 "success",
                 "Actualizada",

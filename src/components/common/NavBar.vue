@@ -26,7 +26,7 @@
               </a>
             </li>
             <li class="nav-item mr-3" v-show="ok">
-              <a class="nav-link text-light font-weight-bold" href="/geolocationSearch">Busqueda geolocalización</a>
+              <a class="nav-link text-light font-weight-bold" href="/geolocation-search">Busqueda geolocalización</a>
             </li>
             <li class="nav-item mr-3" v-show="ok">
               <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
@@ -94,9 +94,9 @@
                         </div>
                       </div>
                       <center class="botones">
-                        <span class="float-left">
+                        <div class="dropdown-divider"></div>
                           <button
-                            class="btn btn-success"
+                            class="btn btn-success btn-sm"
                             type="button"
                             data-toggle="tooltip"
                             @click="redirectEdit()"
@@ -104,10 +104,8 @@
                           >
                             <i class="icon-edit icon-white">Editar usuario</i>
                           </button>
-                        </span>
-                        <span class="float-right">
                           <button
-                            class="btn btn-danger"
+                            class="btn btn-danger btn-sm ml-2"
                             type="button"
                             data-toggle="tooltip"
                             @click="removeClient()"
@@ -115,7 +113,6 @@
                           >
                             <i class="icon-remove icon-white">Darme de baja</i>
                           </button>
-                        </span>
                       </center>
                     </div>
                   </div>
