@@ -137,7 +137,7 @@
               <a
                 class="nav-link navbar-orange-text font-weight-bold login"
                 href="/login"
-                ><strong>Iniciar Sesión</strong></a
+               ><strong>Iniciar Sesión</strong></a
               >
             </li>
             <li v-show="!ok" class="nav-item">
@@ -177,17 +177,7 @@ export default {
     params: {},
     // only needed if you want to render the button with the google ui
   }),
-  // mounted() {
-  //   if(localStorage.getItem("car")){
-  //     this.count = parseInt(localStorage.getItem("car"));
-  //   }
-  //   console.log("# " + this.count)
-  // },
   methods: {
-    /*getCount(value) {
-      this.count = value;
-      debugger;
-    },*/
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
@@ -210,6 +200,7 @@ export default {
         this.email = user.email;
         this.names = user.names;
         this.role = user.type;
+        this.$store.dispatch("setStorageCountAction", this.$store.getters.getCount);
         return true;
       }
       return false;
@@ -218,6 +209,9 @@ export default {
       this.ok = false;
       localStorage.clear();
       this.$router.push({ name: "catalogSearch" });
+      this.$store.dispatch("setStorageCountAction", 0);
+      localStorage.removeItem("idEnterprise");
+      localStorage.getItem("enterpriseName");
     },
     removeClient() {
       if (confirm("¿Seguro que desea darse de baja?", false)) {

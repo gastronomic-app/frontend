@@ -21,9 +21,10 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("existUser")) {
-      this.ok = localStorage.getItem("existUser");
+      this.ok = true;
     } else {
       this.$store.dispatch("setStorageCountAction", 0);
+      this.ok = false;
     }
     if (localStorage.getItem("car")) {
       this.total = parseInt(localStorage.getItem("car"));
@@ -32,9 +33,9 @@ export default {
   },
   methods: {
     order() {
+      var current_url = window.location.href;
+      var page = current_url.split("/");
       if (localStorage.getItem("existUser")) {
-        var current_url = window.location.href;
-        var page = current_url.split("/");
         page = page[page.length - 1];
         if (page != "products-order") {
           if (page != "" && this.$store.getters.getCount == 0) {
@@ -52,7 +53,8 @@ export default {
           }
         }
       } else {
-        this.$router.push({ name: "Login" });
+        window.location = "/login";
+        //this.$router.push({ name: "Login" });
       }
     },
   },

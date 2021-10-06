@@ -456,9 +456,9 @@ export default {
         this.$store.dispatch("incrementCountAction");
         localStorage.car = this.$store.getters.getCount;
       } else {
-        this.$router.push({
+        /*this.$router.push({
           name: "Login",
-        });
+        });*/ window.location = "/login";
       }
     },
 
