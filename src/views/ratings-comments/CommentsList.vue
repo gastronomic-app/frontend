@@ -8,7 +8,7 @@
     </Enterprise>
 
     <div class="row">
-      <div class="col-5 mt-2">
+      <div class="col-xl-5 col-sm-12 mt-2">
         <div>
           <h5>
             <b>Puntuacion {{ calculo }}</b>
@@ -60,7 +60,7 @@
         <br />
         <br />
       </div>
-      <div class="col-7 mt-2">
+      <div class="col-xl-7 col-md-10 col-sm-12 mt-2">
         <h5><b>Comentarios</b></h5>
         <div class="container">
           <div class="row justify-content-center align-items-center">
@@ -75,18 +75,38 @@
           </div>
         </div>
 
-        <div v-for="(item, indice) in this.comments" v-bind:key="indice">
-          <div v-if="item.review.comments != ''">
-            <TextArea
-              :email="item.client.email"
-              :comment="item.review.comments"
-            />
+        <paginate ref="paginator" name="comments" :list="comments" :per="3">
+          <div
+            v-for="comment in paginated('comments')"
+            :key="comment.id"
+            :item="comment"
+            :checkbox_use="true"
+          >
+            <div v-if="comment.review.comments != ''">
+              <TextArea
+                :email="comment.client.email"
+                :comment="comment.review.comments"
+              />
+            </div>
           </div>
+          <div class="mb-2">
+            <a v-on:click="link()" type="button" class="nav-link mr-4">
+              Agregar comentario
+            </a>
+          </div>
+        </paginate>
+
+        <div class="div-paginate d-flex justify-content-center" >
+          <paginate-links
+            for="comments"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
         </div>
-        <div class="mb-2">
-          <a v-on:click="link()" type="button" class="nav-link mr-4">
-            Agregar comentario
-          </a>
+        <div class="div-paginate d-flex justify-content-center">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
         </div>
       </div>
     </div>
@@ -119,6 +139,8 @@ export default {
       calculo: 0,
       auxcont: 0,
       comments: [],
+      Comments: [],
+      paginate: ["comments"],
       aux1: 0,
       aux2: 0,
       aux3: 0,
