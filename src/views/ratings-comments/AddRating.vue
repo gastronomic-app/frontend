@@ -6,19 +6,19 @@
       section="Comentarios y calificaciones"
     ></Enterprise>
     <div class="row">
-      <div class="col-6 col-xs-12 pl-0">
-        <b-container>
-          <b-row class="mt-4">
-            <b-col md="2" class="mb-3">
+      <div class="col-xl-6 col-md-12 col-xs-12 pl-0">
+        <b-container class="mt-3">
+          <!-- <b-row class="mt-4">
+            <b-col sm="2" class="mb-3">
               <b-icon icon="person-circle" font-scale="3"></b-icon>
             </b-col>
-            <b-col sm="8" class="">
-              <label for="">Nombre del usuario</label>
+            <b-col sm="10" class="">
+              <label for=""></label>
             </b-col>
-          </b-row>
-          <b-row>
+          </b-row> -->
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6>Calidad del servicio</h6>
+              <h6 for="range-2" class="mb-0">Calidad del servicio</h6>
               <b-form-input
                 id="range-1"
                 v-model="quality"
@@ -32,9 +32,9 @@
               {{ define_Range(quality) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Presentación del producto</h6>
+              <h6 for="range-2" class="mb-0">Presentación del producto</h6>
               <b-form-input
                 id="range-2"
                 v-model="presentation"
@@ -48,9 +48,9 @@
               {{ define_Range(presentation) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Preparación</h6>
+              <h6 for="range-2" class="mb-0">Preparación</h6>
               <b-form-input
                 id="range-4"
                 v-model="preparation"
@@ -64,9 +64,9 @@
               {{ define_Range(preparation) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Ingredientes</h6>
+              <h6 for="range-2" class="mb-0">Ingredientes</h6>
               <b-form-input
                 id="range-5"
                 v-model="ingredients"
@@ -80,9 +80,9 @@
               {{ define_Range(ingredients) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Precio</h6>
+              <h6 for="range-2" class="mb-0">Precio</h6>
               <b-form-input
                 id="range-3"
                 v-model="price"
@@ -96,9 +96,9 @@
               {{ define_Range(price) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Textura</h6>
+              <h6 for="range-2" class="mb-0">Textura</h6>
               <b-form-input
                 id="range-6"
                 v-model="texture"
@@ -112,9 +112,9 @@
               {{ define_Range(texture) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-2">
             <b-col sm="10">
-              <h6 for="range-2">Punto de cocción</h6>
+              <h6 for="range-2" class="mb-0">Punto de cocción</h6>
               <b-form-input
                 id="range-7"
                 v-model="cooking"
@@ -130,9 +130,8 @@
           </b-row>
         </b-container>
       </div>
-      <div class="col-md-6 col-xs-12">
-        <br /><br />
-        <b-row><label for="" class="mt-5">Agregar comentario</label></b-row>
+      <div class="col-xl-6 col-md-12 col-xs-12">
+        <b-row><label for="" class="">Agregar comentario</label></b-row>
         <b-row>
           <div role="group">
             <b-form-textarea
@@ -220,17 +219,7 @@ export default {
           //this.save();
         });
     },
-    mostrarValores() {
-      //método no funcional, solo para comprobar
-      console.log(this.define_Range(this.quality));
-      console.log(this.define_Range(this.presentation));
-      console.log("Presen : ", this.define_Range(this.preparation));
-      console.log("Ingredients: ", this.define_Range(this.ingredients));
-      console.log("Price: ", this.define_Range(this.price));
-      console.log("texture: ", this.define_Range(this.texture));
-      console.log("cooking: ", this.define_Range(this.cooking));
-      console.log("Coment: ", this.comment);
-    },
+
     define_Range(valor) {
       if (valor <= 15) {
         return "Malo";
@@ -262,8 +251,6 @@ export default {
     },
     sendData() {
       console.log("Pasando por Guardar");
-      //this.idOrder = "T3JkZXJOb2RlOjEz";
-      //this.mostrarValores();
       this.$apollo
         .mutate({
           // Establece la mutación de crear
@@ -289,8 +276,6 @@ export default {
     },
     link() {
       localStorage.idCaught = "";
-      //localStorage.enterpriseC = "";
-      console.log("datos : ", this.id);
       this.$router.push({
         name: "CommentsList",
         params: { idCaught: this.id },
@@ -383,7 +368,6 @@ export default {
       this.enterpriseName = this.$route.params.enterpriseName;
       localStorage.idComment = this.id;
       localStorage.enterpriseN = this.enterpriseName;
-      console.log("Id Recibido : ", this.id, "---", this.enterpriseName);
       this.showComent();
     }
   },
