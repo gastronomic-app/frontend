@@ -32,8 +32,6 @@
         </div>
 
         <div class="row" v-if="list_products_enterprise !== undefined">
-          <!-- <pagination ref="paginator" name="products" :list="products" :per="5">
-          </pagination> -->
           <div
             class="col-xl-4 col-lg-3 col-md-4 col-sm-12"
             v-for="product in list_products_enterprise.filter(
@@ -76,20 +74,6 @@
               </template>
             </div>
           </div>
-
-          <!-- <div class="div-paginate">
-            <paginate-links
-              for="products"
-              :classes="{ ul: 'pagination' }"
-              :show-step-links="true"
-            ></paginate-links>
-          </div>
-
-          <div class="div-paginate">
-            <span v-if="$refs.paginator">
-              Viendo {{ $refs.paginator.pageItemsCount }} resultados
-            </span>
-          </div> -->
         </div>
       </div>
       <!--Carrito-->
@@ -386,7 +370,6 @@ export default {
     };
   },
   mounted() {
-    //this.itemExists();
     if (localStorage.getItem("idEnterprise")) {
       this.idRecovered = localStorage.idEnterprise;
     }
@@ -460,7 +443,6 @@ export default {
           }
         }
         this.saveItems();
-        this.itemExists();
         this.$store.dispatch("incrementCountAction");
         localStorage.car =  this.$store.getters.getCount;
       } else {
@@ -477,7 +459,6 @@ export default {
           localStorage.car = this.$store.getters.getCount;
           this.items.splice(index, 1);
           this.saveItems();
-          this.itemExists();
         }
       }
     },
@@ -488,7 +469,6 @@ export default {
         }
       }
       this.saveItems();
-      this.itemExists();
       this.$store.dispatch("incrementCountAction");
       localStorage.car = this.$store.getters.getCount;
     },
@@ -509,14 +489,12 @@ export default {
           this.items[index].counter < 2
         ) {
           this.items.splice(index, 1);
-          this.itemExists();
         } else {
           if (
             id == this.items[index].recoveredProduct.id &&
             this.items[index].counter >= 2
           ) {
             this.items[index].counter--;
-            this.itemExists();
           }
         }
       }
@@ -529,7 +507,6 @@ export default {
       this.items.splice(1, this.items.length);
       localStorage.removeItem("items");
       this.deleteVariables();
-      this.itemExists();
       this.$store.dispatch("setStorageCountAction", 0);
       localStorage.car = 0;
     },
@@ -539,28 +516,6 @@ export default {
         params: { listado: this.items, enterpriseName: this.enterpriseName },
       });
     },
-
-    //Actualizar el contador de productos adicionado en el carro
-    itemExists() {
-      /*var itemsCar = new Object();
-      var count = 0;
-      if (localStorage.getItem("items")) {
-        itemsCar = JSON.parse(localStorage.getItem("items")); //lo que habia antes de recargar
-        itemsCar.shift(); //Eliminar primer elemento vacio
-        itemsCar.forEach((item) => {
-          count += item.counter;
-        });
-        this.counting = count;
-      } else {
-        this.counting = 0;
-      }
-      if (this.counting == 0) {
-        localStorage.removeItem("items");
-      }
-      localStorage.car = parseInt(this.$store.getters.getCount);
-      console.log("->" + localStorage.car);*/
-    },
-
     deleteVariables() {
       localStorage.removeItem("items");
       localStorage.removeItem("envio");
