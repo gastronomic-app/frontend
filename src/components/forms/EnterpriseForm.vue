@@ -16,14 +16,6 @@
         <label for="location">Direccion Establecimiento<span class="text-danger"></span></label>
         <Geolocation required v-on:value= "ral_Location" showmap="True"/>
         <br />
-        <input
-            type="text"
-            class="form-control"
-            id="enterpriseInputLocation"
-            placeholder="Ubicación del establecimiento"
-            readonly
-            v-model="location"
-        />
         </div>
         <!--TODO Habilitar Imagen -->
         <!--
@@ -309,7 +301,14 @@ async mounted() {
     }
 },
 methods: {
-
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
     ral_Location(value){
         console.log("valor"+ value)
         this.location = value;
@@ -419,6 +418,19 @@ methods: {
         .then((response) => {
         console.log("actualización de empresa:", response.data);
         console.log("agrega aquí más lógica si es necesaria");
+        if (response.data) {
+          this.makeToast(
+            "success",
+            "Establecimiento actualizado",
+            "El Establecimiento " + this.name +" ha sido actualizado",
+            4000);
+        }else{
+          this.makeToast(
+            "warning",
+            "Datos incorrectos",
+            "La informacion proporcionada es incorrecta",
+            4000);
+        }
         });
 
         this.$router.push({ name: "EnterpriseList" });
