@@ -6,19 +6,19 @@
       section="Comentarios y calificaciones"
     ></Enterprise>
     <div class="row">
-      <div class="col-6 col-xs-12 pl-0">
-        <b-container>
-          <b-row class="mt-4">
-            <b-col md="2" class="mb-3">
+      <div class="col-xl-6 col-md-12 col-xs-12 pl-0">
+        <b-container class="mt-3">
+          <!-- <b-row class="mt-4">
+            <b-col sm="2" class="mb-3">
               <b-icon icon="person-circle" font-scale="3"></b-icon>
             </b-col>
-            <b-col sm="8" class="">
-              <label for="">Nombre del usuario</label>
+            <b-col sm="10" class="">
+              <label for=""></label>
             </b-col>
-          </b-row>
-          <b-row>
+          </b-row> -->
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6>Calidad del servicio</h6>
+              <h6 for="range-2" class="mb-0">Calidad del servicio</h6>
               <b-form-input
                 id="range-1"
                 v-model="quality"
@@ -32,9 +32,9 @@
               {{ define_Range(quality) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Presentación del producto</h6>
+              <h6 for="range-2" class="mb-0">Presentación del producto</h6>
               <b-form-input
                 id="range-2"
                 v-model="presentation"
@@ -48,9 +48,9 @@
               {{ define_Range(presentation) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Preparación</h6>
+              <h6 for="range-2" class="mb-0">Preparación</h6>
               <b-form-input
                 id="range-4"
                 v-model="preparation"
@@ -64,9 +64,9 @@
               {{ define_Range(preparation) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Ingredientes</h6>
+              <h6 for="range-2" class="mb-0">Ingredientes</h6>
               <b-form-input
                 id="range-5"
                 v-model="ingredients"
@@ -80,9 +80,9 @@
               {{ define_Range(ingredients) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Precio</h6>
+              <h6 for="range-2" class="mb-0">Precio</h6>
               <b-form-input
                 id="range-3"
                 v-model="price"
@@ -96,9 +96,9 @@
               {{ define_Range(price) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-3">
             <b-col sm="10">
-              <h6 for="range-2">Textura</h6>
+              <h6 for="range-2" class="mb-0">Textura</h6>
               <b-form-input
                 id="range-6"
                 v-model="texture"
@@ -112,9 +112,9 @@
               {{ define_Range(texture) }}
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="mb-2">
             <b-col sm="10">
-              <h6 for="range-2">Punto de cocción</h6>
+              <h6 for="range-2" class="mb-0">Punto de cocción</h6>
               <b-form-input
                 id="range-7"
                 v-model="cooking"
@@ -130,9 +130,8 @@
           </b-row>
         </b-container>
       </div>
-      <div class="col-md-6 col-xs-12">
-        <br /><br />
-        <b-row><label for="" class="mt-5">Agregar comentario</label></b-row>
+      <div class="col-xl-6 col-md-12 col-xs-12">
+        <b-row><label for="" class="">Agregar comentario</label></b-row>
         <b-row>
           <div role="group">
             <b-form-textarea
@@ -154,16 +153,10 @@
         <br />
         <b-row>
           <b-col lg="6" class="ml-5 text-center">
-            <b-button
-              class="mr-3 btn_order"
-              v-on:click="link()"
-              size="sm"
+            <b-button class="btn btn_order mr-3" v-on:click="link()" size="sm"
               >Cancelar</b-button
             >
-            <b-button class="btn_order"
-              size="sm"
-              v-on:click="save()"
-            >
+            <b-button class="btn btn_order" size="sm" v-on:click="save()">
               Guardar
             </b-button></b-col
           >
@@ -201,8 +194,13 @@ export default {
       comment: "",
       idOrder: "",
       idClient: "",
-      emailUser:"",
+      emailUser: "",
     };
+  },
+  mounted() {
+    if (localStorage.getItem("enterpriseN")) {
+      this.enterpriseName = localStorage.getItem("enterpriseN");
+    }
   },
   methods: {
     async showComent() {
@@ -217,21 +215,11 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-          
+
           //this.save();
         });
     },
-    mostrarValores() {
-      //método no funcional, solo para comprobar
-      console.log(this.define_Range(this.quality));
-      console.log(this.define_Range(this.presentation));
-      console.log("Presen : ", this.define_Range(this.preparation));
-      console.log("Ingredients: ", this.define_Range(this.ingredients));
-      console.log("Price: ", this.define_Range(this.price));
-      console.log("texture: ", this.define_Range(this.texture));
-      console.log("cooking: ", this.define_Range(this.cooking));
-      console.log("Coment: ", this.comment);
-    },
+
     define_Range(valor) {
       if (valor <= 15) {
         return "Malo";
@@ -257,14 +245,12 @@ export default {
         let user = JSON.parse(localStorage.getItem("user"));
         this.idClient = user.id;
         this.emailUser = user.email;
-        console.log("Email: ",user.email)
+        console.log("Email: ", user.email);
         console.log("Id Cliente:  ", this.idClient);
       }
     },
-    sendData(){
-       console.log("Pasando por Guardar");
-      //this.idOrder = "T3JkZXJOb2RlOjEz";
-      //this.mostrarValores();
+    sendData() {
+      console.log("Pasando por Guardar");
       this.$apollo
         .mutate({
           // Establece la mutación de crear
@@ -287,27 +273,25 @@ export default {
         .then((response) => {
           console.log("creación de Comment:", response.data);
         });
-        
     },
-    link(){
-      localStorage.idCaught= "";
-      //localStorage.enterpriseC = "";
-      console.log("datos : ",this.id)
-      this.$router.push({ name: "CommentsList", params:{idCaught:this.id} });
+    link() {
+      localStorage.idCaught = "";
+      this.$router.push({
+        name: "CommentsList",
+        params: { idCaught: this.id },
+      });
     },
     save() {
-      let bnd_comment=0;
-      let bnd_review=0;
-      console.log("Entro en save");
+      let bnd_comment = 0;
+      let bnd_review = 0;
       //if (this.enterprise.products.edges.length == 0) {
-        //console.log("Empresa no tiene productos");
-        //}else{
-        for (
+      //console.log("Empresa no tiene productos");
+      //}else{
+      for (
         var product = 0;
         product < this.enterprise.products.edges.length;
         product++
       ) {
-        console.log("Número empresa: ",product);
         if (
           this.enterprise.products.edges[product].node.orders.edges.length !== 0
         ) {
@@ -322,46 +306,53 @@ export default {
                 .node !== null
             ) {
               this.update();
-                //Condición para validar que el usuario registrado tenga ordenes
-                if((this.emailUser == this.enterprise.products.
-                edges[product].node.orders.edges[order].node.client.email)){
-                    //Guardo id de la orden
-                    console.log("TIENE ORDEN")
-                    this.idOrder=this.enterprise.products.edges[product].node.orders
-                    .edges[order].node.id
-                    //Mostramos review
-                    if(this.enterprise.products.edges[product].node.orders.edges[order].node.review!=null){
-                      bnd_review++;
-                    }
-                    //Aumentamos Bandera de que tiene orden
-                    bnd_comment++;
-                }else{
-                  console.log("No entró");
-                }              
+              //Condición para validar que el usuario registrado tenga ordenes
+              if (
+                this.emailUser ==
+                this.enterprise.products.edges[product].node.orders.edges[order]
+                  .node.client.email
+              ) {
+                //Guardo id de la orden
+                this.idOrder =
+                  this.enterprise.products.edges[product].node.orders.edges[
+                    order
+                  ].node.id;
+                //Mostramos review
+                if (
+                  this.enterprise.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review != null
+                ) {
+                  bnd_review++;
+                }
+                //Aumentamos Bandera de que tiene orden
+                bnd_comment++;
+              } else {
+                console.log("No entró");
+              }
             }
-            
           }
         }
       }
-     
-      if(bnd_review==0 && bnd_comment!=0){
+
+      if (bnd_review == 0 && bnd_comment != 0) {
         //console.log("Entro en sendData")
         this.sendData();
         this.link();
       }
-      if(bnd_review!=0){
+      if (bnd_review != 0) {
         confirm("Ya tiene un comentario");
         this.link();
       }
- 
-      if(bnd_comment==0){
+
+      if (bnd_comment == 0) {
         confirm("No tiene orden");
         this.link();
       }
-      }
-      //confirm("Empresa no tiene producto");
-      //this.link();
-      //},
+    },
+    //confirm("Empresa no tiene producto");
+    //this.link();
+    //},
   },
   computed: {
     commentState() {
@@ -369,13 +360,14 @@ export default {
     },
   },
   created() {
-    if ((localStorage.getItem("idComment") == "" ) && (localStorage.getItem("enterpriseN")=="")) {
-
+    if (
+      localStorage.getItem("idComment") == "" &&
+      localStorage.getItem("enterpriseN") == ""
+    ) {
       this.id = this.$route.params.enterpriseId;
       this.enterpriseName = this.$route.params.enterpriseName;
       localStorage.idComment = this.id;
       localStorage.enterpriseN = this.enterpriseName;
-      console.log("Id Recibido : ",this.id,"---",this.enterpriseName);
       this.showComent();
     }
   },
@@ -383,14 +375,15 @@ export default {
 </script>
 <style scoped>
 .btn_order {
-  background-color: var(--dark-xx);
-  color: var(--orange);
+  background-color: var(--orange-x);
+  color: var(--dark);
 }
 .btn_order:hover {
-  background: var(--grey-hover);
+  /*background: var(--grey-hover);*/
+  background: var(--orange-x-hover);
   color: var(--dark);
 }
 .btn_order:focus {
-  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
+  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 </style>

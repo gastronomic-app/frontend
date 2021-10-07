@@ -15,7 +15,7 @@
       </div>
       <input
         :disabled="disable_input"
-        id="autocomplete"
+        ref="autocomplete"
         type="text"
         class="form-control"
         :placeholder="placeholder"
@@ -23,7 +23,7 @@
       />
     </div>
     <div v-show="showmap" :style="{ width: map_width, height: map_height }">
-      <section id="map" class="containder map"></section>
+      <section ref="map" class="containder map"></section>
     </div>
 
     <br />
@@ -52,14 +52,14 @@ export default {
   mounted() {
     this.showUserLocation(2.45, -76.6167);
     const autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("autocomplete"),
+      this.$refs.autocomplete,
       {
         bounds: google.maps.LatLngBounds(
           new google.maps.LatLng(2.45, -76.6167)
         ),
       }
     );
-    const input = document.getElementById("autocomplete");
+    const input = this.$refs.autocomplete;
     input.addEventListener("keydown", (event) => {
       if (event.key == "Enter") {
         event.preventDefault();
@@ -118,7 +118,7 @@ export default {
     },
     showUserLocation(lat, lon) {
       //Creación del objeto map
-      this.map = new google.maps.Map(document.getElementById("map"), {
+      this.map = new google.maps.Map(this.$refs.map, {
         zoom: 15,
         center: new google.maps.LatLng(lat, lon),
       });
@@ -136,7 +136,7 @@ export default {
         );
         if (direction != undefined) {
           //Se muestra la direccion obtenida en el input
-          document.getElementById("autocomplete").value = direction;
+          this.$refs.autocomplete.value = direction;
         }
       });
     },

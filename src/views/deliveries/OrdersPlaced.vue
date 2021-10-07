@@ -48,18 +48,35 @@
               </h5>
               <h5>Lugar de entrega: {{ order.route.destination }}</h5>
               <h5>
-                Tiempo estimado de preparation: {{order.preparationTime}} minutos.
+                Tiempo estimado de preparation:
+                {{ order.preparationTime }} minutos.
               </h5>
               <h5>
                 Tu pedido llegara en:
                 <b style="color: var(--orange)"
-                  ><Countdown
+                  ><countdown
                     :id="order.id"
-                    :currentTime="getCurrentTime"
                     :hours="order.estimatedTime.hours"
                     :min="order.estimatedTime.min"
                     :sec="order.estimatedTime.sec"
-                /></b>
+                  >
+                    <!-- Button trigger modal -->
+                    <button
+                      type="button"
+                      class="btn btn-black"
+                      data-toggle="modal"
+                      data-target="#simpleModal"
+                    >
+                      Generar Reporte
+                    </button>
+                    <simple-modal
+                      title="Soy tu titulo"
+                      body="Soy tu body"
+                      buttonPrimaryTitle="Reportar"
+                      :buttonPrimaryAction="redirect(idx)"
+                    ></simple-modal>
+                    </countdown 
+                ></b>
               </h5>
               <h5>
                 Costo Total: <b>${{ order.cost }}</b>
@@ -98,6 +115,7 @@ import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import NotFound from "@/components/common/NotFound.vue";
 import Countdown from "@/views/deliveries/Countdown.vue";
+import SimpleModal from "../../components/common/SimpleModal.vue";
 
 export default {
   components: {
@@ -105,11 +123,12 @@ export default {
     LoadingGraphql,
     ConnectionErrorGraphql,
     NotFound,
+    SimpleModal,
     Countdown,
   },
   name: "OrdersPlaced",
   created() {
-    let elements = JSON.parse(localStorage.getItem("times"));
+    let elements = JSON.parse(localStorage.getItem("deliveryTimes"));
     try {
       if (elements.length > 0) {
         this.currentTimes = elements;
@@ -118,17 +137,19 @@ export default {
     } catch (error) {
       ///
     }
+    window.addEventListener("beforeunload", this.leaving);
+  },
+  ready: function () {
+    window.beforeunload = this.leaving;
+    window.onblur = this.leaving;
   },
   mounted() {
     this.getCurrentUser();
-
     this.queryOrders();
   },
 
   destroyed() {
-    if (this.currentTimes.length > 0) {
-      localStorage.setItem("times", JSON.stringify(this.currentTimes));
-    }
+    this.leaving();
   },
   data() {
     return {
@@ -146,6 +167,11 @@ export default {
     };
   },
   methods: {
+    leaving() {
+      if (this.$store.state.deliveryTimes.length > 0) {
+        this.$store.dispatch("setDeliveryTimesAction");
+      }
+    },
     queryOrders() {
       this.$apollo
         .query({
@@ -154,25 +180,12 @@ export default {
         .then((response) => {
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
             if (value) {
-              // this.getCompleteAddress();
               this.getDurationDistance(this.orders);
             } else {
               this.exitsOrders = false;
             }
-
-            //
           });
         });
-    },
-    getUserPosition() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.destination.lat = position.coords.latitude;
-          this.destination.lng = position.coords.longitude;
-        });
-      } else {
-        console.log("No se ha podido acceder su ubicación");
-      }
     },
     async getCompleteAddress(address) {
       const geocoder = new google.maps.Geocoder();
@@ -314,7 +327,6 @@ export default {
       let allOrders = data.filter(
         (user) => user.node.client.email === this.user.email
       );
-
       if (allOrders.length > 0) {
         for (let order of allOrders) {
           let newOrder = {
@@ -387,7 +399,6 @@ export default {
             order.route.duration.durationInSec + preparation
           );
           order.estimatedTime = time;
-        
         }
       }
       this.exitsOrders = true;
@@ -408,23 +419,18 @@ export default {
       }
       return true;
     },
-    getCurrentTime(time) {
-      let idx = this.currentTimes.findIndex((element, idx) => {
-        if (element.id === time.id) {
-          return true;
-        }
-      });
-      if (idx >= 0) {
-        this.currentTimes[idx] = time;
-      } else {
-        this.currentTimes.push(time);
-      }
+    redirect(n) {
+      console.log(n)
+      // this.$router.push({
+      //   name: "Report",
+      //   params: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Culo" },
+      // });
     },
   },
 };
 </script>
 
-//General Component styles 
+//General Component styles
 <style scope>
 .btn-black {
   background-color: var(--dark);

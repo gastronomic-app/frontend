@@ -31,6 +31,7 @@
             <li class="nav-item mr-3" v-show="ok">
               <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
             </li>
+            <Count></Count>
             <li class="nav-item mr-3">
               <span class="nav-link separator" href="#">|</span>
             </li>
@@ -133,7 +134,7 @@
               <a
                 class="nav-link navbar-orange-text font-weight-bold login"
                 href="/login"
-                ><strong>Iniciar Sesión</strong></a
+               ><strong>Iniciar Sesión</strong></a
               >
             </li>
             <li v-show="!ok" class="nav-item">
@@ -155,10 +156,12 @@
  * Barra de navegación común
  */
 import GoogleLogin from "vue-google-login";
+import Count from "@/views/shopping-car/Count.vue";
 export default {
   name: "NavBar",
   components: {
     GoogleLogin,
+    Count,
   },
 
   data: () => ({
@@ -167,6 +170,7 @@ export default {
     role: "",
     email: "",
     id: "",
+    count: 0,
     params: {},
     // only needed if you want to render the button with the google ui
   }),
@@ -193,6 +197,7 @@ export default {
         this.email = user.email;
         this.names = user.names;
         this.role = user.type;
+        this.$store.dispatch("setStorageCountAction", this.$store.getters.getCount);
         return true;
       }
       return false;
@@ -201,6 +206,9 @@ export default {
       this.ok = false;
       localStorage.clear();
       this.$router.push({ name: "catalogSearch" });
+      this.$store.dispatch("setStorageCountAction", 0);
+      localStorage.removeItem("idEnterprise");
+      localStorage.getItem("enterpriseName");
     },
     removeClient() {
       if (confirm("¿Seguro que desea darse de baja?", false)) {

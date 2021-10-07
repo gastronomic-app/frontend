@@ -78,7 +78,8 @@ const routes = [
     path: "/report",
     name: "Report",
     component: () => import("@/views/deliveries/Report.vue"),
-    props: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Burger" },
+    props:true,
+    // props: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Burger" },
   },
   {
     path: "/my-deliveries",

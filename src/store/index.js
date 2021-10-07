@@ -4,8 +4,72 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
-  actions: {},
+  state: {
+    count: 0,
+    deliveryTimes: [],
+  },
+  mutations: {
+    decrementCount(state) {
+      state.count = state.count - 1;
+    },
+    incrementCount(state) {
+      state.count = state.count + 1;
+    },
+    setCount(state, value) {
+      state.count = state.count - value;
+    },
+    setCountStorage(state, value) {
+      state.count = value;
+    },
+
+    //Add a new delivery time for an order
+    addDeliveryTime(state, time) {
+      let idx = state.deliveryTimes.findIndex(element => {
+        if (element.id === time.id) {
+          return true;
+        }
+      });
+      if (idx >= 0) {
+        state.deliveryTimes[idx] = time;
+      } else {
+        state.deliveryTimes.push(time)
+      }
+
+    },
+
+    //Add all delivery times to localstorage
+    setDeliveryTimes(state){
+      localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimes))
+    }
+  },
+  actions: {
+    decrementCountAction(context) {
+      context.commit("decrementCount");
+    },
+    incrementCountAction(context) {
+      context.commit("incrementCount");
+    },
+    setCountAction(context, value) {
+      context.commit("setCount", value);
+    },
+
+    setStorageCountAction(context, value) {
+      context.commit("setCountStorage", value);
+    },
+    setDeliveryTimesAction(context){
+      context.commit("setDeliveryTimes")
+    },
+    addDeliveryTimeAction(context, time) {
+
+      context.commit("addDeliveryTime", time);
+    },
+  },
+
+ 
+  getters: {
+    getCount(state) {
+      return state.count;
+    },
+  },
   modules: {},
 });
