@@ -192,7 +192,7 @@
     <br/>
     <button
         v-if="id == null"
-        type="submit"
+        type="button"
         class="btn btn-primary"
         :disabled="inputsEmpty"
         @click="addEnterprise"
@@ -201,7 +201,17 @@
     </button>
     <button
         v-if="id !== null"
-        type="submit"
+        id="buttonBack"
+        type="button"
+        class="btn btn-primary"
+        :disabled="inputsEmpty"
+        @click="ReturnEnterprises"
+    >
+        Volver
+    </button>
+    <button
+        v-if="id !== null"
+        type="button"
         class="btn btn-success"
         :disabled="inputsEmpty"
         @click="editEnterprise"
@@ -209,6 +219,7 @@
         Actualizar empresa
     </button>
     </form>
+    <br>
 </div>
 </template>
 
@@ -342,12 +353,26 @@ methods: {
 
         this.$router.push({ name: "EnterpriseList" });
     },
+    ReturnEnterprises(){
+        this.$router.push({ name: "EnterpriseList" });
+    },
     /**
      * Método que crea actualiza una empresa cuando es precionado el botón
      */
-    editEnterprise() {
-
-        /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
+    async editEnterprise() {
+        this.$swal.fire({
+          title: '¿Está Seguro de realizar la accion?',
+          html:`Modificar Establecimiento <br> <b>${this.name}</b>`,
+          type: 'warning',
+          icon: 'question',
+          showCancelButton:true,
+          confirmButtonText:'Si, modificar',
+          cancelButtonText:'No, modificar',
+          showCloseButton:true,
+          showLoaderOnConfirm:true
+        }).then(async (result) => {
+          if(result.isConfirmed){
+                    /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
         let lunesStatus = document.getElementById("CheckboxLunes").checked;
         let martesStatus = document.getElementById("CheckboxMartes").checked;
         let miercolesStatus = document.getElementById("CheckboxMiercoles").checked;
@@ -440,8 +465,10 @@ methods: {
             4000);
         }
         });
-
+          }
         this.$router.push({ name: "EnterpriseList" });
+
+        })
     },
     /**
     onCancel(event) {
@@ -486,5 +513,8 @@ computed: {
 <style scoped>
 #thead__H {
     font-weight: normal;
+}
+#buttonBack {
+  margin-right: 10px;
 }
 </style>

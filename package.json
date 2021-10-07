@@ -16,11 +16,13 @@
     "jquery": "^3.6.0",
     "jspdf-autotable": "^3.5.20",
     "popper.js": "^1.16.1",
+    "sweetalert2": "^11.1.7",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-google-login": "^2.0.5",
     "vue-paginate": "^3.6.0",
     "vue-router": "^3.2.0",
+    "vue-sweetalert2": "^5.0.2",
     "vue2-datepicker": "^3.10.2",
     "vuesax": "^4.0.1-alpha.25",
     "vuex": "^3.4.0"
