@@ -1,0 +1,9 @@
+query usersEnterprise($id: ID!) {
+  user(id: $id) {
+    type
+    enterprise {
+      id
+      name
+    }
+  }
+}

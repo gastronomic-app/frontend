@@ -210,6 +210,9 @@ export default {
      */
     //enterprise: Object,
   },
+  created() {
+    this.idEnterprise = this.$route.params.id;
+  },
   methods: {
     generatePDF() {
       var description = this.reportEnterprise.enterprise;
@@ -305,41 +308,33 @@ export default {
       this.isHidden = false;
     },
     consult(startDate, finalDate) {
-      var aux = "RW50ZXJwcmlzZU5vZGU6Mg==";
-      var aux1 = atob(aux);
-
-      console.log(aux1.split("EnterpriseNode:")[1]);
-      startDate;
-      finalDate;
+      var auxid = window.atob(this.idEnterprise);
+      var aux = auxid.split("EnterpriseNode:")[1]
       this.$apollo
         .query({
           query: require("@/graphql/enterprise/enterpriseReport.gql"),
           variables: {
-            //id: aux1.split("EnterpriseNode:")[1],
-            id: "2",
-            //sDate: "2021-09-11T23:52:05.568000+00:00",
-            //fDate: "2021-09-20T23:52:05.568000+00:00",
+            id: aux,
             sDate: startDate,
             fDate: finalDate,
           },
         })
         .then((response) => {
-          if (response.data.reports == null) {
+          if(response.data.reports == null){
             this.makeToast(
-              //"success",
-              "primary",
-              "Resultado",
-              "La consulta no arrojo resultados",
-              5000
-            );
+                  //"success",
+                  "primary",
+                  "Resultado",
+                  "La consulta no arrojo resultados",
+                  5000
+                );
             this.isHidden = true;
-          } else {
+          }else{
             this.reportEnterprise = response.data.reports;
             this.oderList = this.reportEnterprise.reportList;
             this.total = this.reportEnterprise.totalValue;
             this.isHidden = false;
           }
-
           //this.pages = response.data.allEnterprises.edges.length;
         });
     },

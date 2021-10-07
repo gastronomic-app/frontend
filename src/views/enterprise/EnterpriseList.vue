@@ -28,7 +28,7 @@
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <!--Redireccion de componentes-->
             <a class="dropdown-item puntero"  @click= redirectEnterpriseEdit(enterprise.node.id)>Modificar Informacion basica</a>
-            <a class="dropdown-item" href="#">Gestionar productos</a>
+            <a class="dropdown-item" href="/products-list">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
             <a class="dropdown-item puntero" @click= "redirectPendingOrders(enterprise.node.id, enterprise.node.name)">Gestionar pedidos</a>
             <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
@@ -98,8 +98,7 @@ export default {
       this.$router.push({ name: "ExampleAdd" });
     },
     redirectEnterpriseReport(idEnterprise){
-      console.log("enviar id por url", idEnterprise);
-
+      //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "reportEnterprise",
         params: { id: idEnterprise },
@@ -110,8 +109,7 @@ export default {
      * pasando el id de la empresa por parametro en la url
      */
     redirectEnterpriseEdit(idEnterprise) {
-      console.log("enviar id por url", idEnterprise);
-
+      //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "EnterpriseEdit",
         params: { id: idEnterprise },
