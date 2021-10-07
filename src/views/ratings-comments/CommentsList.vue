@@ -339,12 +339,10 @@ export default {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
       localStorage.idCaught = this.id;
-      console.log(this.id);
       //this.prueba();
       this.queryReviews();
     } else {
       this.id = localStorage.getItem("idCaught");
-      console.log(this.id);
       //this.prueba();
       this.queryReviews();
     }
