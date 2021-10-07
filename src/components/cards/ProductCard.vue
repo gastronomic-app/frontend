@@ -1,7 +1,11 @@
 <template>
   <div class="card bg-cart color-black">
     <img
-      :src="image.url"
+      :src="
+        image.substring(0, 5) === 'https'
+          ? image
+          : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' + image
+          "
       class="card-img-top img-fluid"
       :alt="'Imagen de ' + product.name"
       style="width: 18rem; height: 18rem"
@@ -22,7 +26,7 @@ export default {
   name: "ProductCard",
   props: {
     product: Object,
-    image: Object,
+    image: String,
   },
 };
 </script>

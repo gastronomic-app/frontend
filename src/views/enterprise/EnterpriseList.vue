@@ -28,7 +28,7 @@
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <!--Redireccion de componentes-->
             <a class="dropdown-item puntero"  @click= redirectEnterpriseEdit(enterprise.node.id)>Modificar Informacion basica</a>
-            <a class="dropdown-item" href="#">Gestionar productos</a>
+            <a class="dropdown-item" href="/products-list">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
             <a class="dropdown-item puntero" @click= "redirectPendingOrders(enterprise.node.id, enterprise.node.name)">Gestionar pedidos</a>
             <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
