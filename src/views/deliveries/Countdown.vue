@@ -5,72 +5,18 @@
       <span v-show="time.min > 0"> {{ time.min }} minutos - </span
       >{{ time.sec }} segundos
     </span>
-    <!-- Button trigger modal -->
-    <button
-      style="background-color: var(--dark); color: white"
-      type="button"
-      class="btn"
-      data-toggle="modal"
-      data-target="#exampleModal"
-      v-else
-    >
-      Generar reporte
-    </button>
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" style="color: black" id="exampleModalLabel">
-              Información
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">Hola ¿paso algo con tu orden?</div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn"
-              style="background-color: var(--dark); color: white"
-              @click="redirect"
-            >
-              Generar reporte
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <slot v-else></slot>
   </section>
 </template>
 
 <script>
 export default {
   name: "Countdown",
-  props: ["id", "sec", "min", "hours", "currentTime"],
+  props: ["id", "sec", "min", "hours"],
 
   data() {
     return {
-      timeout: false,
+      timeout: true,
 
       time: {
         id: this.id,
@@ -81,15 +27,7 @@ export default {
     };
   },
 
-  beforeDestroy() {
-    this.prepareData();
-    this.currentTime(this.time);
-  },
   methods: {
-    redirect() {
-      this.$destroy();
-      this.$router.push({ name: "Report" });
-    },
     prepareData() {
       this.time.hours === undefined ? (this.time.hours = 0) : this.time.hours;
       this.time.min === undefined ? (this.time.min = 0) : this.time.min;
@@ -115,6 +53,7 @@ export default {
         } else {
           this.timeout = true;
         }
+        this.$store.dispatch("addDeliveryTimeAction",this.time)
       },
       immediate: true,
     },
