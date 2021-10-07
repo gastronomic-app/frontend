@@ -129,7 +129,7 @@ export default {
         });
 
       // Redirección a otra página
-      this.$router.push({ name: "catalogSearch" });
+      this.$router.push({ name: "OrdersPlaced" });
     },
   },
   computed: {

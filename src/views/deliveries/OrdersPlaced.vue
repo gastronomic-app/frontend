@@ -65,17 +65,23 @@
                       type="button"
                       class="btn btn-black"
                       data-toggle="modal"
-                      data-target="#simpleModal"
+                      :data-target="'#simpleModal' + order.id"
                     >
                       Generar Reporte
                     </button>
                     <simple-modal
-                      title="Soy tu titulo"
-                      body="Soy tu body"
+                      :modalRef="order.id"
+                      :modalCentered="true"
+                      :body="
+                        'Hola, ' +
+                        user.names +
+                        ', ¿quieres reportar una queja a ' +
+                        order.enterprise +
+                        '? '
+                      "
                       buttonPrimaryTitle="Reportar"
-                      :buttonPrimaryAction="redirect(idx)"
-                    ></simple-modal>
-                    </countdown 
+                      :buttonPrimaryAction="redirect"
+                    ></simple-modal> </countdown
                 ></b>
               </h5>
               <h5>
@@ -96,9 +102,23 @@
         v-if="orders.length > 0"
         class="container d-flex justify-content-end"
       >
-        <button type="button" class="btn btn-black" @click="trackOrder">
+        <button
+          type="button"
+          class="btn btn-black"
+          data-toggle="modal"
+          data-target="#simpleModal"
+          @click="trackOrder"
+        >
           Seguir Pedido
         </button>
+        <simple-modal
+          v-if="selected===false"
+          :modalCentered="true"
+          title="Atencion"
+          body="Es necesario seleccionar un pedido para seguir."
+          buttonPrimaryTitle="Ok"
+          :buttonSecundary="false"
+        ></simple-modal>
       </div>
       <br />
       <div v-show="showmap">
@@ -159,10 +179,10 @@ export default {
       user: {},
       showmap: false,
       orders: [],
-      error: null,
+      currentTimes: [],
+      selected: false,
       //Paginator
       currentPage: 1,
-      currentTimes: [],
       paginate: ["orders"],
     };
   },
@@ -310,17 +330,16 @@ export default {
     },
 
     trackOrder() {
-      let flag = false;
+      this.selected = true;
       for (let idx in this.orders) {
         if (this.orders[idx].selected) {
+          console.log(this.selected)
           this.showmap = true;
-
           this.showRoute([this.orders[idx].route]);
-          flag = true;
+          
+        } else {
+          this.selected = false;
         }
-      }
-      if (!flag) {
-        alert("Seleccione un pedido para ver la ruta y el tiempo estimado");
       }
     },
     async tansformQuery(data) {
@@ -369,11 +388,8 @@ export default {
     },
     secondsToString(seconds) {
       let hours = Math.floor(seconds / 3600);
-      hours = hours < 10 ? "0" + hours : hours;
       let minute = Math.floor((seconds / 60) % 60);
-      minute = minute < 10 ? "0" + minute : minute;
       let second = seconds % 60;
-      second = second < 10 ? "0" + second : second;
       return { hours: hours, min: minute, sec: second };
     },
     getCurrentUser() {
@@ -419,12 +435,14 @@ export default {
       }
       return true;
     },
-    redirect(n) {
-      console.log(n)
-      // this.$router.push({
-      //   name: "Report",
-      //   params: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Culo" },
-      // });
+    redirect(orderID) {
+      const order = this.orders.find((order) => order.id === orderID);
+      if (order !== undefined) {
+        this.$router.push({
+          name: "Report",
+          params: { deliveryId: order.id, enterprise: order.enterprise },
+        });
+      }
     },
   },
 };
