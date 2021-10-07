@@ -13,7 +13,7 @@
         />
         </div>
         <div class="form-group">
-        <label for="location">Direccion Establecimiento<span class="text-danger"></span></label>
+        <label for="location">Direccion Establecimiento</label>
         <input
             type="text"
             class="form-control"
@@ -185,7 +185,6 @@
         <label for="input-name">Reseña Establecimiento</label>
         <div class="input-group">
             <div class="input-group-prepend"></div>
-            <!---->
             <textarea class="form-control" v-model="historicalReview"></textarea>
         </div>
     </div>
@@ -262,11 +261,6 @@ export default {
    * donde realiza la consulta si llega un id por props
    */
 async mounted() {
-
-
-
-    console.log("id en el formulario", this.id);
-
     // Si el id existe, realiza la consulta
     if (this.id) {
         await this.$apollo
@@ -321,15 +315,14 @@ async mounted() {
 },
 methods: {
     makeToast(variant = null, title, info, time) {
-      this.$bvToast.toast(info, {
-        title: title,
-        autoHideDelay: time,
-        variant: variant,
-        solid: true,
-      });
+        this.$bvToast.toast(info, {
+            title: title,
+            autoHideDelay: time,
+            variant: variant,
+            solid: true,
+    });
     },
     ral_Location(value){
-        console.log("valor"+ value)
         this.location = value;
     },
     //Crea la empresa
@@ -347,10 +340,8 @@ methods: {
         // El método mutate devuelve una promesa
         // que puede usarse para agregar más logica
         .then((response) => {
-        console.log("creación de empresa:", response.data);
-        console.log("agrega aquí más lógica si es necesaria");
+          console.log("creación de empresa:", response.data);
         });
-
         this.$router.push({ name: "EnterpriseList" });
     },
     ReturnEnterprises(){
@@ -361,78 +352,77 @@ methods: {
      */
     async editEnterprise() {
         this.$swal.fire({
-          title: '¿Está Seguro de realizar la accion?',
-          html:`Modificar Establecimiento <br> <b>${this.name}</b>`,
-          type: 'warning',
-          icon: 'question',
-          showCancelButton:true,
-          confirmButtonText:'Si, modificar',
-          cancelButtonText:'No, modificar',
-          showCloseButton:true,
-          showLoaderOnConfirm:true
+            title: '¿Está Seguro de realizar la accion?',
+            html:`Modificar Establecimiento <br> <b>${this.name}</b>`,
+            type: 'warning',
+            icon: 'question',
+            showCancelButton:true,
+            confirmButtonText:'Si, modificar',
+            cancelButtonText:'No, modificar',
+            showCloseButton:true,
+            showLoaderOnConfirm:true
         }).then(async (result) => {
-          if(result.isConfirmed){
-                    /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
-        let lunesStatus = document.getElementById("CheckboxLunes").checked;
-        let martesStatus = document.getElementById("CheckboxMartes").checked;
-        let miercolesStatus = document.getElementById("CheckboxMiercoles").checked;
-        let juevesStatus = document.getElementById("CheckboxJueves").checked;
-        let viernesStatus = document.getElementById("CheckboxViernes").checked;
-        let sabadoStatus = document.getElementById("CheckboxSabado").checked;
-        let domingoStatus = document.getElementById("CheckboxDomingo").checked;
+            if(result.isConfirmed){
+                /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
+                let lunesStatus = document.getElementById("CheckboxLunes").checked;
+                let martesStatus = document.getElementById("CheckboxMartes").checked;
+                let miercolesStatus = document.getElementById("CheckboxMiercoles").checked;
+                let juevesStatus = document.getElementById("CheckboxJueves").checked;
+                let viernesStatus = document.getElementById("CheckboxViernes").checked;
+                let sabadoStatus = document.getElementById("CheckboxSabado").checked;
+                let domingoStatus = document.getElementById("CheckboxDomingo").checked;
 
-        let lunesI = document.getElementById("lunesInicio").value;
-        let lunesC = document.getElementById("lunesCierre").value;
+                let lunesI = document.getElementById("lunesInicio").value;
+                let lunesC = document.getElementById("lunesCierre").value;
 
-        let martesI = document.getElementById("martesInicio").value;
-        let martesC = document.getElementById("martesCierre").value;
+                let martesI = document.getElementById("martesInicio").value;
+                let martesC = document.getElementById("martesCierre").value;
 
-        let miercolesI = document.getElementById("miercolesInicio").value;
-        let miercolesC = document.getElementById("miercolesCierre").value;
+                let miercolesI = document.getElementById("miercolesInicio").value;
+                let miercolesC = document.getElementById("miercolesCierre").value;
 
-        let juevesI = document.getElementById("juevesInicio").value;
-        let juevesC = document.getElementById("juevesCierre").value;
+                let juevesI = document.getElementById("juevesInicio").value;
+                let juevesC = document.getElementById("juevesCierre").value;
 
-        let viernesI = document.getElementById("viernesInicio").value;
-        let viernesC = document.getElementById("viernesCierre").value;
+                let viernesI = document.getElementById("viernesInicio").value;
+                let viernesC = document.getElementById("viernesCierre").value;
 
-        let sabadoI = document.getElementById("sabadoInicio").value;
-        let sabadoC = document.getElementById("sabadoCierre").value;
+                let sabadoI = document.getElementById("sabadoInicio").value;
+                let sabadoC = document.getElementById("sabadoCierre").value;
 
-        let domingoI = document.getElementById("domingoInicio").value;
-        let domingoC = document.getElementById("domingoCierre").value;
+                let domingoI = document.getElementById("domingoInicio").value;
+                let domingoC = document.getElementById("domingoCierre").value;
 
-        this.businessHours =JSON.stringify({
-                "lunes":{
-                        "estado":lunesStatus,
-                        "horaI":lunesI,
-                        "horaF":lunesC},
-                "martes":{
-                        "estado":martesStatus,
-                        "horaI":martesI,
-                        "horaF":martesC},
-                "miercoles":{
-                        "estado":miercolesStatus,
-                        "horaI":miercolesI,
-                        "horaF":miercolesC},
-                "jueves":{
-                        "estado":juevesStatus,
-                        "horaI":juevesI,
-                        "horaF":juevesC},
-                "viernes":{
-                        "estado":viernesStatus,
-                        "horaI":viernesI,
-                        "horaF":viernesC},
-                "sabado":{
-                        "estado":sabadoStatus,
-                        "horaI":sabadoI,
-                        "horaF":sabadoC},
-                "domingo":{
-                        "estado":domingoStatus,
-                        "horaI":domingoI,
-                        "horaF":domingoC}
-                });
-
+                this.businessHours =JSON.stringify({
+                        "lunes":{
+                                "estado":lunesStatus,
+                                "horaI":lunesI,
+                                "horaF":lunesC},
+                        "martes":{
+                                "estado":martesStatus,
+                                "horaI":martesI,
+                                "horaF":martesC},
+                        "miercoles":{
+                                "estado":miercolesStatus,
+                                "horaI":miercolesI,
+                                "horaF":miercolesC},
+                        "jueves":{
+                                "estado":juevesStatus,
+                                "horaI":juevesI,
+                                "horaF":juevesC},
+                        "viernes":{
+                                "estado":viernesStatus,
+                                "horaI":viernesI,
+                                "horaF":viernesC},
+                        "sabado":{
+                                "estado":sabadoStatus,
+                                "horaI":sabadoI,
+                                "horaF":sabadoC},
+                        "domingo":{
+                                "estado":domingoStatus,
+                                "horaI":domingoI,
+                                "horaF":domingoC}
+                        });
         this.$apollo
         .mutate({
           // Establece la mutación de editar
@@ -449,25 +439,23 @@ methods: {
         // El método mutate devuelve una promesa
         // que puede usarse para agregar más logica
         .then((response) => {
-        console.log("actualización de empresa:", response.data);
-        console.log("agrega aquí más lógica si es necesaria");
         if (response.data) {
-          this.makeToast(
-            "success",
-            "Establecimiento actualizado",
-            "El Establecimiento " + this.name +" ha sido actualizado",
-            4000);
+            this.makeToast(
+                "success",
+                "Establecimiento actualizado",
+                "El Establecimiento " + this.name +" ha sido actualizado",
+                4000);
         }else{
-          this.makeToast(
-            "warning",
-            "Datos incorrectos",
-            "La informacion proporcionada es incorrecta",
-            4000);
+            this.makeToast(
+                "warning",
+                "Datos incorrectos",
+                "La informacion proporcionada es incorrecta",
+                4000);
         }
         });
-          }
         this.$router.push({ name: "EnterpriseList" });
-
+        }
+        //Si se presiona en la X o en la opcion de no modificar se queda en la pagina actual
         })
     },
     /**
@@ -515,6 +503,6 @@ computed: {
     font-weight: normal;
 }
 #buttonBack {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 </style>

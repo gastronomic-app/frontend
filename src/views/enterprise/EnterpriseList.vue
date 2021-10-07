@@ -98,8 +98,7 @@ export default {
       this.$router.push({ name: "ExampleAdd" });
     },
     redirectEnterpriseReport(idEnterprise){
-      console.log("enviar id por url", idEnterprise);
-
+      //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "reportEnterprise",
         params: { id: idEnterprise },
@@ -110,8 +109,7 @@ export default {
      * pasando el id de la empresa por parametro en la url
      */
     redirectEnterpriseEdit(idEnterprise) {
-      console.log("enviar id por url", idEnterprise);
-
+      //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "EnterpriseEdit",
         params: { id: idEnterprise },
