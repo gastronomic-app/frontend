@@ -1,18 +1,17 @@
 <template>
   <section>
-
     <div
       class="modal fade"
-      id="simpleModal"
+      :id="'simpleModal' + modalRef"
       tabindex="-1"
       role="dialog"
       aria-labelledby="ModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog" :class="isCentered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ title }}</h5>
+            <h5 class="modal-title color-title">{{ title }}</h5>
             <button
               type="button"
               class="close"
@@ -29,12 +28,13 @@
             <button
               type="button"
               class="btn btn-black"
+              @click="buttonPrimaryAction(modalRef)"
               data-dismiss="modal"
               data-backdrop="false"
             >
               {{ buttonPrimaryTitle }}
             </button>
-            <button
+            <button v-show="buttonSecundary"
               type="button"
               class="btn btn-secondary"
               data-dismiss="modal"
@@ -51,12 +51,20 @@
 export default {
   name: "SimpleModal",
   props: {
-    title: { type: String, default: "Modal Title" },
-    body: { type: String, default: "Modal Body" },
+    modalRef: { type: String, default: "" },
+    title: { type: String, default: "" },
+    modalCentered: { type: Boolean, default: false },
+    body: { type: String, default: "" },
     buttonPrimaryTitle: { type: String, default: "OK" },
-    buttonPrimaryAction: { type: Function },
+    buttonPrimaryAction: { type: Function, default: ()=>{}},
+    buttonSecundary:{type:Boolean, default:true},
     buttonSecundaryTitle: { type: String, default: "cerrar" },
     buttonSecundaryAction: { type: Function },
+  },
+  computed: {
+    isCentered() {
+      return this.modalCentered == true ? "modal-dialog-centered" : "";
+    },
   },
   data() {
     return {};
@@ -72,11 +80,7 @@ export default {
   background-color: var(--dark-xx);
   color: var(--light);
 }
-.color-text-tar {
-  color: var(--black);
-}
-.color-text-tar:hover {
-  text-decoration: none;
-  color: var(--black);
+.color-title {
+  color: var(--dark);
 }
 </style>
