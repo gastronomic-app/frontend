@@ -50,7 +50,7 @@
           </div>
           <input
             type="number"
-            min="0"
+            min="1"
             oninput="validity.valid||(value='');"
             class="form-control"
             placeholder="Precio"
@@ -202,7 +202,8 @@
                               (element) =>
                                 element.node.productType.includes(type[2]) &&
                                 element.node.active == true &&
-                                element.node.id !== id
+                                element.node.id !== id &&
+                                element.node.enterprise.id === idEnterprise
                             ).length > 0
                           "
                         >
@@ -215,7 +216,9 @@
                                 (element) =>
                                   element.node.productType.includes(type[2]) &&
                                   element.node.active == true &&
-                                  element.node.id !== id
+                                  element.node.id !== id &&
+                                element.node.enterprise.id === idEnterprise
+                                  
                               )"
                               :value="product.node.id"
                               :key="product.node.id"
@@ -243,7 +246,7 @@
         v-if="id === null"
         type="submit"
         @click="checkProduct"
-        class="btnorange-button mr-3 mb-2"
+        class="btn orange-button mr-3 mb-2"
         :disabled="inputsEmpty"
       >
         Crear producto
@@ -292,6 +295,7 @@ export default {
       recommendation_id_list: [],
       recommendation_list: [],
       edit_recommendation_list: [],
+      idEnterprise:"",
       form: {
         name: "",
         images: [],
@@ -354,6 +358,31 @@ export default {
    * donde realiza la consulta si llega un id por props
    */
   async mounted() {
+    if (localStorage.getItem("user")) {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user.type === "MANAGER") {
+        await this.$apollo
+          .query({
+            query: require("@/graphql/user/usersenterprise.gql"),
+            variables: {
+              id: user.id,
+            },
+          })
+          .then((response) => {
+            if (response.data.user.enterprise !== null) {
+              localStorage.idEnterprise = response.data.user.enterprise.id;
+              localStorage.nameEnterprise = response.data.user.enterprise.name;
+              this.idEnterprise = localStorage.getItem("idEnterprise");
+            } else {
+              this.$router.push({ name: "EnterpriseList" });
+            }
+          });
+      } else {
+        this.$router.push({ name: "EnterpriseList" });
+      }
+    } else {
+      this.$router.push({ name: "EnterpriseList" });
+    }
     console.log("id en el formulario", this.id);
 
     // Si el id existe, realiza la consulta
@@ -404,8 +433,8 @@ export default {
       event.preventDefault();
       let producto = this.allProducts.edges.filter(
         (element) =>
-          element.node.name == this.form.name.toLowerCase() &&
-          element.node.enterprise.id == "RW50ZXJwcmlzZU5vZGU6MQ=="
+          element.node.name == this.form.name.toLowerCase() &&          
+          element.node.enterprise.id === this.idEnterprise
       );
       console.log(producto);
       if (producto.length == 0 && this.id === null) {
@@ -447,7 +476,7 @@ export default {
             preparation: this.form.preparation,
             estimatedTime: this.form.preparation_time,
             productType: this.form.product_type,
-            enterpriseId: "RW50ZXJwcmlzZU5vZGU6MQ==",
+            enterpriseId: this.idEnterprise,
           },
           refetchQueries: [
             { query: require("@/graphql/product/allProducts.gql") },
@@ -488,7 +517,7 @@ export default {
             ingredients: this.form.ingredients,
             preparation: this.form.preparation,
             estimatedTime: this.form.preparation_time,
-            enterpriseId: "RW50ZXJwcmlzZU5vZGU6MQ==",
+            enterpriseId: this.idEnterprise,
           },
           refetchQueries: [
             { query: require("@/graphql/product/allProducts.gql") },
@@ -525,13 +554,14 @@ export default {
       const extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
       if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
         this.form.images = event.target.files;
-        this.images_urls = [];
+        this.images_urls = [];        
         this.form.images.forEach((file) => {
           const fileImage = file;
           this.images_urls.push(URL.createObjectURL(fileImage));
-        });
+        });        
       } else {
         this.form.images = [];
+        this.images_urls = []; 
         this.makeToast(
           "warning",
           "Datos incorrectos",
@@ -639,14 +669,15 @@ export default {
      * Habilita o inhabilita el botón de crear o actualizar establecimiento
      * dependiendo si los inputs están vacios
      */
-    inputsEmpty() {
-      if (
+    inputsEmpty() {      
+      if (        
         this.form.name.trim() === "" ||
         this.form.price.trim() === "" ||
         this.form.ingredients.trim() === "" ||
         this.form.preparation_time.trim() === "" ||
         this.form.product_type.trim() === "" ||
-        (!this.form.images.length && this.id == null)
+        (!this.form.images.length && this.id == null) ||
+        (!this.images_urls.length && this.id !== null)
       ) {
         return true;
       }
@@ -682,8 +713,8 @@ export default {
   font-weight: bold;
 }
 
-.orange-button:hover,
-.black-button:hover {
+.orange-button:hover:enabled,
+.black-button:hover:enabled {
   box-shadow: 0 4px 16px rgb(201, 132, 30);
   transition: all 0.2s ease;
 }

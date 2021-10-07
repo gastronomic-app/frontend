@@ -21,7 +21,7 @@
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" @click="redirectEnterpriseEdit(enterprise.node.id)">Modificar Informacion basica</a>
             <!--<a class="dropdown-item" @click="removeEnteprise(enterprise.node.id)">Eliminar Establecimiento</a>-->
-            <a class="dropdown-item" href="#">Gestionar productos</a>
+            <a class="dropdown-item" href="/products-list">Gestionar productos</a>
             <a class="dropdown-item" href="#">Gestionar mensajeros</a>
             <a class="dropdown-item" href="#">Gestionar pedidos</a>
             <a class="dropdown-item" href="#">Obtener informes</a>

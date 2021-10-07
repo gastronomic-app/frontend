@@ -66,15 +66,20 @@
               (element) =>
                 element.node.productType.includes(leaveType) &&
                 element.node.name.includes(searchString.toLowerCase()) &&
-                element.node.active == true
+                element.node.active == true &&
+                element.node.enterprise.id == this.idEnterprise
             )"
             :key="product.node.id"
           >
-            <div v-if="product.node.images.edges[0] !== undefined">
+
               <template>
                 <ProductCard
                   :product="product.node"
-                  :image="product.node.images.edges[0].node"
+                  :image="
+                  product.node.images.edges[0] !== undefined
+                    ? product.node.images.edges[0].node.url
+                    : 'https://icones.pro/wp-content/uploads/2021/04/icone-de-nourriture-orange-symbole-png.png'
+                "
                 />
                 <br />
                 <button
@@ -103,8 +108,7 @@
                   Ver
                 </button>
                 <hr />
-              </template>
-            </div>
+              </template>            
           </div>
         </div>
       </div>
@@ -229,6 +233,7 @@ export default {
 
       leaveType: "",
       searchString: "",
+      idEnterprise: "",
       productToDisable: "",
 
       productsTypes: [
@@ -280,6 +285,33 @@ export default {
         imageUrl: "",
       },
     };
+  },
+  async mounted() {
+    if (localStorage.getItem("user")) {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user.type === "MANAGER") {
+        await this.$apollo
+          .query({
+            query: require("@/graphql/user/usersenterprise.gql"),
+            variables: {
+              id: user.id,
+            },
+          })
+          .then((response) => {
+            if (response.data.user.enterprise !== null) {
+              localStorage.idEnterprise = response.data.user.enterprise.id;
+              localStorage.nameEnterprise = response.data.user.enterprise.name;
+              this.idEnterprise = localStorage.getItem("idEnterprise");
+            } else {
+              this.$router.push({ name: "EnterpriseList" });
+            }
+          });
+      } else {
+        this.$router.push({ name: "EnterpriseList" });
+      }
+    } else {
+      this.$router.push({ name: "EnterpriseList" });
+    }
   },
   methods: {
     makeToast(variant = null, title, info, time) {
