@@ -5,7 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    count: 0,
+    deliveryTimes: [],
   },
   mutations: {
     decrementCount(state) {
@@ -20,6 +21,26 @@ export default new Vuex.Store({
     setCountStorage(state, value) {
       state.count = value;
     },
+
+    //Add a new delivery time for an order
+    addDeliveryTime(state, time) {
+      let idx = state.deliveryTimes.findIndex(element => {
+        if (element.id === time.id) {
+          return true;
+        }
+      });
+      if (idx >= 0) {
+        state.deliveryTimes[idx] = time;
+      } else {
+        state.deliveryTimes.push(time)
+      }
+
+    },
+
+    //Add all delivery times to localstorage
+    setDeliveryTimes(state){
+      localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimes))
+    }
   },
   actions: {
     decrementCountAction(context) {
@@ -31,10 +52,20 @@ export default new Vuex.Store({
     setCountAction(context, value) {
       context.commit("setCount", value);
     },
+
     setStorageCountAction(context, value) {
       context.commit("setCountStorage", value);
     },
+    setDeliveryTimesAction(context){
+      context.commit("setDeliveryTimes")
+    },
+    addDeliveryTimeAction(context, time) {
+
+      context.commit("addDeliveryTime", time);
+    },
   },
+
+ 
   getters: {
     getCount(state) {
       return state.count;
