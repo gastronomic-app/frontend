@@ -24,21 +24,22 @@ export default new Vuex.Store({
 
     //Add a new delivery time for an order
     addDeliveryTime(state, time) {
-      let idx = state.deliveryTimes.findIndex(element => {
-        if (element.id === time.id) {
-          return true;
+      if (time.hours > 0 || time.min > 0 || time.sec > 0) {
+        let idx = state.deliveryTimes.findIndex(element => {
+          if (element.id === time.id) {
+            return true;
+          }
+        });
+        if (idx >= 0) {
+          state.deliveryTimes[idx] = time;
+        } else {
+          state.deliveryTimes.push(time)
         }
-      });
-      if (idx >= 0) {
-        state.deliveryTimes[idx] = time;
-      } else {
-        state.deliveryTimes.push(time)
       }
-
     },
 
     //Add all delivery times to localstorage
-    setDeliveryTimes(state){
+    setDeliveryTimes(state) {
       localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimes))
     }
   },
@@ -56,7 +57,7 @@ export default new Vuex.Store({
     setStorageCountAction(context, value) {
       context.commit("setCountStorage", value);
     },
-    setDeliveryTimesAction(context){
+    setDeliveryTimesAction(context) {
       context.commit("setDeliveryTimes")
     },
     addDeliveryTimeAction(context, time) {
@@ -65,7 +66,7 @@ export default new Vuex.Store({
     },
   },
 
- 
+
   getters: {
     getCount(state) {
       return state.count;

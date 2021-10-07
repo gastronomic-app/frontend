@@ -1,5 +1,8 @@
 <template>
-  <div class="container" style="margin-top: 1em">
+  <div
+    class="container justify-content-center align-items-center"
+    style="margin-top: 1em"
+  >
     <h3><b>Mis Pedidos</b></h3>
 
     <div v-if="!isReady">
@@ -14,15 +17,10 @@
       </div>
     </div>
 
-    <div v-else>
+    <div v-else id="accordionList">
       <paginate name="orders" :list="orders" :per="5">
         <template v-for="(order, idx) in paginated('orders')">
-          <accordion
-            :key="order.id"
-            :item="order"
-            :checkbox_use="true"
-            :id="idx"
-          >
+          <accordion :key="order.id" :item="order" :id="idx">
             <div class="card-body">
               <h4>Resumen de pedido <br /></h4>
               <div>
@@ -87,6 +85,16 @@
               <h5>
                 Costo Total: <b>${{ order.cost }}</b>
               </h5>
+              <div class="track-order-container">
+                <button
+                  :ref="order.id"
+                  type="button "
+                  class="btn btn-black track-order"
+                  @click="trackOrder(order.id)"
+                >
+                  Seguir Pedido
+                </button>
+              </div>
             </div>
           </accordion>
         </template>
@@ -98,30 +106,8 @@
           :show-step-links="true"
         ></paginate-links>
       </div>
-      <div
-        v-if="orders.length > 0"
-        class="container d-flex justify-content-end"
-      >
-        <button
-          type="button"
-          class="btn btn-black"
-          data-toggle="modal"
-          data-target="#simpleModal"
-          @click="trackOrder"
-        >
-          Seguir Pedido
-        </button>
-        <simple-modal
-          v-if="selected===false"
-          :modalCentered="true"
-          title="Atencion"
-          body="Es necesario seleccionar un pedido para seguir."
-          buttonPrimaryTitle="Ok"
-          :buttonSecundary="false"
-        ></simple-modal>
-      </div>
       <br />
-      <div v-show="showmap">
+      <div v-show="showmap" class="map-container">
         <div class="map" ref="map"></div>
       </div>
     </div>
@@ -180,7 +166,6 @@ export default {
       showmap: false,
       orders: [],
       currentTimes: [],
-      selected: false,
       //Paginator
       currentPage: 1,
       paginate: ["orders"],
@@ -329,18 +314,10 @@ export default {
       });
     },
 
-    trackOrder() {
-      this.selected = true;
-      for (let idx in this.orders) {
-        if (this.orders[idx].selected) {
-          console.log(this.selected)
-          this.showmap = true;
-          this.showRoute([this.orders[idx].route]);
-          
-        } else {
-          this.selected = false;
-        }
-      }
+    trackOrder(orderID) {
+      const order = this.orders.find((order) => order.id === orderID);
+      this.showmap = true;
+      this.showRoute([order.route]);
     },
     async tansformQuery(data) {
       let allOrders = data.filter(
@@ -354,7 +331,6 @@ export default {
             products: [],
             enterprise: "",
             cost: 0,
-            selected: false,
             estimatedTime: { hours: 0, min: 0, sec: 0 },
             preparationTime: "",
             route: {
@@ -466,6 +442,20 @@ export default {
   color: var(--black);
 }
 
+.track-order-container {
+  display: flex;
+  justify-content: center;
+}
+.track-order {
+  margin: auto;
+  background-color: var(--orange);
+  color: var(--black);
+}
+.track-order:hover {
+  background-color: var(--orange-x-hover);
+  color: var(--black);
+}
+
 .card-header:hover {
   background-color: var(--grey);
   color: var(--black);
@@ -474,11 +464,13 @@ export default {
   background-color: var(--white);
   color: var(--black);
 }
+.map-container{
+  padding-left:2.5em;
+  margin:auto;
+}
 .map {
   height: 25em;
   top: 0;
-  right: 0;
-  left: 0;
   bottom: 0;
   background-color: var(--light);
 }
