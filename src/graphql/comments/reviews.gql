@@ -1,0 +1,31 @@
+query reviews {
+  allReviews{
+    edges{
+      node{
+        comments
+        qualityService
+        presentation
+        preparation
+        ingredients
+        price
+        textures
+        cookingPoint
+        order{
+          client{
+            email
+          }
+          products{
+            edges{
+              node{
+                enterprise{
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
