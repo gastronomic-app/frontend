@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="accordion" id="accordionExample" >
+    <div class="accordion" :id="'accordion'+id" >
       <div class="card">
         <div
           class="card-header"
@@ -37,7 +37,7 @@
           :id="'collapse' + id"
           class="collapse"
           :aria-labelledby="'heading' + id"
-          data-parent="#accordionExample"
+          :data-parent="'#accordion'+id"
         >
           <slot></slot>
         </div>

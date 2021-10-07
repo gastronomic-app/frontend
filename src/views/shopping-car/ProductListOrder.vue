@@ -32,8 +32,6 @@
         </div>
 
         <div class="row" v-if="list_products_enterprise !== undefined">
-          <!-- <pagination ref="paginator" name="products" :list="products" :per="5">
-          </pagination> -->
           <div
             class="col-xl-4 col-lg-3 col-md-4 col-sm-12"
             v-for="product in list_products_enterprise.filter(
@@ -76,20 +74,6 @@
               </template>
             </div>
           </div>
-
-          <!-- <div class="div-paginate">
-            <paginate-links
-              for="products"
-              :classes="{ ul: 'pagination' }"
-              :show-step-links="true"
-            ></paginate-links>
-          </div>
-
-          <div class="div-paginate">
-            <span v-if="$refs.paginator">
-              Viendo {{ $refs.paginator.pageItemsCount }} resultados
-            </span>
-          </div> -->
         </div>
       </div>
       <!--Carrito-->
@@ -264,24 +248,34 @@
           <div class="modal-body">
             <img class="d-block w-100" :src="productView.imageUrl" />
             <div class="row">
-              <div class="col-6">
-                <b class="bold">Precio</b><br />
-                <b class="bold">Ingredientes</b><br />
-                <b class="bold">Preparación</b><br />
-                <b class="bold">Tiempo</b><br />
-                <b class="bold">Tipo de producto</b><br />
-              </div>
-              <div class="col-6">
-                ${{ productView.price }} <br />
-
-                {{ productView.ingredients | capitalize }} <br />
-
-                {{ productView.preparation | capitalize }} <br />
-
-                {{ productView.preparation_time }} <br />
-
-                {{ productView.product_type | capitalize }}
-                <br />
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Precio</th>
+                      <td>
+                        $
+                        {{ new Intl.NumberFormat().format(productView.price) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ingredientes</th>
+                      <td>{{ productView.ingredients | capitalize }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Preparación</th>
+                      <td>{{ productView.preparation | capitalize }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Tiempo</th>
+                      <td>{{ productView.preparation_time }} minutos</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Tipo de producto</th>
+                      <td>{{ productView.product_type | capitalize }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
             <p></p>
@@ -323,6 +317,7 @@ export default {
       total: 0,
       envio: 4000,
       estimatedTime: 0,
+      counting: 0,
       idRecovered: "",
       enterpriseName: "",
       prods: [],
@@ -443,25 +438,35 @@ export default {
 
     addItem(product) {
       var bandera = false;
-      if (this.items.length == 0) {
-        this.items.push({ recoveredProduct: product.node, counter: 1 });
-      } else {
-        for (var index = 1; index < this.items.length; index++) {
-          if (product.node.id == this.items[index].recoveredProduct.id) {
-            this.items[index].counter++;
-            bandera = true;
+      if (localStorage.getItem("existUser")) {
+        if (this.items.length == 0) {
+          this.items.push({ recoveredProduct: product.node, counter: 1 });
+        } else {
+          for (var index = 1; index < this.items.length; index++) {
+            if (product.node.id == this.items[index].recoveredProduct.id) {
+              this.items[index].counter++;
+              bandera = true;
+            }
+          }
+          if (bandera == false) {
+            this.items.push({ recoveredProduct: product.node, counter: 1 });
           }
         }
-        if (bandera == false) {
-          this.items.push({ recoveredProduct: product.node, counter: 1 });
-        }
+        this.saveItems();
+        this.$store.dispatch("incrementCountAction");
+        localStorage.car = this.$store.getters.getCount;
+      } else {
+        /*this.$router.push({
+          name: "Login",
+        });*/ window.location = "/login";
       }
-      this.saveItems();
     },
 
     deleteItem(id) {
       for (var index = 1; index < this.items.length; index++) {
         if (id == this.items[index].recoveredProduct.id) {
+          this.$store.dispatch("setCountAction", this.items[index].counter);
+          localStorage.car = this.$store.getters.getCount;
           this.items.splice(index, 1);
           this.saveItems();
         }
@@ -474,6 +479,8 @@ export default {
         }
       }
       this.saveItems();
+      this.$store.dispatch("incrementCountAction");
+      localStorage.car = this.$store.getters.getCount;
     },
     updateTotal() {
       var sumatoria = 0;
@@ -502,12 +509,16 @@ export default {
         }
       }
       this.saveItems();
+      this.$store.dispatch("decrementCountAction");
+      localStorage.car = this.$store.getters.getCount;
     },
 
     deleteCart() {
       this.items.splice(1, this.items.length);
       localStorage.removeItem("items");
       this.deleteVariables();
+      this.$store.dispatch("setStorageCountAction", 0);
+      localStorage.car = 0;
     },
     continueOrder() {
       this.$router.push({
@@ -515,19 +526,11 @@ export default {
         params: { listado: this.items, enterpriseName: this.enterpriseName },
       });
     },
-
-    itemExists() {
-      if (this.items.nombreItem != "Pizza") {
-        this.addItem();
-      } else {
-        this.incrimentarContador();
-      }
-    },
-
     deleteVariables() {
       localStorage.removeItem("items");
       localStorage.removeItem("envio");
       localStorage.removeItem("total");
+      localStorage.removeItem("car");
     },
     saveItems() {
       const parsed = JSON.stringify(this.items);
@@ -558,8 +561,8 @@ export default {
       localStorage.getItem("idEnterprise") == "" &&
       localStorage.getItem("enterpriseName") == ""
     ) {
-      this.idRecovered = this.$route.params.selectedEnterprise.id;
-      this.enterpriseName = this.$route.params.selectedEnterprise.name;
+      this.idRecovered = this.$route.params.id;
+      this.enterpriseName = this.$route.params.name;
       //Guardar en localStorage datos recuperados.
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;
@@ -573,31 +576,52 @@ export default {
   font-weight: bold;
 }
 .btn_order {
-  background-color: var(--dark-xx);
+  /*background-color: var(--dark-xx);
   color: var(--orange);
-}
-.btn_order:hover {
-  background: var(--grey-hover);
+  background-color: #E85D0C;
+  color: var(--dark);*/
+  background-color: var(--orange-x);
   color: var(--dark);
 }
-.btn_order1:hover {
-  background: var(--grey-hover);
+.btn_order:hover {
+  /*background: var(--grey-hover);*/
+  background: var(--orange-x-hover);
   color: var(--dark);
 }
 .btn_order:focus {
-  box-shadow: 0 0 0 1px var(--orange), 0 0 0 1px var(--white);
+  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
+}
+.contentProduct {
+  background-color: var(--dark-x);
+  /*background-color: #0d0d0d;*/
+  padding-bottom: 0%;
+  border-radius: 5px;
+}
+.car {
+  background-color: var(--dark-x);
+  color: var(--light);
 }
 .search {
   background: var(--muted);
 }
 .alignment {
-  color: var(--orange);
+  color: var(--orange-x);
   background: var(--dark);
   border-radius: 5px;
-  border: 2px solid var(--orange);
+  border: 2px solid var(--orange-x);
+}
+.alignment:hover {
+  color: var(--orange-x-hover);
+  background: var(--dark);
+  border-radius: 5px;
+  border: 2px solid var(--orange-x-hover);
 }
 .orange {
-  color: var(--orange);
+  color: var(--orange-x);
+  font-size: large;
+}
+.orange:hover {
+  color: var(--orange-x-hover);
   font-size: large;
 }
 .outer-border {
@@ -613,24 +637,11 @@ export default {
     margin-right: 20rem;
   }
 }
-.contentProduct {
-  background-color: var(--dark);
-  padding-bottom: 0%;
-  border-radius: 5px;
-}
-.car {
-  background-color: var(--dark);
-  color: var(--light);
-}
+
 /* Paginación */
 .container {
   display: flex;
   justify-content: center;
-}
-
-.btn-color {
-  background-color: var(--dark-x);
-  color: whitesmoke;
 }
 
 .div-paginate {

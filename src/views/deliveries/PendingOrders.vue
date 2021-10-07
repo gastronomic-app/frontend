@@ -8,14 +8,6 @@
       </h2>
       <h4>Pedidos por despachar</h4>
 
-      <!--SELECCIONAR TODOS-->
-      <div class="d-flex justify-content-end">
-        <label class="form-check-label">
-          Seleccionar todos
-          <input type="checkbox" v-on:click="selectAll()" />
-        </label>
-      </div>
-
       <!--ERROR DE CONEXIÓN & LOADING-->
       <div v-if="$apollo.loading">
         <LoadingGraphql />
@@ -24,49 +16,68 @@
         <ConnectionErrorGraphql />
       </div>
 
-      <!--PAGINACIÓN-->
-      <paginate ref="paginator" name="orders" :list="orders" :per="5">
-        <template v-for="(order) in paginated('orders')">
-          <!--LISTADO DE PEDIDOS-->
-          <accordion
-            :key="order.id"
-            :item="order"
-            :id="order.idx"
-            :checkbox_use="true"
-            v-if="order.status"
-          >
-            <div class="card-body">
-              <h5><b>Resumen del pedido</b></h5>
-              <p></p>
-              <h6><b>Productos: </b>{{ order.products }}</h6>
-              <h6><b>Precio total: </b> ${{ order.price }}</h6>
-              <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
-            </div>
-          </accordion>
-        </template>
-      </paginate>
-
-      <div class="div-paginate">
-        <paginate-links
-          for="orders"
-          :classes="{ ul: 'pagination' }"
-          :show-step-links="true"
-        ></paginate-links>
+      <!--NO HAY PEDIDOS-->
+      <div v-if="!existsOrders">
+        <h4>
+          Tus clientes aún no realizan pedidos <b></b>
+        </h4>
+        <not-found></not-found>
       </div>
 
-      <div class="div-paginate">
-        <span v-if="$refs.paginator">
-          Viendo {{ $refs.paginator.pageItemsCount }} resultados
+      <div v-if="existsOrders">
+
+        <!--SELECCIONAR TODOS-->
+        <div class="d-flex justify-content-end">
+          <label class="form-check-label">
+            Seleccionar todos
+            <input type="checkbox" v-on:click="selectAll()" />
+          </label>
+        </div>
+
+        <!--PAGINACIÓN-->
+        <paginate ref="paginator" name="orders" :list="orders" :per="5">
+          <template v-for="order in paginated('orders')">
+            <!--LISTADO DE PEDIDOS-->
+            <accordion
+              :key="order.id"
+              :item="order"
+              :id="order.idx"
+              :checkbox_use="true"
+              v-if="order.status"
+            >
+              <div class="card-body">
+                <h5><b>Resumen del pedido</b></h5>
+                <p></p>
+                <h6><b>Productos: </b>{{ order.products }}</h6>
+                <h6><b>Precio total: </b> ${{ order.price }}</h6>
+                <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
+              </div>
+            </accordion>
+          </template>
+        </paginate>
+
+        <div class="div-paginate">
+          <paginate-links
+            for="orders"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
+        </div>
+
+        <div class="div-paginate">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
+        </div>
+
+        <!--BOTON DESPACHAR PEDIDOS-->
+        <span class="d-flex justify-content-end">
+          <button type="button" class="btn btn-color" v-on:click="dispatch()">
+            Despachar Pedidos
+          </button>
         </span>
+        <br />
       </div>
-
-      <!--BOTON DESPACHAR PEDIDOS-->
-      <span class="d-flex justify-content-end">
-        <button type="button" class="btn btn-color" v-on:click="dispatch()">
-          Despachar Pedidos
-        </button>
-      </span>
-      <br>
     </div>
   </div>
 </template>
@@ -81,12 +92,12 @@ export default {
   components: {
     Accordion,
     LoadingGraphql,
-    ConnectionErrorGraphql
+    ConnectionErrorGraphql,
   },
   data() {
     return {
-      enterpriseId: "RW50ZXJwcmlzZU5vZGU6MQ==",
-      enterpriseName: "",
+      enterpriseId: String,
+      enterpriseName: String,
       checked_all: false,
       allOrders: Object, //Todas las ordenes de un establecimiento
       enterprise: Object, //Mensajeros adjuntos a un establecimiento
@@ -94,13 +105,11 @@ export default {
       error: null,
       orders: [], //Para guardar las órdenes realizadas a un establecimiento transformadas
       paginate: ["orders"],
+      existsOrders: true,
     };
   },
 
   methods: {
-    //TODO: Get the enterprise that is being managed.
-    getEnterpise() {},
-
     /*Despachar los pedidos seleccionados*/
     dispatch() {
       let selectedOrders = this.orders.filter((order) => order.selected);
@@ -129,9 +138,8 @@ export default {
 
     /*Obtener los mensajeros disponibles*/
     getAvailableCouriers() {
-      return this.couriers.filter(
-        (courier) => courier.node.isAvailable
-      );
+      this.queryCouriers();
+      return this.couriers.filter((courier) => courier.node.isAvailable);
     },
 
     /*Seleccionar todos */
@@ -160,11 +168,11 @@ export default {
           count++;
         }
       }
+      return this.orders.length > 0;
     },
 
     /**Transformar el formato de los productos provenientes de la BD */
     transformProducts(details) {
-      this.enterpriseId = "RW50ZXJwcmlzZU5vZGU6MQ==";
       let detailsOrder = details.edges.filter(
         (detail) => detail.node.product.enterprise.id === this.enterpriseId
       );
@@ -173,7 +181,6 @@ export default {
         belong = false;
 
       if (detailsOrder.length > 0) {
-        this.enterpriseName = detailsOrder[0].node.product.enterprise.name;
         belong = true;
         detailsOrder.forEach((detail) => {
           prodNames +=
@@ -215,8 +222,9 @@ export default {
 
     /*Actualizar el estado del mensajero*/
     updateStatusCourier(courierId, status) {
-
-      let idx = this.couriers.findIndex((courier) => courier.node.id === courierId);
+      let idx = this.couriers.findIndex(
+        (courier) => courier.node.id === courierId
+      );
       this.couriers[idx].node.isAvailable = status;
       this.$apollo
         .mutate({
@@ -237,7 +245,6 @@ export default {
         .then((response) => {
           console.log("actualización de courier:", response.data);
         });
-
     },
 
     /*Actualizar el estado de la orden*/
@@ -279,10 +286,11 @@ export default {
         .query({
           // Establece la consulta para traer las ordenes
           query: require("@/graphql/deliveries/pendingOrders.gql"),
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           // Se transforma la respuesta para ajustarla a lo necesario
-          this.transform(response.data.allOrders);
+          this.existsOrders = this.transform(response.data.allOrders);
         });
     },
 
@@ -293,6 +301,7 @@ export default {
           variables: {
             id: this.enterpriseId,
           },
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           this.couriers = response.data.enterprise.couriers.edges;
@@ -303,6 +312,12 @@ export default {
   mounted() {
     this.queryCouriers();
     this.queryOrders();
+  },
+
+  created() {
+    this.enterpriseId = this.$route.params.id;
+    this.enterpriseName = this.$route.params.name;
+    console.log("obtener id por url:", this.enterpriseId);
   },
 
   apollo: {

@@ -78,7 +78,8 @@ const routes = [
     path: "/report",
     name: "Report",
     component: () => import("@/views/deliveries/Report.vue"),
-    props: { deliveryId: "RGVsaXZlcnlOb2RlOjM=", enterprise: "Dom Burger" },
+    props:true,
+    // props: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Burger" },
   },
   {
     path: "/my-deliveries",
@@ -130,6 +131,12 @@ const routes = [
     name: "AddRating",
     component: () =>
         import("@/views/ratings-comments/AddRating.vue"),
+  },
+  {
+    path: "/report-Enterprise/:id",
+    name: "reportEnterprise",
+    component: () =>
+      import("@/views/enterprise/Report.vue"),
 },
 ];
 

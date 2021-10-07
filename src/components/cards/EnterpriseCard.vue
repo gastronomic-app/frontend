@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="card bg-cart color-black">
     <img
       src="@/assets/enterprise.jpg"
@@ -21,6 +22,7 @@
       <h5 class="card-title font-weight-bold">
         {{ enterprise.name | capitalize }}
       </h5>
+      <p class="card-text">{{ enterprise.historicalReview | capitalize }}</p>
       <p class="card-text">{{ enterprise.location | capitalize }}</p>
       <p class="card-text">Horario de atención:</p>
       <p class="card-text">
@@ -35,8 +37,21 @@
       >
         Valoraciones
       </button>
+      {{getLocalStorage()}}
+      <template v-if="$store.getters.getCount!=0 && recovered != enterprise.id">
+ <button
+        v-show="ok"
 
-      <button
+        type="button"
+        class="btn btn-success btn-sm mr-4"
+        data-toggle="modal"
+                data-target="#deleteConfirmationModal"
+      >
+        Hacer Pedido
+      </button>
+      </template>
+      <template v-else>
+ <button
         v-show="ok"
         v-on:click="makeOrder(enterprise)"
         type="button"
@@ -44,10 +59,59 @@
       >
         Hacer Pedido
       </button>
+      </template>
+
     </div>
   </div>
-</template>
 
+ <!-- Modals -->
+    <!-- Delete confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteConfirmationModal"
+      data-backdrop="static"
+      data-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="deleteConfirmationModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteConfirmationModalLabel">
+              Eliminar pedido
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Está a punto de eliminar su último pedido ¿Desea continuar?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn_order" v-on:click="redirection()" data-dismiss="modal">
+              Cerrar
+            </button>
+            <button
+              type="button"
+              class="btn btn_order"
+              v-on:click="makeOrder(enterprise)"
+              data-dismiss="modal"
+            >
+              Eliminar pedido
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
 <script>
 export default {
   name: "ExampleCard",
@@ -57,6 +121,7 @@ export default {
       allReviews: Object,
       valoration: 0,
       counter: 0,
+      recovered:"",
       varShedule: "",
       aux1: 0,
       aux2: 0,
@@ -100,22 +165,46 @@ export default {
   methods: {
     btnComments(id) {
       localStorage.idCaught = "";
-      //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
         params: { idCaught: id },
       });
     },
     makeOrder(Enterprise) {
-      localStorage.removeItem("items");
-      localStorage.removeItem("idRecovered");
-      localStorage.idEnterprise = "";
-      localStorage.enterpriseName = "";
-      this.$router.push({
+      if(Enterprise.id==localStorage.idEnterprise){
+        this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
+        localStorage.car = this.$store.getters.getCount;
+        this.$router.push({
         name: "ProductListOrder",
-        params: { selectedEnterprise: Enterprise },
+        params: { id: Enterprise.id, name: Enterprise.name },
       });
+      }else{
+        this.$store.dispatch("setCountAction", this.$store.getters.getCount);
+        localStorage.removeItem("items");
+        localStorage.removeItem("idRecovered");
+        localStorage.removeItem("car");
+        localStorage.idEnterprise = "";
+        localStorage.enterpriseName = "";
+        this.$router.push({
+          name: "ProductListOrder",
+          params: { id: Enterprise.id, name: Enterprise.name },
+        });
+      }
     },
+    redirection(){
+      if(localStorage.getItem("idEnterprise")){
+        this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
+        localStorage.car = this.$store.getters.getCount;
+        this.$router.push({
+        name: "ProductListOrder",
+        params: { id: localStorage.idEnterprise, name: localStorage.enterpriseName },
+      });
+      }
+    },
+    getLocalStorage(){
+      this.recovered = localStorage.getItem('idEnterprise');
+    }
+    ,
     valnum(texto) {
       var aux = 1;
       if (texto == "BUENO") {
@@ -141,7 +230,7 @@ export default {
       for (const product in this.allReviews.products.edges) {
         for (const order in this.allReviews.products.edges[product].node.orders
           .edges.review) {
-           comments.push(
+          comments.push(
             this.allReviews.products.edges[product].node.orders.edges[order]
               .node.review.comments
           );
@@ -238,60 +327,74 @@ export default {
       let dia = dias[hoy.getDay()];
 
       if (dia == "lunes") {
-        if (diasSemana.lunes.horaI != "") {
+        if (diasSemana.lunes.horaI != "" && diasSemana.lunes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.lunes.horaI +
             " Cierre: " +
             diasSemana.lunes.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "martes") {
-        if (diasSemana.martes.horaI != "") {
+        if (diasSemana.martes.horaI != "" && diasSemana.martes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.martes.horaI +
             " Cierre: " +
             diasSemana.martes.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "miercoles") {
-        if (diasSemana.miercoles.horaI != "") {
+        if (diasSemana.miercoles.horaI != "" && diasSemana.miercoles.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.miercoles.horaI +
             " Cierre: " +
             diasSemana.miercoles.horaF;
+        }else{
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "jueves") {
-        if (diasSemana.jueves.horaI != "") {
+        if (diasSemana.jueves.horaI != "" && diasSemana.jueves.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.jueves.horaI +
             " Cierre: " +
             diasSemana.jueves.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "viernes") {
-        if (diasSemana.viernes.horaI != "") {
+        if (diasSemana.viernes.horaI != "" && diasSemana.viernes.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.viernes.horaI +
             " Cierre: " +
             diasSemana.viernes.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "sabado") {
-        if (diasSemana.sabado.horaI != "") {
+        if (diasSemana.sabado.horaI != "" && diasSemana.sabado.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.sabado.horaI +
             " Cierre: " +
             diasSemana.sabado.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "domingo") {
-        if (diasSemana.domingo.horaI != "") {
+        if (diasSemana.domingo.horaI != "" && diasSemana.domingo.estado == true) {
           this.varShedule =
             "Abierto: " +
             diasSemana.domingo.horaI +
             " Cierre: " +
             diasSemana.domingo.horaF;
+        }else {
+          this.varShedule = "Hoy no habra atencion";
         }
       }
     },
@@ -354,5 +457,17 @@ export default {
 }
 .checked {
   color: orange;
+}
+.btn_order {
+  background-color: var(--orange-x);
+  color: var(--dark);
+}
+.btn_order:hover {
+  /*background: var(--grey-hover);*/
+  background: var(--orange-x-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 </style>

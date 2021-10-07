@@ -21,6 +21,7 @@
             class="form-control"
             id="enterpriseInputLocation"
             placeholder="Ubicación del establecimiento"
+            readonly
             v-model="location"
         />
         </div>
@@ -76,7 +77,7 @@
                 <th scope="row " id="thead__H">Lunes</th>
                 <td>
                     <label class="custom-checkbox" tab-index="0">
-                        <input type="checkbox" checked />
+                        <input id="CheckboxLunes" type="checkbox" checked />
                         <span class="checkmark"></span>
                     </label>
                 </td>
@@ -91,7 +92,7 @@
                 <th scope="row" id="thead__H">Martes</th>
                 <td>
                     <label class="custom-checkbox" tab-index="1">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxMartes" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -106,7 +107,7 @@
                 <th scope="row" id="thead__H">Miércoles</th>
                 <td>
                     <label class="custom-checkbox" tab-index="2">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxMiercoles" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -121,7 +122,7 @@
                 <th scope="row" id="thead__H">Jueves</th>
                 <td>
                 <label class="custom-checkbox" tab-index="3">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxJueves" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -136,7 +137,7 @@
                 <th scope="row" id="thead__H">Viernes</th>
                 <td>
                     <label class="custom-checkbox" tab-index="4">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxViernes" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -151,7 +152,7 @@
                 <th scope="row" id="thead__H">Sábado</th>
                 <td>
                     <label class="custom-checkbox" tab-index="5">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxSabado" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -166,7 +167,7 @@
                 <th scope="row" id="thead__H">Domingo</th>
                 <td>
                     <label class="custom-checkbox" tab-index="6">
-                    <input type="checkbox" checked />
+                    <input id="CheckboxDomingo" type="checkbox" checked />
                     <span class="checkmark"></span>
                 </label>
                 </td>
@@ -277,34 +278,43 @@ async mounted() {
         this.historicalReview = response.data.enterprise.historicalReview;
 
         });
+        //Cambia los valores en el formulario con respecto a lo que venga del back
+        document.getElementById("CheckboxLunes").checked = this.businessHours.lunes.estado;
         document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
         document.getElementById("lunesCierre").value = this.businessHours.lunes.horaF;
+
+        document.getElementById("CheckboxMartes").checked = this.businessHours.martes.estado;
         document.getElementById("martesInicio").value = this.businessHours.martes.horaI;
         document.getElementById("martesCierre").value = this.businessHours.martes.horaF;
+
+        document.getElementById("CheckboxMiercoles").checked = this.businessHours.miercoles.estado;
         document.getElementById("miercolesInicio").value = this.businessHours.miercoles.horaI;
         document.getElementById("miercolesCierre").value = this.businessHours.miercoles.horaF;
+
+        document.getElementById("CheckboxJueves").checked = this.businessHours.jueves.estado;
         document.getElementById("juevesInicio").value = this.businessHours.jueves.horaI;
         document.getElementById("juevesCierre").value = this.businessHours.jueves.horaF;
+
+        document.getElementById("CheckboxViernes").checked = this.businessHours.viernes.estado;
         document.getElementById("viernesInicio").value = this.businessHours.viernes.horaI;
         document.getElementById("viernesCierre").value = this.businessHours.viernes.horaF;
+
+        document.getElementById("CheckboxSabado").checked = this.businessHours.sabado.estado;
         document.getElementById("sabadoInicio").value = this.businessHours.sabado.horaI;
         document.getElementById("sabadoCierre").value = this.businessHours.sabado.horaF;
+
+        document.getElementById("CheckboxDomingo").checked = this.businessHours.domingo.estado;
         document.getElementById("domingoInicio").value = this.businessHours.domingo.horaI;
         document.getElementById("domingoCierre").value = this.businessHours.domingo.horaF;
-        //console.log(this.businessHours);
     }
 },
 methods: {
-    /**
-     * Método que crea una empresa cuando es precionado el botón
-     */
-    //mostrar(){
-    //    Document.getElementById("lunesInicio").value = this.businessHours.lunes.horaI;
-    //},
+
     ral_Location(value){
         console.log("valor"+ value)
         this.location = value;
     },
+    //Crea la empresa
     addEnterprise() {
         this.$apollo
         .mutate({
@@ -314,7 +324,6 @@ methods: {
         variables: {
             name: this.name,
             location: this.location,
-            //businessHours: this.businessHours,
         },
         })
         // El método mutate devuelve una promesa
@@ -332,6 +341,13 @@ methods: {
     editEnterprise() {
 
         /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
+        let lunesStatus = document.getElementById("CheckboxLunes").checked;
+        let martesStatus = document.getElementById("CheckboxMartes").checked;
+        let miercolesStatus = document.getElementById("CheckboxMiercoles").checked;
+        let juevesStatus = document.getElementById("CheckboxJueves").checked;
+        let viernesStatus = document.getElementById("CheckboxViernes").checked;
+        let sabadoStatus = document.getElementById("CheckboxSabado").checked;
+        let domingoStatus = document.getElementById("CheckboxDomingo").checked;
 
         let lunesI = document.getElementById("lunesInicio").value;
         let lunesC = document.getElementById("lunesCierre").value;
@@ -356,31 +372,31 @@ methods: {
 
         this.businessHours =JSON.stringify({
                 "lunes":{
-                        "estado":true,
+                        "estado":lunesStatus,
                         "horaI":lunesI,
                         "horaF":lunesC},
                 "martes":{
-                        "estado":true,
+                        "estado":martesStatus,
                         "horaI":martesI,
                         "horaF":martesC},
                 "miercoles":{
-                        "estado":true,
+                        "estado":miercolesStatus,
                         "horaI":miercolesI,
                         "horaF":miercolesC},
                 "jueves":{
-                        "estado":true,
+                        "estado":juevesStatus,
                         "horaI":juevesI,
                         "horaF":juevesC},
                 "viernes":{
-                        "estado":true,
+                        "estado":viernesStatus,
                         "horaI":viernesI,
                         "horaF":viernesC},
                 "sabado":{
-                        "estado":true,
+                        "estado":sabadoStatus,
                         "horaI":sabadoI,
                         "horaF":sabadoC},
                 "domingo":{
-                        "estado":true,
+                        "estado":domingoStatus,
                         "horaI":domingoI,
                         "horaF":domingoC}
                 });
