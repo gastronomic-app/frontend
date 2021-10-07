@@ -16,7 +16,7 @@ export default {
 
   data() {
     return {
-      timeout: true,
+      timeout: false,
 
       time: {
         id: this.id,
