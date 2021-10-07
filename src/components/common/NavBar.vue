@@ -106,6 +106,7 @@
                             <i class="icon-edit icon-white">Editar usuario</i>
                           </button>
                           <button
+                            v-if="client()"
                             class="btn btn-danger btn-sm ml-2"
                             type="button"
                             data-toggle="tooltip"
@@ -199,6 +200,18 @@ export default {
         this.role = user.type;
         this.$store.dispatch("setStorageCountAction", this.$store.getters.getCount);
         return true;
+      }
+      return false;
+    },
+    client(){
+      this.ok = localStorage.getItem("existUser");
+      if (this.ok) {
+        let user = JSON.parse(localStorage.getItem("user"));
+        this.role = user.type;
+        if (this.role=="CLIENT") {
+          return true;
+        }
+        return false;
       }
       return false;
     },

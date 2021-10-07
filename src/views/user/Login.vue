@@ -209,14 +209,36 @@ export default {
               localStorage.setItem("user", JSON.stringify(this.user));
               localStorage.setItem("existUser", true);
               this.show_charging = false;
-              this.$router.push({ name: "catalogSearch" }).then(() => {
-                this.makeToast(
+              if (this.user.type == "CLIENT") {
+                 this.$router.push({ name: "catalogSearch" }).then(() => {
+                  this.makeToast(
                   "success",
                   "Bienvenido",
                   "Usuario: " + this.user.names,
                   3000
                 );
               });
+              }else if (this.user.type == "MANAGER") {
+                this.$router.push({ name: "EnterpriseList" , params: { id: this.user.id }}).then(() => {
+                this.makeToast(
+                  "success",
+                  "Bienvenido Admin",
+                  "Usuario: " + this.user.names,
+                  3000
+                );
+              });
+              } else {
+                //TODO Redireccionar menú de mensajero
+                this.$router.push({ name: "catalogSearch" }).then(() => {
+                  this.makeToast(
+                  "success",
+                  "Bienvenido mensajero",
+                  "Usuario: " + this.user.names,
+                  3000
+                );
+              });
+              }
+
             } else {
               this.error_msg = "El usuario esta inactivo";
               if (response.data.allUsers.edges[0].node.type == 'CLIENT') {

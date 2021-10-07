@@ -41,7 +41,7 @@
       </div>
       <br />
       <center>
-        <input type="submit" class="btn boton" value="Restablecer contraseña" />
+        <input type="submit" class="btn btn-color" value="Restablecer contraseña" />
       </center>
     </form>
   </div>
@@ -130,10 +130,6 @@ export default {
 };
 </script>
 <style scoped>
-.boton {
-  background-color: #ff6079;
-  border: 1px solid red;
-}
 .boton:hover {
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
     0 17px 50px 0 rgba(0, 0, 0, 0.19);
