@@ -153,10 +153,10 @@ export default {
   methods: {
     link() {
       localStorage.idComment = "";
-      localStorage.enterpriseN = "";
+      //localStorage.enterpriseN = "";
       this.$router.push({
         name: "AddRating",
-        params: { enterpriseId: this.id, enterpriseName: this.enterprise.name },
+        params: { enterpriseId: this.id },
       });
     },
     async queryReviews() {
@@ -341,6 +341,7 @@ export default {
       localStorage.idCaught = this.id;
       //this.prueba();
       this.queryReviews();
+      
     } else {
       this.id = localStorage.getItem("idCaught");
       //this.prueba();

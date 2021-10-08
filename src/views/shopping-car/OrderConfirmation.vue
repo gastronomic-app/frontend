@@ -22,30 +22,14 @@
             </select>
           </div>
         </div>
+        <br>
         <template>
-          <template v-if="msjError === 'error'">
-            {{ cleanError() }}
-          </template>
-          <div
-            style="
-              background: #f8d7da;
-              margin-top: 1%;
-              padding: 0.5%;
-              border-radius: 6px;
-              border: 1px solid #f5c1b3;
-              color: #730115;
-            "
-            v-else-if="msjError != ''"
-          >
-            {{ msjError }}
-          </div>
-          <br />
           <template v-if="selected === 'Añadir dirección'">
             {{ resetLocation() }}
             <Geolocation v-on:value="getLocation" showmap="True"></Geolocation>
           </template>
           <template v-if="selected === 'Dirección del perfil'">
-            {{ cleanError() }}
+            <!-- {{ cleanError() }} -->
             {{ update() }}
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -64,6 +48,7 @@
             </div>
           </template>
         </template>
+        <br />
         <div class="container text-center">
           <button class="btn btn_order btn-sm" v-on:click="confirmOrder()">
             Enviar pedido
@@ -100,24 +85,6 @@
           </div>
           <!--costos-->
           <hr style="background-color: var(--orange)" />
-          <!-- <div class="row ml-1 container text-center">
-            <div class="col">
-              <p style="text-align: left; margin-left: 2%">
-                Envio <br />Sub-Total <br />
-                <span style="font-weight: bold">Total</span>
-              </p>
-            </div>
-            <div class="col">
-              <p>
-                $ {{ new Intl.NumberFormat().format(4000) }} <br />
-                $ {{ new Intl.NumberFormat().format(this.total) }} <br />
-                <span style="font-weight: bold"
-                  >$
-                  {{ new Intl.NumberFormat().format(this.total + 4000) }}</span
-                >
-              </p>
-            </div>
-          </div> -->
           <TotalOrder :total="this.total" :envio="this.envio"></TotalOrder>
         </div>
       </div>
@@ -157,7 +124,7 @@ export default {
       orderId: "",
       total: 0,
       envio: 0,
-      msjError: "",
+     // msjError: "",
       error: null,
     };
   },
@@ -181,9 +148,9 @@ export default {
     getLocation(value) {
       this.location = value;
     },
-    cleanError() {
+    /*cleanError() {
       this.msjError = "";
-    },
+    },*/
     update() {
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
@@ -254,13 +221,25 @@ export default {
       this.estimatedTime = sumatoria;
     },
     validate() {
-      this.msjError = "error";
+      //this.msjError = "error";
       if (this.selected === "") {
-        this.msjError = "Seleccione un tipo de dirección";
+        //this.msjError = "Seleccione un tipo de dirección";
+        this.makeToast(
+              "danger",
+              "Error",
+              "Seleccione un tipo de dirección",
+              3000
+            );
         return false;
       }
       if (this.location.length == 0) {
-        this.msjError = "Ingrese una direccion o seleccione en el mapa";
+        //this.msjError = "Ingrese una direccion o seleccione en el mapa";
+        this.makeToast(
+              "danger",
+              "Error",
+              "Ingrese una dirección o seleccione una en el mapa",
+              3000
+            );
         return false;
       }
       return true;
@@ -268,9 +247,19 @@ export default {
     resetLocation() {
       this.location = "";
     },
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
     confirmOrder() {
-      this.$store.dispatch("setStorageCountAction", 0);
+      this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
+
       if (this.validate()) {
+        this.$store.dispatch("setStorageCountAction", 0);
         this.calculateEstimatedTime();
         this.ok = localStorage.getItem("existUser");
         if (this.ok) {
@@ -314,6 +303,12 @@ export default {
                   //agrega aquí más lógica si es necesaria"
                 });
             }
+            this.makeToast(
+              "success",
+              "Éxito",
+              "¡Su pedido fue enviado exitosamente!",
+              3000
+            );
           });
 
         this.$router.push({ name: "catalogSearch" });
