@@ -239,6 +239,8 @@ export default {
               });
               }
 
+              window.location.reload();
+              this.$store.dispatch("setStorageCountAction", 0);
             } else {
               this.error_msg = "El usuario esta inactivo";
               if (response.data.allUsers.edges[0].node.type == 'CLIENT') {
