@@ -17,10 +17,15 @@
       </div>
     </div>
 
-    <div v-else id="accordionList">
-      <paginate name="orders" :list="orders" :per="5">
+    <div v-else ref="accordionList" class="accordion" id="accordion">
+      <paginate ref="paginator" name="orders" :list="orders" :per="5">
         <template v-for="(order, idx) in paginated('orders')">
-          <accordion :key="order.id" :item="order" :id="idx">
+          <collapsible-card
+            :key="order.id"
+            :item="order"
+            :id="idx"
+            :header="'Pediste a ' + order.enterprise"
+          >
             <div class="card-body">
               <h4>Resumen de pedido <br /></h4>
               <div>
@@ -96,16 +101,25 @@
                 </button>
               </div>
             </div>
-          </accordion>
+          </collapsible-card>
         </template>
       </paginate>
-      <div v-if="orders.length === 5" class="div-paginate">
-        <paginate-links
-          for="orders"
-          :classes="{ ul: 'pagination' }"
-          :show-step-links="true"
-        ></paginate-links>
-      </div>
+      <section v-if="orders.length > 5">
+        <div class="div-paginate">
+          <paginate-links
+            for="orders"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
+        </div>
+
+        <div class="div-paginate">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
+        </div>
+      </section>
+
       <br />
       <div v-show="showmap" class="map-container">
         <div class="map" ref="map"></div>
@@ -116,28 +130,29 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
 <script>
-import Accordion from "@/components/common/Accordion.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import NotFound from "@/components/common/NotFound.vue";
 import Countdown from "@/views/deliveries/Countdown.vue";
 import SimpleModal from "../../components/common/SimpleModal.vue";
+import CollapsibleCard from '../../components/common/CollapsibleCard.vue';
 
 export default {
   components: {
-    Accordion,
     LoadingGraphql,
     ConnectionErrorGraphql,
     NotFound,
     SimpleModal,
     Countdown,
+    CollapsibleCard,
   },
   name: "OrdersPlaced",
   created() {
     let elements = JSON.parse(localStorage.getItem("deliveryTimes"));
     try {
-      if (elements.length > 0) {
-        this.currentTimes = elements;
+      if (elements.deliveryTimes.length > 0) {
+        this.localTimes = elements;
+        this.updateTimes();
         this.existsTimes = true;
       }
     } catch (error) {
@@ -165,7 +180,7 @@ export default {
       user: {},
       showmap: false,
       orders: [],
-      currentTimes: [],
+      localTimes: {},
       //Paginator
       currentPage: 1,
       paginate: ["orders"],
@@ -173,7 +188,7 @@ export default {
   },
   methods: {
     leaving() {
-      if (this.$store.state.deliveryTimes.length > 0) {
+      if (this.$store.state.deliveryTimesLocal.deliveryTimes.length > 0) {
         this.$store.dispatch("setDeliveryTimesAction");
       }
     },
@@ -370,7 +385,7 @@ export default {
     },
     getCurrentUser() {
       let localUser = JSON.parse(localStorage.getItem("user"));
-      if (localUser.type === "CLIENT") {
+      if (localUser.type === "CLIENT" || localUser.type === "COURIER") {
         this.user = localUser;
       } else {
         this.$destroy();
@@ -378,10 +393,21 @@ export default {
       }
     },
     getEstimatedTime() {
+      let idx = -1;
       for (const order of this.orders) {
         if (this.existsTimes) {
-          const localtime = this.currentTimes.find(({ id }) => id === order.id);
-          order.estimatedTime = this.thereisTime(localtime) ? localtime : 0;
+          idx = this.localTimes.deliveryTimes.findIndex(
+            (time) => time.id === order.id
+          );
+        }
+
+        if (idx >= 0) {
+          order.estimatedTime = {
+            hours: this.localTimes.deliveryTimes[idx].hours,
+            min: this.localTimes.deliveryTimes[idx].min,
+            sec: this.localTimes.deliveryTimes[idx].sec,
+          };
+          idx = -1;
         } else {
           let preparation =
             order.preparationTime > 0
@@ -396,20 +422,20 @@ export default {
       this.exitsOrders = true;
       this.isReady = true;
     },
-    thereisTime(time) {
+    updateTimes() {
       const date = new Date();
-      const currenttime = {
-        hours: date.getHours(),
-        min: date.getMinutes(),
-        sec: date.getSeconds(),
-      };
-      let hours = currenttime.hours - parseInt(time.hours);
-      let min = currenttime.min - parseInt(time.min);
-      let sec = currenttime.sec - parseInt(time.sec);
-      if (hours <= 0 && min <= 0 && sec <= 0) {
-        return false;
-      }
-      return true;
+      const elapsedMilisec = date - new Date(this.localTimes.lastActiveTime);
+      const elapsed = this.secondsToString(elapsedMilisec / 1000);
+      this.localTimes.deliveryTimes.forEach((time) => {
+        time.hours =
+          time.hours - elapsed.hours > 0
+            ? time.hours - parseInt(elapsed.hours)
+            : 0;
+        time.min =
+          time.min - elapsed.min > 0 ? time.min - parseInt(elapsed.min) : 0;
+        time.sec =
+          time.sec - elapsed.sec > 0 ? time.sec - parseInt(elapsed.sec) : 0;
+      });
     },
     redirect(orderID) {
       const order = this.orders.find((order) => order.id === orderID);
@@ -464,9 +490,9 @@ export default {
   background-color: var(--white);
   color: var(--black);
 }
-.map-container{
-  padding-left:2.5em;
-  margin:auto;
+.map-container {
+  padding-left: 2.5em;
+  margin: auto;
 }
 .map {
   height: 25em;
