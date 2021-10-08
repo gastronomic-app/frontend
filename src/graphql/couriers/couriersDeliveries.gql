@@ -7,10 +7,12 @@
         courier{
           id
           email
-          
         }
         order{
-          
+          client {
+            id
+            email
+          }
           id
           status
         details {
