@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <Enterprise
-      :name="enterprise.name"
+      :name="enterpriseName"
       :image="'@/assets/enterprise.jpg'"
       section="Valoraciones y Comentarios"
     >
@@ -25,37 +25,37 @@
         <h5>Calidad de servicios</h5>
 
         <progress max="5" :value="aux1" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux1 }}
+        {{ "(" }}{{ aux1 }}
         {{ "/5)" }}
         <h5>Presentación</h5>
 
         <progress max="5" :value="aux2" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux2 }}
+        {{ "(" }}{{ aux2 }}
         {{ "/5)" }}
         <h5>Preparación</h5>
 
         <progress max="5" :value="aux3" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux3 }}
+        {{ "(" }}{{ aux3 }}
         {{ "/5)" }}
         <h5>Ingredientes</h5>
 
         <progress max="5" :value="aux4" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux4 }}
+        {{ "(" }}{{ aux4 }}
         {{ "/5)" }}
         <h5>Precio</h5>
 
         <progress max="5" :value="aux5" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux5 }}
+        {{ "(" }}{{ aux5 }}
         {{ "/5)" }}
         <h5>Textura</h5>
 
         <progress max="5" :value="aux6" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux6 }}
+        {{ "(" }}{{ aux6 }}
         {{ "/5)" }}
         <h5>Punto de cocción</h5>
 
         <progress max="5" :value="aux7" style="width: 80%"></progress>
-        {{ "(" }}{{ this.aux7 }}
+        {{ "(" }}{{ aux7 }}
         {{ "/5)" }}
         <br />
         <br />
@@ -75,17 +75,17 @@
           </div>
         </div>
 
-        <paginate ref="paginator" name="comments" :list="comments" :per="3">
+        <paginate ref="paginator" name="reviews" :list="reviews" :per="3">
           <div
-            v-for="comment in paginated('comments')"
-            :key="comment.id"
+            v-for="(comment, idx) in paginated('reviews')"
+            :key="idx"
             :item="comment"
             :checkbox_use="true"
           >
-            <div v-if="comment.review.comments != ''">
+            <div v-if="comment.comments != ''">
               <TextArea
-                :email="comment.client.email"
-                :comment="comment.review.comments"
+                :email="comment.node.order.client.email"
+                :comment="comment.node.comments"
               />
             </div>
           </div>
@@ -96,9 +96,9 @@
           </div>
         </paginate>
 
-        <div class="div-paginate d-flex justify-content-center" >
+        <div class="div-paginate d-flex justify-content-center">
           <paginate-links
-            for="comments"
+            for="reviews"
             :classes="{ ul: 'pagination' }"
             :show-step-links="true"
           ></paginate-links>
@@ -131,7 +131,7 @@ export default {
     return {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
-      enterprise: Object,
+      reviews: [],
       enterpriseName: "",
       id: "",
       // Variable que recibe el error de la consulta
@@ -139,8 +139,7 @@ export default {
       calculo: 0,
       auxcont: 0,
       comments: [],
-      Comments: [],
-      paginate: ["comments"],
+      paginate: ["reviews"],
       aux1: 0,
       aux2: 0,
       aux3: 0,
@@ -160,6 +159,18 @@ export default {
         params: { enterpriseId: this.id, enterpriseName: this.enterprise.name },
       });
     },
+    async queryReviews() {
+      await this.$apollo
+        .query({
+          query: require("@/graphql/comments/reviews.gql"),
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          console.log(response.data.allReviews);
+          this.filterQuery(response.data.allReviews.edges);
+          this.allReviewsMeth1();
+        });
+    },
     async prueba() {
       await this.$apollo
         .query({
@@ -174,6 +185,16 @@ export default {
           this.allReviewsMeth1();
         });
     },
+
+    filterQuery(response) {
+      this.reviews = response.filter(
+        (review) =>
+          review.node.order.products.edges[0].node.enterprise.id === this.id
+      );
+      this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
+      console.log(this.reviews);
+    },
+
     valnum(texto) {
       var aux = 1;
       if (texto == "BUENO") {
@@ -186,15 +207,27 @@ export default {
 
     allReviewsMeth1() {
       var comments = [];
-      var aux1 = 0;
-      var aux2 = 0;
-      var aux3 = 0;
-      var aux4 = 0;
-      var aux5 = 0;
-      var aux6 = 0;
-      var aux7 = 0;
+      var qualityService = 0;
+      var presentation = 0;
+      var preparation = 0;
+      var ingredients = 0;
+      var price = 0;
+      var texture = 0;
+      var cookingPoint = 0;
       var conttam = 0;
-      if (this.enterprise.products.edges.length === 0) {
+
+      this.reviews.forEach((review) => {
+        qualityService += this.valnum(review.node.qualityService);
+        presentation += this.valnum(review.node.presentation);
+        preparation += this.valnum(review.node.preparation);
+        ingredients += this.valnum(review.node.ingredients);
+        price += this.valnum(review.node.price);
+        texture += this.valnum(review.node.texture);
+        cookingPoint += this.valnum(review.node.cookingPoint);
+        comments.push(review.node.comments);
+      });
+
+      /*if (this.enterprise.products.edges.length === 0) {
         return;
       }
       for (
@@ -272,28 +305,28 @@ export default {
             }
           }
         }
-      }
+      }*/
 
       //promedios
-      if (comments.length > 0) {
-        conttam = comments.length;
+      if (this.reviews.length > 0) {
+        conttam = this.reviews.length;
         this.auxcont = conttam;
-        aux1 = Math.round(aux1 / conttam);
-        this.aux1 = aux1;
-        aux2 = Math.round(aux2 / conttam);
-        this.aux2 = aux2;
-        aux3 = Math.round(aux3 / conttam);
-        this.aux3 = aux3;
-        aux4 = Math.round(aux4 / conttam);
-        this.aux4 = aux4;
-        aux5 = Math.round(aux5 / conttam);
-        this.aux5 = aux5;
-        aux6 = Math.round(aux6 / conttam);
-        this.aux6 = aux6;
-        aux7 = Math.round(aux7 / conttam);
-        this.aux7 = aux7;
-        this.comments = comments;
-        var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(
+        qualityService = Math.round(qualityService / conttam);
+        this.aux1 = qualityService;
+        presentation = Math.round(presentation / conttam);
+        this.aux2 = presentation;
+        preparation = Math.round(preparation / conttam);
+        this.aux3 = preparation;
+        ingredients = Math.round(ingredients / conttam);
+        this.aux4 = ingredients;
+        price = Math.round(price / conttam);
+        this.aux5 = price;
+        texture = Math.round(texture / conttam);
+        this.aux6 = texture;
+        cookingPoint = Math.round(cookingPoint / conttam);
+        this.aux7 = cookingPoint;
+        //this.comments = comments;
+        var calculo = ((qualityService + presentation + preparation + ingredients + price + texture + cookingPoint) / 7).toFixed(
           1
         );
 
@@ -306,10 +339,12 @@ export default {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
       localStorage.idCaught = this.id;
-      this.prueba();
+      //this.prueba();
+      this.queryReviews();
     } else {
       this.id = localStorage.getItem("idCaught");
-      this.prueba();
+      //this.prueba();
+      this.queryReviews();
     }
   },
   mounted() {},
