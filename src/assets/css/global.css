@@ -207,3 +207,8 @@ body{
   border: solid 1px var(--orange);
   color: var(--dark);
 }
+.div-paginate {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}

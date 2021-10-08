@@ -18,7 +18,7 @@
     </div>
 
     <div v-else id="accordionList">
-      <paginate name="orders" :list="orders" :per="5">
+      <paginate ref="paginator" name="orders" :list="orders" :per="5">
         <template v-for="(order, idx) in paginated('orders')">
           <accordion :key="order.id" :item="order" :id="idx">
             <div class="card-body">
@@ -99,13 +99,22 @@
           </accordion>
         </template>
       </paginate>
-      <div v-if="orders.length === 5" class="div-paginate">
-        <paginate-links
-          for="orders"
-          :classes="{ ul: 'pagination' }"
-          :show-step-links="true"
-        ></paginate-links>
-      </div>
+      <section v-if="orders.length>5">
+        <div class="div-paginate">
+          <paginate-links
+            for="orders"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
+        </div>
+
+        <div class="div-paginate">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
+        </div>
+      </section>
+
       <br />
       <div v-show="showmap" class="map-container">
         <div class="map" ref="map"></div>
@@ -166,7 +175,6 @@ export default {
       showmap: false,
       orders: [],
       localTimes: {},
-
       //Paginator
       currentPage: 1,
       paginate: ["orders"],
@@ -408,18 +416,13 @@ export default {
     },
     updateTimes() {
       const date = new Date();
-      const currenttime = {
-        hours: date.getHours(),
-        min: date.getMinutes(),
-        sec: date.getSeconds(),
-      };
-      let hours = currenttime.hours - this.localTimes.lastActiveTime.hours;
-      let min = currenttime.min - this.localTimes.lastActiveTime.min;
-      let sec = currenttime.sec - this.localTimes.lastActiveTime.sec;
+      const elapsedMilisec = date - new Date(this.localTimes.lastActiveTime);
+      const elapsed = this.secondsToString(elapsedMilisec / 1000);
       this.localTimes.deliveryTimes.forEach((time) => {
-        time.hours = time.hours - hours > 0 ? time.hours - hours : 0;
-        time.min = time.min - min > 0 ? time.min - min : 0;
-        time.sec = time.sec - sec > 0 ? time.sec - sec : 0;
+        time.hours =
+          time.hours - elapsed.hours > 0 ? time.hours - parseInt(elapsed.hours) : 0;
+        time.min = time.min - elapsed.min > 0 ? time.min - parseInt(elapsed.min) : 0;
+        time.sec = time.sec - elapsed.sec > 0 ? time.sec - parseInt(elapsed.sec) : 0;
       });
     },
     redirect(orderID) {

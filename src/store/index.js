@@ -45,13 +45,7 @@ export default new Vuex.Store({
 
     //Add all delivery times to localstorage
     setDeliveryTimes(state) {
-      const date = new Date();
-      const currenttime = {
-        hours: date.getHours(),
-        min: date.getMinutes(),
-        sec: date.getSeconds(),
-      };
-      state.deliveryTimesLocal.lastActiveTime=currenttime;
+      state.deliveryTimesLocal.lastActiveTime=new Date();
       localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimesLocal))
     }
   },
