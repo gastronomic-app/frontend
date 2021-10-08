@@ -1,46 +1,45 @@
 <template>
   <div>
-    <div class="accordion" :id="'accordion'+id" >
-      <div class="card">
-        <div
-          class="card-header"
-          :id="'heading' + id"
-          v-bind:class="{
-            'card-color': !item.selected,
-            selected: item.selected,
-          }"
-        >
-          <h2 class="mb-0 flex">
-            <button
-              class="btn btn-block text-left btn-width shadow-none"
-              type="button"
-              data-toggle="collapse"
-              :data-target="'#collapse' + id"
-              :aria-controls="'collapse' + id"
-            >
-              {{header}} {{ id + 1 }}
-            </button>
-            <span v-if="checkbox_use" class="force-left">
-              <label class="container-checkbox">
-                <input
-                  type="checkbox"
-                  :checked="item.selected"
-                  @click="item.selected = !item.selected"
-                />
-                <span class="checkmark"></span>
-              </label>
-            </span>
-          </h2>
-        </div>
+    <div class="card">
+      <div
+      class="card-header"
+        :id="'heading' + id"
+        v-bind:class="{
+          'card-color': !item.selected,
+          selected: item.selected,
+        }"
+      >
+        <h2 class="mb-0 flex">
+          <button
+            class="btn btn-block text-left btn-width shadow-none"
+            type="button"
+            aria-expanded="true"
+            data-toggle="collapse"
+            :data-target="'#collapse' + id"
+            :aria-controls="'collapse' + id"
+          >
+            {{ header }} {{ id + 1 }}
+          </button>
+          <span v-if="checkbox_use" class="force-left">
+            <label class="container-checkbox">
+              <input
+                type="checkbox"
+                :checked="item.selected"
+                @click="item.selected = !item.selected"
+              />
+              <span class="checkmark"></span>
+            </label>
+          </span>
+        </h2>
+      </div>
 
-        <div
-          :id="'collapse' + id"
-          class="collapse"
-          :aria-labelledby="'heading' + id"
-          :data-parent="'#accordion'+id"
-        >
-          <slot></slot>
-        </div>
+      <div
+        :id="'collapse' + id"
+        class="collapse"
+        :aria-labelledby="'heading' + id"
+        data-parent="#accordion"
+      >
+        <slot></slot>
       </div>
     </div>
   </div>
@@ -49,8 +48,13 @@
 
 <script>
 export default {
-  name: "Accordion",
-  props: {item:Object, id:Number, checkbox_use:Boolean, header:{type: String,default:"Pedido realizado #"},}
+  name: "CollapsibleCard",
+  props: {
+    item: Object,
+    id: Number,
+    checkbox_use: Boolean,
+    header: { type: String, default: "Pedido realizado #" },
+  },
 };
 </script>
 

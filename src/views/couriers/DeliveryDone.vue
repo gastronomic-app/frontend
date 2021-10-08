@@ -14,9 +14,10 @@
 
     <div v-else>
       <h3><b>Pedidos en proceso de entrega</b></h3>
+      <div class="accordion">
       <paginate name="deliveries" :list="deliveries" :per="5">
         <template v-for="(delivery, idx) in paginated('deliveries')">
-          <accordion
+          <collapsible-card
             :key="delivery.deliveryID"
             :item="delivery"
             :checkbox_use="true"
@@ -57,9 +58,10 @@
                 Estado: <b>${{ delivery.status }}</b>
               </h5>
             </div>
-          </accordion>
+          </collapsible-card>
         </template>
       </paginate>
+      </div>
       <div v-if="deliveries.length === 5" class="div-paginate">
         <paginate-links
           for="orders"
@@ -84,12 +86,12 @@
   </div>
 </template>
 <script>
-import Accordion from "@/components/common/Accordion.vue";
+import CollapsibleCard from "@/components/common/CollapsibleCard.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import NotFound from "@/components/common/NotFound.vue";
 export default {
   components: {
-    Accordion,
+    CollapsibleCard,
     LoadingGraphql,
     NotFound,
   },
