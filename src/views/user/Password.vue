@@ -21,7 +21,7 @@
             autofocus=""
           />
           <br>
-        <input type="submit"  class="btn btn-primary btn-block" value="Continuar" />
+        <input type="submit"  class="btn btn-color btn-block" value="Continuar" />
         <b-progress
           v-show="ok"
           :value="100"

@@ -121,7 +121,7 @@
         </p>
         <input
           type="submit"
-          class="btn btn-color"
+          class="btn btn-color btn-block"
           value="Registrar"
         />
       </div>

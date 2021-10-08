@@ -2,7 +2,7 @@
   <section>
     <nav class="navbar navbar-expand-lg nav-bar fixed-top static-top navbar-bg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
           <img class="logo" src="@/assets/logo.png" alt="" />
         </a>
 
@@ -86,7 +86,7 @@
                                   <td>{{ role }}</td>
                                 </tr>
                                 <tr>
-                                  <td>email:</td>
+                                  <td>Email:</td>
                                   <td>{{ email }}</td>
                                 </tr>
                               </tbody>
@@ -107,7 +107,7 @@
                           </button>
                           <button
                             v-if="client()"
-                            class="btn btn-danger btn-sm ml-2"
+                            class="btn btn-color btn-sm ml-2"
                             type="button"
                             data-toggle="tooltip"
                             @click="removeClient()"
@@ -122,7 +122,7 @@
                 <center>
                   <div class="dropdown-divider"></div>
                   <GoogleLogin
-                    class="btn btn-warning"
+                    class="btn btn-dark"
                     :params="params"
                     :onSuccess="onSuccess"
                     :logoutButton="true"

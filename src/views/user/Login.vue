@@ -82,13 +82,13 @@
                   <button
                     type="submit"
                     data-dismiss="modal"
-                    class="btn btn-primary"
+                    class="btn btn-color"
                   >
                     Reactivar Usuario
                   </button>
                   <button
                     type="button"
-                    class="btn btn-secondary"
+                    class="btn btn-dark btn-black"
                     data-dismiss="modal"
                     @click="show_modal = false"
                   >
