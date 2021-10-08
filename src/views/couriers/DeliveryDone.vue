@@ -14,7 +14,7 @@
 
     <div v-else>
       <h3><b>Pedidos en proceso de entrega</b></h3>
-      <div class="accordion">
+      <div class="accordion" id="accordion">
       <paginate name="deliveries" :list="deliveries" :per="5">
         <template v-for="(delivery, idx) in paginated('deliveries')">
           <collapsible-card
