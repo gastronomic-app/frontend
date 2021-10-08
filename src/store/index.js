@@ -6,7 +6,12 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     count: 0,
-    deliveryTimes: [],
+    deliveryTimesLocal:{
+      lastActiveTime:{},
+      deliveryTimes: [],
+
+    }
+   
   },
   mutations: {
     decrementCount(state) {
@@ -25,22 +30,29 @@ export default new Vuex.Store({
     //Add a new delivery time for an order
     addDeliveryTime(state, time) {
       if (time.hours > 0 || time.min > 0 || time.sec > 0) {
-        let idx = state.deliveryTimes.findIndex(element => {
+        let idx = state.deliveryTimesLocal.deliveryTimes.findIndex(element => {
           if (element.id === time.id) {
             return true;
           }
         });
         if (idx >= 0) {
-          state.deliveryTimes[idx] = time;
+          state.deliveryTimesLocal.deliveryTimes[idx] = time;
         } else {
-          state.deliveryTimes.push(time)
+          state.deliveryTimesLocal.deliveryTimes.push(time)
         }
       }
     },
 
     //Add all delivery times to localstorage
     setDeliveryTimes(state) {
-      localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimes))
+      const date = new Date();
+      const currenttime = {
+        hours: date.getHours(),
+        min: date.getMinutes(),
+        sec: date.getSeconds(),
+      };
+      state.deliveryTimesLocal.lastActiveTime=currenttime;
+      localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimesLocal))
     }
   },
   actions: {

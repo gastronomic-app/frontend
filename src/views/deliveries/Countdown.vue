@@ -45,11 +45,11 @@ export default {
           }, 1000);
         } else if (this.time.min > 0) {
           this.time.min--;
-          this.time.sec = 60;
+          this.time.sec = 59;
         } else if (this.time.hours > 0) {
           this.time.hours--;
-          this.time.min = 60;
-          this.time.sec = 60;
+          this.time.min = 59;
+          this.time.sec = 59;
         } else {
           this.timeout = true;
         }

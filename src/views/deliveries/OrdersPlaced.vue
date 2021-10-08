@@ -136,8 +136,8 @@ export default {
   created() {
     let elements = JSON.parse(localStorage.getItem("deliveryTimes"));
     try {
-      if (elements.length > 0) {
-        this.currentTimes = elements;
+      if (elements.deliveryTimes.length > 0) {
+        this.localTimes = elements;
         this.existsTimes = true;
       }
     } catch (error) {
@@ -165,7 +165,8 @@ export default {
       user: {},
       showmap: false,
       orders: [],
-      currentTimes: [],
+      localTimes: {},
+
       //Paginator
       currentPage: 1,
       paginate: ["orders"],
@@ -173,7 +174,7 @@ export default {
   },
   methods: {
     leaving() {
-      if (this.$store.state.deliveryTimes.length > 0) {
+      if (this.$store.state.deliveryTimesLocal.deliveryTimes.length > 0) {
         this.$store.dispatch("setDeliveryTimesAction");
       }
     },
@@ -378,10 +379,19 @@ export default {
       }
     },
     getEstimatedTime() {
+      if (this.existsTimes) {
+        this.updateTimes();
+      }
       for (const order of this.orders) {
-        if (this.existsTimes) {
-          const localtime = this.currentTimes.find(({ id }) => id === order.id);
-          order.estimatedTime = this.thereisTime(localtime) ? localtime : 0;
+        const idx = this.localTimes.deliveryTimes.findIndex(
+          (time) => time.id === order.id
+        );
+        if (idx >= 0) {
+          order.estimatedTime = {
+            hours: this.localTimes.deliveryTimes[idx].hours,
+            min: this.localTimes.deliveryTimes[idx].min,
+            sec: this.localTimes.deliveryTimes[idx].sec,
+          };
         } else {
           let preparation =
             order.preparationTime > 0
@@ -396,20 +406,21 @@ export default {
       this.exitsOrders = true;
       this.isReady = true;
     },
-    thereisTime(time) {
+    updateTimes() {
       const date = new Date();
       const currenttime = {
         hours: date.getHours(),
         min: date.getMinutes(),
         sec: date.getSeconds(),
       };
-      let hours = currenttime.hours - parseInt(time.hours);
-      let min = currenttime.min - parseInt(time.min);
-      let sec = currenttime.sec - parseInt(time.sec);
-      if (hours <= 0 && min <= 0 && sec <= 0) {
-        return false;
-      }
-      return true;
+      let hours = currenttime.hours - this.localTimes.lastActiveTime.hours;
+      let min = currenttime.min - this.localTimes.lastActiveTime.min;
+      let sec = currenttime.sec - this.localTimes.lastActiveTime.sec;
+      this.localTimes.deliveryTimes.forEach((time) => {
+        time.hours = time.hours - hours > 0 ? time.hours - hours : 0;
+        time.min = time.min - min > 0 ? time.min - min : 0;
+        time.sec = time.sec - sec > 0 ? time.sec - sec : 0;
+      });
     },
     redirect(orderID) {
       const order = this.orders.find((order) => order.id === orderID);
@@ -464,9 +475,9 @@ export default {
   background-color: var(--white);
   color: var(--black);
 }
-.map-container{
-  padding-left:2.5em;
-  margin:auto;
+.map-container {
+  padding-left: 2.5em;
+  margin: auto;
 }
 .map {
   height: 25em;
