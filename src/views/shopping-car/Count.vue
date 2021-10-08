@@ -1,4 +1,4 @@
-<template>
+<template v-show="prueba()">
   <li id="counting" class="nav-item" v-show="ok">
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
       <b-icon icon="cart4" class="icon-cart"></b-icon>
@@ -19,6 +19,7 @@ export default {
       total: 0,
     };
   },
+
   mounted() {
     if (localStorage.getItem("existUser")) {
       this.ok = true;
@@ -32,18 +33,27 @@ export default {
     }
   },
   methods: {
+    prueba() {
+      return this.$store.getters.getCount >= 0;
+    },
     order() {
       var current_url = window.location.href;
       var page = current_url.split("/");
+
       if (localStorage.getItem("existUser")) {
         page = page[page.length - 1];
         if (page != "products-order") {
           if (page != "" && this.$store.getters.getCount == 0) {
+            localStorage.removeItem("enterpriseName");
+            this.$store.dispatch("setCountAction", 0);
             this.$router.push({
               name: "catalogSearch",
             });
           } else {
-            if (localStorage.getItem("enterpriseName")) {
+            if (
+              localStorage.getItem("enterpriseName") &&
+              this.$store.getters.getCount > 0
+            ) {
               this.$router.push({
                 name: "ProductListOrder",
                 params: {
@@ -68,6 +78,7 @@ export default {
   },
   created() {
     this.ok = localStorage.getItem("existUser");
+    this.$store.dispatch("setStorageCountAction", 0);
   },
 };
 </script>

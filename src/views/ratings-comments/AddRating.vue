@@ -8,14 +8,6 @@
     <div class="row">
       <div class="col-xl-6 col-md-12 col-xs-12 pl-0">
         <b-container class="mt-3">
-          <!-- <b-row class="mt-4">
-            <b-col sm="2" class="mb-3">
-              <b-icon icon="person-circle" font-scale="3"></b-icon>
-            </b-col>
-            <b-col sm="10" class="">
-              <label for=""></label>
-            </b-col>
-          </b-row> -->
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Calidad del servicio</h6>
@@ -215,7 +207,8 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-
+          this.enterpriseName = this.enterprise.name; 
+          localStorage.enterpriseN = this.enterpriseName;
           //this.save();
         });
     },
@@ -361,13 +354,14 @@ export default {
   },
   created() {
     if (
-      localStorage.getItem("idComment") == "" &&
-      localStorage.getItem("enterpriseN") == ""
+      localStorage.getItem("idComment") == "" 
+      //&&
+      //localStorage.getItem("enterpriseN") == ""
     ) {
       this.id = this.$route.params.enterpriseId;
-      this.enterpriseName = this.$route.params.enterpriseName;
+      //this.enterpriseName = this.$route.params.enterpriseName;
       localStorage.idComment = this.id;
-      localStorage.enterpriseN = this.enterpriseName;
+      //localStorage.enterpriseN = this.enterpriseName;
       this.showComent();
     }
   },
