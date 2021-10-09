@@ -289,9 +289,3 @@ export default {
   color: var(--black);
 }
 </style>
-//Clouds over map
-<style >
-.gm-style-iw button {
-  display: none !important;
-}
-</style>
