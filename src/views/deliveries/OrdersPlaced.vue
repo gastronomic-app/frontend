@@ -3,7 +3,7 @@
     class="container justify-content-center align-items-center"
     style="margin-top: 1em"
   >
-    <h3><b>Mis Pedidos</b></h3>
+    <h2><b>Mis Pedidos</b></h2>
 
     <div v-if="!isReady">
       <div v-if="!exitsOrders">
@@ -27,7 +27,7 @@
             :header="'Pediste a ' + order.enterprise"
           >
             <div class="card-body">
-              <h4>Resumen de pedido <br /></h4>
+              <h5 class="order-summary"><b>Resumen de pedido </b><br /></h5>
               <div>
                 <table class="table table-bordered">
                   <thead>
@@ -46,16 +46,14 @@
                   </tbody>
                 </table>
               </div>
-              <h5>
-                Establecimiento: <b>{{ order.enterprise }}</b>
-              </h5>
-              <h5>Lugar de entrega: {{ order.route.destination }}</h5>
-              <h5>
-                Tiempo estimado de preparation:
+              <h6><b> Establecimiento: </b>{{ order.enterprise }}</h6>
+              <h6><b>Lugar de entrega: </b>{{ order.route.destination }}</h6>
+              <h6>
+                <b> Tiempo estimado de preparation: </b>
                 {{ order.preparationTime }} minutos.
-              </h5>
-              <h5>
-                Tu pedido llegara en:
+              </h6>
+              <h6>
+                <b> Tu pedido llegara en:</b>
                 <b style="color: var(--orange)"
                   ><countdown
                     :id="order.id"
@@ -86,11 +84,9 @@
                       :buttonPrimaryAction="redirect"
                     ></simple-modal> </countdown
                 ></b>
-              </h5>
-              <h5>
-                Costo Total: <b>${{ order.cost }}</b>
-              </h5>
-              <div class="track-order-container">
+              </h6>
+              <h6><b> Costo Total: </b>${{ order.cost }}</h6>
+              <div v-if="order.route.status" class="track-order-container">
                 <button
                   :ref="order.id"
                   type="button "
@@ -99,6 +95,9 @@
                 >
                   Seguir Pedido
                 </button>
+              </div>
+              <div  v-else class="no-track-order">
+                <span>La opción de seguir pedido no está disponible para la ubicación que colocaste.</span>
               </div>
             </div>
           </collapsible-card>
@@ -135,7 +134,7 @@ import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.v
 import NotFound from "@/components/common/NotFound.vue";
 import Countdown from "@/views/deliveries/Countdown.vue";
 import SimpleModal from "../../components/common/SimpleModal.vue";
-import CollapsibleCard from '../../components/common/CollapsibleCard.vue';
+import CollapsibleCard from "../../components/common/CollapsibleCard.vue";
 
 export default {
   components: {
@@ -200,7 +199,7 @@ export default {
         .then((response) => {
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
             if (value) {
-              this.getDurationDistance(this.orders);
+              this.getDurationDistance(this.orders)
             } else {
               this.exitsOrders = false;
             }
@@ -232,41 +231,54 @@ export default {
     getOriginsDestinations() {
       let origins = [];
       let destinations = [];
+      let objRoutes = [];
       for (const order of this.orders) {
         origins.push(order.route.origin);
         destinations.push(order.route.destination);
+        if (origins.length === 9) {
+          objRoutes.push({ origins: origins, destinations: destinations });
+          origins = [];
+          destinations = [];
+        }
       }
-      return { origins: origins, destinations: destinations };
+      objRoutes.push({ origins: origins, destinations: destinations });
+      return objRoutes;
     },
     async getDurationDistance(orders) {
-      const objRoute = this.getOriginsDestinations();
-
-      const distanceMatrix = new google.maps.DistanceMatrixService();
-      distanceMatrix.getDistanceMatrix(
-        {
-          origins: objRoute.origins,
-          destinations: objRoute.destinations,
-          travelMode: "DRIVING",
-        },
-        async (response) => {
-          for (let i = 0; i < response.rows.length; i++) {
-            if (response.rows[0].elements[0].status === "OK") {
-              let elements = await response.rows[i].elements[i];
-
-              orders[i].route.distance = await elements.distance.text;
-              orders[i].route.duration.durationFormatted = await elements
-                .duration.text;
-              orders[i].route.duration.durationInSec = await elements.duration
-                .value;
-            } else {
-              orders[i].route.distance = 0;
-              orders[i].route.duration.durationFormatted = 0;
-              orders[i].route.duration.durationInSec = 0;
+      let idx = 0;
+      const objRoutes = this.getOriginsDestinations();
+      for await(const routes of objRoutes) {
+        const distanceMatrix = new google.maps.DistanceMatrixService();
+        await distanceMatrix.getDistanceMatrix(
+          {
+            origins: routes.origins,
+            destinations: routes.destinations,
+            travelMode: "DRIVING",
+          },
+         async (response) => {
+         
+            for (let j = 0; j < response.rows.length; j++) {
+              if (response.rows[j].elements[j].status === "OK") {
+                let elements = await response.rows[j].elements[j];
+                orders[idx].route.distance = await elements.distance.text;
+                orders[idx].route.duration.durationFormatted = await elements
+                  .duration.text;
+                orders[idx].route.duration.durationInSec = await elements
+                  .duration.value;
+                orders[idx].route.status = true;
+              } else {
+                orders[idx].route.distance = 0;
+                orders[idx].route.duration.durationFormatted = 0;
+                orders[idx].route.duration.durationInSec = 0;
+                orders[idx].route.status = false;
+              }
+              idx++;
             }
+            
           }
-          this.getEstimatedTime();
-        }
-      );
+        );
+      }
+      this.getEstimatedTime();
     },
     showRoute(routes) {
       const directionsService = new google.maps.DirectionsService();
@@ -353,6 +365,7 @@ export default {
               destination: {},
               duration: { durationFormatted: "", durationInSec: "" },
               distance: "",
+              status: false,
             },
           };
           for (let product of order.node.details.edges) {
@@ -452,6 +465,11 @@ export default {
 
 //General Component styles
 <style scope>
+.container {
+  width: 80%;
+  margin: auto;
+  padding: auto;
+}
 .btn-black {
   background-color: var(--dark);
   color: var(--white);
@@ -481,7 +499,11 @@ export default {
   background-color: var(--orange-x-hover);
   color: var(--black);
 }
-
+.no-track-order{
+  text-align: center;
+  font-size:.7em;
+  color: red;
+}
 .card-header:hover {
   background-color: var(--grey);
   color: var(--black);
@@ -493,6 +515,10 @@ export default {
 .map-container {
   padding-left: 2.5em;
   margin: auto;
+}
+.order-summary {
+  display: flex;
+  justify-content: center;
 }
 .map {
   height: 25em;
