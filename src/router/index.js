@@ -82,7 +82,7 @@ const routes = [
     // props: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Burger" },
   },
   {
-    path: "/my-deliveries",
+    path: "/my-delivery",
     name: "DeliveryDone",
     component: () => import("@/views/couriers/DeliveryDone.vue"),
   },

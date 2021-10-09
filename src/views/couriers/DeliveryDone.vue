@@ -1,97 +1,85 @@
 <template>
-  <div class="container" style="margin-top: 1em">
+  <div class="container jumbotron container-image" style="margin-top: 1em">
     <div v-if="!isReadyQuery">
-      <div v-if="!exitsDeliveries">
-        <h4>
-          No tienes entregas por realizar.
+      <div v-if="exitsDelivery === false">
+        <h3>
+          <strong> No tienes entregas por realizar.</strong>
           <not-found></not-found>
-        </h4>
+        </h3>
       </div>
       <div v-else>
         <LoadingGraphql />
       </div>
     </div>
 
-    <div v-else>
-      <h3><b>Pedidos en proceso de entrega</b></h3>
-      <div class="accordion" id="accordion">
-      <paginate name="deliveries" :list="deliveries" :per="5">
-        <template v-for="(delivery, idx) in paginated('deliveries')">
-          <collapsible-card
-            :key="delivery.deliveryID"
-            :item="delivery"
-            :checkbox_use="true"
-            :id="idx"
-            :reference="delivery.deliveryID"
-            header="Entrega #"
+    <div v-else v-show="exitsDelivery">
+      <h3><b>Entrega pendiente</b></h3>
+      <div class="card-body">
+        <h4>Resumen de pedido <br /></h4>
+        <div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Productos</th>
+                <th>Cantidad</th>
+                <th>Valor Unitario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product in delivery.products" :key="product.id">
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.cost }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h5>
+          Establecimiento: <b>{{ delivery.enterprise }}</b>
+        </h5>
+        <h5>
+          Destinatario:
+          <b>
+            {{ delivery.orderUser.name }} {{ delivery.orderUser.lastname }}</b
           >
-            <div class="card-body">
-              <h4>Resumen de pedido <br /></h4>
-              <div>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Productos</th>
-                      <th>Cantidad</th>
-                      <th>Valor Unitario</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="product in delivery.products" :key="product.id">
-                      <td>{{ product.name }}</td>
-                      <td>{{ product.quantity }}</td>
-                      <td>{{ product.cost }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <h5>
-                Establecimiento: <b>{{ delivery.enterprise }}</b>
-              </h5>
-              <h5>
-                Método de pago: <b>{{ delivery.payType }}</b>
-              </h5>
-              <h5>
-                Costo Total: <b>${{ delivery.cost }}</b>
-              </h5>
-              <h5>
-                Estado: <b>${{ delivery.status }}</b>
-              </h5>
-            </div>
-          </collapsible-card>
-        </template>
-      </paginate>
+        </h5>
+        <h5>
+          Ubicación: <b> {{ delivery.orderUser.location }}</b>
+        </h5>
+        <h5>
+          Método de pago: <b>{{ delivery.payType }}</b>
+        </h5>
+        <h5>
+          Costo Total: <b>${{ delivery.cost }}</b>
+        </h5>
+        <h5>
+          Estado: <b>${{ delivery.status }}</b>
+        </h5>
       </div>
-      <div v-if="deliveries.length === 5" class="div-paginate">
-        <paginate-links
-          for="orders"
-          :classes="{ ul: 'pagination' }"
-          :show-step-links="true"
-        ></paginate-links>
-      </div>
-      <div
-        v-if="deliveries.length > 0"
-        class="container d-flex justify-content-end"
-      >
+      <div class="container-button">
         <button type="button" class="btn btn-black" @click="deliver">
           Entregar
         </button>
       </div>
-      <div v-else>
-        No tienes entregas por realizar.
-        <not-found></not-found>
-      </div>
       <br />
     </div>
+    <div v-show="delivered">
+      <h3></h3>
+      <div v-if="exitsDelivery">
+          <LoadingGraphql />
+      </div>
+          <h3 v-else>
+          <strong> No tienes entregas por realizar.</strong>
+          <not-found></not-found>
+        </h3>
+      </div>
   </div>
 </template>
 <script>
-import CollapsibleCard from "@/components/common/CollapsibleCard.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import NotFound from "@/components/common/NotFound.vue";
 export default {
   components: {
-    CollapsibleCard,
     LoadingGraphql,
     NotFound,
   },
@@ -103,14 +91,10 @@ export default {
   data() {
     return {
       courier: Object,
-      deliveries: [],
-      exitsDeliveries: true,
+      delivery: {},
+      exitsDelivery: true,
       isReadyQuery: false,
-      //Paginator
-      currentPage: 1,
-      currentTimes: [],
-      paginate: ["deliveries"],
-      reload: false,
+      delivered: false,
     };
   },
   methods: {
@@ -131,11 +115,11 @@ export default {
         .then((response) => {
           this.tansformQuery(response.data.allDeliveries.edges).then(
             (value) => {
-              if (value && this.deliveries.length > 0) {
+              if (value && this.delivery != undefined) {
                 this.isReadyQuery = true;
-                this.exitsDeliveries = true;
+                this.exitsDelivery = true;
               } else {
-                this.exitsDeliveries = false;
+                this.exitsDelivery = false;
               }
 
               //
@@ -144,62 +128,102 @@ export default {
         });
     },
     async tansformQuery(data) {
-      let allDeliveries = data.filter(
+      let delivery = data.filter(
         (user) => user.node.courier.email === this.courier.email
       );
-
-      if (allDeliveries.length > 0) {
-        for (let delivery of allDeliveries) {
-          if (delivery.node.order.status == "DESPACHADO") {
-            let newDelivery = {
-              deliveryID: delivery.node.id,
-              orderID: delivery.node.order.id,
-              deliveryTime: delivery.node.deliveryTime,
-              products: [],
-              enterprise: "",
-              payType: "Efectivo",
-              cost: 0,
-              status: delivery.node.order.status,
-              selected: false,
-            };
-            for (let product of delivery.node.order.details.edges) {
-              newDelivery.products.push({
-                name: product.node.product.name,
-                quantity: product.node.quantity,
-                cost: product.node.product.price,
-              });
-              newDelivery.cost +=
-                parseInt(product.node.product.price) *
-                parseInt(product.node.quantity);
-              newDelivery.enterprise = product.node.product.enterprise.name;
+      if (delivery !== undefined) {
+        if (delivery[0].node.order.status == "DESPACHADO") {
+          let newDelivery = {
+            deliveryID: delivery[0].node.id,
+            orderID: delivery[0].node.order.id,
+            deliveryTime: delivery[0].node.deliveryTime,
+            products: [],
+            enterprise: "",
+            payType: "Efectivo",
+            cost: 0,
+            status: delivery[0].node.order.status,
+            selected: false,
+            orderUser: {},
+            courierStatus: false,
+          };
+          await this.getOrderUser(delivery[0].node.order.client.email).then(
+            (value) => {
+              newDelivery.orderUser = value;
+              for (let product of delivery[0].node.order.details.edges) {
+                newDelivery.products.push({
+                  name: product.node.product.name,
+                  quantity: product.node.quantity,
+                  cost: product.node.product.price,
+                });
+                newDelivery.cost +=
+                  parseInt(product.node.product.price) *
+                  parseInt(product.node.quantity);
+                newDelivery.enterprise = product.node.product.enterprise.name;
+              }
+              this.delivery = newDelivery;
             }
-            this.deliveries.push(newDelivery);
-          }
+          );
+          return true;
         }
-        return true;
+        return false;
       } else {
         return false;
       }
     },
-    deliver() {
-      let flag = false;
-      for (let idx in this.deliveries) {
-        if (this.deliveries[idx].selected) {
-          this.updateStatusOrder(this.deliveries[idx]);
-          flag = true;
-        }
-      }
-      if (!flag) {
-        alert("Seleccione un pedido para ver la ruta y el tiempo estimado");
-      }
+    async getOrderUser(userEmail) {
+      let user = {};
+      await this.$apollo
+        .query({
+          query: require("@/graphql/user/userByEmail.gql"),
+          variables: {
+            email: userEmail,
+          },
+        })
+        .then((response) => {
+          user.lastname =
+            response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
+          user.name =
+            response.data.allUsers.edges[0].node.contact.edges[0].node.names;
+          user.location =
+            response.data.allUsers.edges[0].node.contact.edges[0].node.location;
+          user.telephone =
+            response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
+        });
+      return user;
     },
+    deliver() {
+      this.updateStatusOrder(this.delivery);
+      this.updateStatusCourier(true);
+      
+      this.delivered = true;
+      setTimeout(() => {
+        this.makeToast("success", "", "Pedido entregado.", 5000);
+        this.exitsDelivery = false;
+      }, 2000);
+    },
+    /*Actualizar el estado del mensajero*/
+    updateStatusCourier(status) {
+      this.courier.courierStatus = status;
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/deliveries/updateCourier.gql"),
+          variables: {
+            id: this.courier.id,
+            isAvailable: status,
+          },
+        })
+        .then((response) => {
+          console.log("actualización de courier:", response.data);
+        });
+    },
+
     /*Actualizar el estado de la orden*/
-    updateStatusOrder(delivery) {
+    updateStatusOrder() {
       this.$apollo
         .mutate({
           mutation: require("@/graphql/deliveries/updateOrder.gql"),
           variables: {
-            id: delivery.orderID,
+            id: this.delivery.orderID,
             status: "entregado",
           },
           refetchQueries: [
@@ -209,26 +233,44 @@ export default {
         .then((response) => {
           console.log("actualización de order:", response.data);
         });
-      let idx = this.deliveries.findIndex(
-        (delivery) => delivery.deliveryID === delivery.deliveryID
-      );
-      this.deliveries.splice(idx, 1);
-      if (this.deliveries.length == 0) {
-        this.exitsDeliveries = false;
-      }
+    },
+    makeToast(variant = null, title, info, time) {
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
     },
   },
 };
 </script>
 //General Component styles 
 <style scope>
+.container-image {
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.88)
+    ),
+    url("https://delivery-food-frontend.herokuapp.com/img/logo.d205f58e.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  border-style: solid;
+  width: 60vw;
+}
+.container-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 2em;
+}
 .btn-black {
-  background-color: var(--dark);
-  color: var(--white);
+  background-color: var(--orange);
+  color: var(--black);
 }
 .btn-black:hover {
-  background-color: var(--dark-xx);
-  color: var(--light);
+  background-color: var(--orange-x);
+  color: var(--black);
 }
 .color-text-tar {
   color: var(--black);
