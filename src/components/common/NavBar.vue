@@ -59,7 +59,7 @@
                   <a class="dropdown-item" style="color: var(--light)">Email: {{email}}</a>
                   <a class="dropdown-item" style="color: var(--light)" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item" style="color: var(--light)"  @click="redirectEdit()">Editar usuario</a>
-                  <a class="dropdown-item" style="color: var(--light)"  @click="removeClient()">Darme de baja</a>
+                  <a class="dropdown-item" style="color: var(--light)" v-if="role=='CLIENT'" @click="removeClient()">Darme de baja</a>
                   <a class="dropdown-item log-out">
                    <GoogleLogin
                     class="btn"
