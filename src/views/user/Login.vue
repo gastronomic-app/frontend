@@ -208,7 +208,7 @@ export default {
               localStorage.setItem("user", JSON.stringify(this.user));
               localStorage.setItem("existUser", true);
               this.show_charging = false;
-              if (this.user.type == "CLIENT") {
+              if (this.user.type === 'CLIENT') {
                  this.$router.push({ name: "catalogSearch" }).then(() => {
                   this.makeToast(
                   "success",
@@ -217,8 +217,8 @@ export default {
                   3000
                 );
               });
-              }else if (this.user.type == "MANAGER") {
-                this.$router.push({ name: "EnterpriseList" , params: { id: this.user.id }}).then(() => {
+              }else if (this.user.type === 'MANAGER') {
+                this.$router.push({ name: "EnterpriseList"}).then(() => {
                 this.makeToast(
                   "success",
                   "Bienvenido Admin",
@@ -228,7 +228,7 @@ export default {
               });
               } else {
                 //TODO Redireccionar menú de mensajero
-                this.$router.push({ name: "catalogSearch" }).then(() => {
+                this.$router.push({ name: "DeliveryDone" }).then(() => {
                   this.makeToast(
                   "success",
                   "Bienvenido mensajero",
@@ -238,8 +238,6 @@ export default {
               });
               }
 
-              window.location.reload();
-              this.$store.dispatch("setStorageCountAction", 0);
             } else {
               this.error_msg = "El usuario esta inactivo";
               if (this.user.type == 'CLIENT') {
