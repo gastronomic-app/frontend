@@ -113,7 +113,8 @@ export default {
           query: require("@/graphql/couriers/couriersDeliveries.gql"),
         })
         .then((response) => {
-          this.tansformQuery(response.data.allDeliveries.edges).then(
+  
+          this.tansformQuery(response.data.allOrders.edges).then(
             (value) => {
               if (value && this.delivery != undefined) {
                 this.isReadyQuery = true;
@@ -128,28 +129,29 @@ export default {
         });
     },
     async tansformQuery(data) {
+     
       let delivery = data.filter(
         (user) => user.node.courier.email === this.courier.email
       );
       if (delivery !== undefined) {
-        if (delivery[0].node.order.status == "DESPACHADO") {
+
+        if (delivery[0].node.status == "DESPACHADO") {
           let newDelivery = {
-            deliveryID: delivery[0].node.id,
-            orderID: delivery[0].node.order.id,
-            deliveryTime: delivery[0].node.deliveryTime,
+            orderID: delivery[0].node.id,
+            deliveryTime: delivery[0].node.estimatedTime,
             products: [],
             enterprise: "",
             payType: "Efectivo",
             cost: 0,
-            status: delivery[0].node.order.status,
+            status: delivery[0].node.status,
             selected: false,
             orderUser: {},
             courierStatus: false,
           };
-          await this.getOrderUser(delivery[0].node.order.client.email).then(
+          await this.getOrderUser(delivery[0].node.client.email).then(
             (value) => {
               newDelivery.orderUser = value;
-              for (let product of delivery[0].node.order.details.edges) {
+              for (let product of delivery[0].node.details.edges) {
                 newDelivery.products.push({
                   name: product.node.product.name,
                   quantity: product.node.quantity,

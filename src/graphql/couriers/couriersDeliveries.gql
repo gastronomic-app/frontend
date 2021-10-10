@@ -1,36 +1,37 @@
+
 {
-	allDeliveries{
+  allOrders {
     edges {
       node {
-        deliveryTime
         id
-        courier{
-          id
-          email
-        }
-        order{
-          client {
-            id
-            email
-          }
-          id
-          status
-        details {
+        estimatedTime
+        status
+            details {
           edges {
             node {
+              quantity
               product {
                 name
                 price
                 enterprise {
                   name
                 }
+                
               }
-              quantity
             }
           }
         }
+        client {
+          id
+          email
+        }
+        courier {
+          id
+          email
+        }
+    
+        
       }
     }
   }
-}
 }
