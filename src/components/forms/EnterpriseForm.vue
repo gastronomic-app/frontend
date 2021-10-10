@@ -254,6 +254,7 @@ export default {
         businessHours: "",
       // Reseña
         historicalReview: "",
+      //Id administrador de los establecimientos a mostrar
     };
 },
 /**
