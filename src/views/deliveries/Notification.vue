@@ -39,7 +39,6 @@ export default {
           },
         })
         .then((response) => {
-          console.log("---", response.data.user);
           this.notifications = response.data.user.notifications.edges;
         });
     }
