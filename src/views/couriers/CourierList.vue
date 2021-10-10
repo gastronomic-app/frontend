@@ -13,12 +13,13 @@
         </div>
         <input
           ref="search"
+          :v-model="search"
           type="text"
           class="form-control"
           placeholder="Buscar"
           aria-label="search"
           aria-describedby="basic-addon1"
-          @keyup.enter="search($refs.search.value)"
+  
         />
       </div>
       <button
@@ -157,7 +158,9 @@ export default {
       });
     },
 
-    search(value) {
+    search() {
+      const value = this.$refs.search.value;
+      console.log(value)
       const capitalize = value.toLowerCase();
 
       const found = this.courierList.find((courier) => {

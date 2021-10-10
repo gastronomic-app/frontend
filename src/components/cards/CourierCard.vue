@@ -73,7 +73,7 @@ export default {
   margin: 1em auto;
   width: 20em;
   min-width: 15em;
-  height: 29em;
+  min-height: 28em;
   border-radius: .7em;
 }
 img {
