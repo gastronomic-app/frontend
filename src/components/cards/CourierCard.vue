@@ -23,9 +23,12 @@
     </div>
     <div class="container">
      
-      <select class="btn btn-success "  @change="fn(courierInfo.id)">
-          <option selected=""> {{courierInfo.isActive}}</option>
-        <option href="#">Inactivo</option>
+      <select class="btn btn-success "  @change="fn(courierInfo.id, courierInfo.isActive)">
+          <option v-if ="courierInfo.isActive" selected=""> Activo</option>
+        <option v-else selected="">Inactivo</option>
+          <option v-if ="courierInfo.isActive" > Inactivo</option>
+        <option v-else >Activo</option>
+        
       </select>
       <div class="dropdown-menu"></div>
     </div>
@@ -70,7 +73,7 @@ export default {
   margin: 1em auto;
   width: 20em;
   min-width: 15em;
-  height: 29em;
+  min-height: 28em;
   border-radius: .7em;
 }
 img {
