@@ -78,20 +78,52 @@ export default {
       paginate: ["Enterprises"],
       // Variable que recibe el error de la consulta
       error: null,
+      //Id del administrador para redireccionar
+      idAdmin: String,
     };
   },
   async created() {
+    if (
+      null === localStorage.getItem("existUser") ||
+      false === localStorage.getItem("existUser")
+    ){
+      this.$router.push({ name: "catalogSearch" });
+    }else{
+
+    let user = JSON.parse(localStorage.getItem("user"));;
+
     await this.$apollo
       .query({
         // Consulta
-        query: require("@/graphql/enterprise/allEnterprises.gql"),
+        query: require("@/graphql/enterprise/IdAdmin.gql"),
+        variables: {
+            email: user.email,
+        },
         fetchPolicy: "no-cache",
       })
       .then((response) => {
-        this.Enterprises = response.data.allEnterprises.edges;
-        this.allEnterprises = response.data.allEnterprises.edges;
+        this.idAdmin = response.data.allManagers.edges[0].node.id;
+        console.log(this.idAdmin)
+      });
+
+    //this.Admin = "TWFuYWdlck5vZGU6MzU="
+
+
+    await this.$apollo
+      .query({
+        // Consulta
+        query: require("@/graphql/enterprise/allEnterpriseManager.gql"),
+        variables: {
+            id: this.idAdmin,
+        },
+        fetchPolicy: "no-cache",
+      })
+      .then((response) => {
+        this.Enterprises = response.data.manager.enterprises.edges;
+        this.allEnterprises = response.data.manager.enterprises.edges;
         //this.pages = response.data.allEnterprises.edges.length;
       });
+    }
   },
   methods: {
     redirectExampleAdd() {
@@ -112,7 +144,7 @@ export default {
       //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "EnterpriseEdit",
-        params: { id: idEnterprise },
+        params: { id: idEnterprise, idA: this.idAdmin },
       });
     },
     /**

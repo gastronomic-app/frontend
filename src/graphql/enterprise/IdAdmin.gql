@@ -1,0 +1,10 @@
+query todOSm($email: String!){
+  allManagers(email: $email){
+    edges{
+      node{
+        id
+        email
+      }
+    }
+  }
+}
