@@ -35,25 +35,30 @@
           </table>
         </div>
         <h5>
-          Establecimiento: <b>{{ delivery.enterprise }}</b>
-        </h5>
-        <h5>
-          Destinatario:
           <b>
-            {{ delivery.orderUser.name }} {{ delivery.orderUser.lastname }}</b
-          >
+          Establecimiento: </b>{{ delivery.enterprise }}
         </h5>
         <h5>
-          Ubicación: <b> {{ delivery.orderUser.location }}</b>
+           <b>
+          Destinatario:</b>
+         
+            {{ delivery.orderUser.name }} {{ delivery.orderUser.lastname }}
+          
         </h5>
         <h5>
-          Método de pago: <b>{{ delivery.payType }}</b>
+          <b>
+          Ubicación:</b>  {{ delivery.orderUser.location }}
         </h5>
         <h5>
-          Costo Total: <b>${{ delivery.cost }}</b>
+          <b>
+          Método de pago: </b>{{ delivery.payType }}
+        </h5>
+        <h5> <b>
+          Costo Total: ${{ delivery.cost }}</b>
         </h5>
         <h5>
-          Estado: <b>${{ delivery.status }}</b>
+          <b>
+          Estado: <span style="color:var(--orange)">{{ delivery.status }}</span></b>
         </h5>
       </div>
       <div class="container-button">
@@ -66,13 +71,13 @@
     <div v-show="delivered">
       <h3></h3>
       <div v-if="exitsDelivery">
-          <LoadingGraphql />
+        <LoadingGraphql />
       </div>
-          <h3 v-else>
-          <strong> No tienes entregas por realizar.</strong>
-          <not-found></not-found>
-        </h3>
-      </div>
+      <h3 v-else>
+        <strong> No tienes entregas por realizar.</strong>
+        <not-found></not-found>
+      </h3>
+    </div>
   </div>
 </template>
 <script>
@@ -113,28 +118,29 @@ export default {
           query: require("@/graphql/couriers/couriersDeliveries.gql"),
         })
         .then((response) => {
-  
-          this.tansformQuery(response.data.allOrders.edges).then(
-            (value) => {
-              if (value && this.delivery != undefined) {
-                this.isReadyQuery = true;
-                this.exitsDelivery = true;
-              } else {
-                this.exitsDelivery = false;
-              }
-
-              //
+          this.tansformQuery(response.data.allOrders.edges).then((value) => {
+            if (value && this.delivery != undefined) {
+              this.isReadyQuery = true;
+              this.exitsDelivery = true;
+            } else {
+              this.exitsDelivery = false;
             }
-          );
+
+            //
+          });
         });
     },
     async tansformQuery(data) {
-     
-      let delivery = data.filter(
-        (user) => user.node.courier.email === this.courier.email
-      );
-      if (delivery !== undefined) {
+      console.log(this.courier);
+      let delivery = data.filter((user) => {
+        if (user.node.courier !== null) {
+          if (user.node.courier.email === this.courier.email) {
+            return true;
+          }
+        }
+      });
 
+      if (delivery !== undefined) {
         if (delivery[0].node.status == "DESPACHADO") {
           let newDelivery = {
             orderID: delivery[0].node.id,
@@ -196,7 +202,7 @@ export default {
     deliver() {
       this.updateStatusOrder(this.delivery);
       this.updateStatusCourier(true);
-      
+
       this.delivered = true;
       setTimeout(() => {
         this.makeToast("success", "", "Pedido entregado.", 5000);
