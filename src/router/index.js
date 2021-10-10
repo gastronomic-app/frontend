@@ -45,7 +45,7 @@ const routes = [
     component: () => import("@/views/enterprise/EnterpriseList.vue"),
   },
   {
-    path: "/enterprise-edit/:id",
+    path: "/enterprise-edit",
     name: "EnterpriseEdit",
     component: () => import("@/views/enterprise/EnterpriseEdit.vue"),
   },
