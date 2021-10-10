@@ -48,7 +48,6 @@
             </div>
           </template>
         </template>
-        <br />
         <div class="container text-center">
           <button class="btn btn_order btn-sm" v-on:click="confirmOrder()">
             Enviar pedido
@@ -123,7 +122,7 @@ export default {
       productId: "",
       orderId: "",
       total: 0,
-      envio: 0,
+      envio: 4000,
      // msjError: "",
       error: null,
     };

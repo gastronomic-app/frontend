@@ -59,7 +59,7 @@ export default {
       valoration: 0,
       counter: 0,
       varShedule: "",
-      calculo:0
+      calculo: 0,
     };
   },
 
@@ -100,14 +100,28 @@ export default {
       });
     },
     makeOrder(Enterprise) {
-      localStorage.removeItem("items");
-      localStorage.removeItem("idRecovered");
-      localStorage.idEnterprise = "";
-      localStorage.enterpriseName = "";
-      this.$router.push({
-        name: "ProductListOrder",
-        params: { selectedEnterprise: Enterprise },
-      });
+      if (Enterprise.id == localStorage.idEnterprise) {
+        this.$store.dispatch(
+          "setStorageCountAction",
+          parseInt(localStorage.getItem("car"))
+        );
+        localStorage.car = this.$store.getters.getCount;
+        this.$router.push({
+          name: "ProductListOrder",
+          params: { id: Enterprise.id, name: Enterprise.name },
+        });
+      } else {
+        this.$store.dispatch("setCountAction", this.$store.getters.getCount);
+        localStorage.removeItem("items");
+        localStorage.removeItem("idRecovered");
+        localStorage.removeItem("car");
+        localStorage.idEnterprise = "";
+        localStorage.enterpriseName = "";
+        this.$router.push({
+          name: "ProductListOrder",
+          params: { id: Enterprise.id, name: Enterprise.name },
+        });
+      }
     },
     valnum(texto) {
       var aux = 1;
@@ -119,7 +133,7 @@ export default {
       return aux;
     },
     allReviewsMeth1() {
-      var comments=[]
+      var comments = [];
       var aux1 = 0;
       var aux2 = 0;
       var aux3 = 0;
@@ -130,47 +144,87 @@ export default {
       var conttam = 0;
       //var users = [];
 
-        if(this.allReviews.products.edges.length === 0) {
-            return;
-        }
-        for (
-          var product = 0;
-          product < this.allReviews.products.edges.length;
-          product++
+      if (this.allReviews.products.edges.length === 0) {
+        return;
+      }
+      for (
+        var product = 0;
+        product < this.allReviews.products.edges.length;
+        product++
+      ) {
+        if (
+          this.allReviews.products.edges[product].node.orders.edges.length !== 0
         ) {
-
-          if(this.allReviews.products.edges[product].node.orders.edges.length !== 0){
-              for (
-              var order = 0;
-              order <
-              this.allReviews.products.edges[product].node.orders.edges.length;
-              order++
-            ){
-            if(this.allReviews.products.edges[product].node.orders.edges[order].node.review !== null){
-               comments.push(
-                  this.allReviews.products.edges[product].node.orders.edges[order].node
+          for (
+            var order = 0;
+            order <
+            this.allReviews.products.edges[product].node.orders.edges.length;
+            order++
+          ) {
+            if (
+              this.allReviews.products.edges[product].node.orders.edges[order]
+                .node.review !== null
+            ) {
+              comments.push(
+                this.allReviews.products.edges[product].node.orders.edges[order]
+                  .node
+              );
+              aux1 =
+                aux1 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.qualityService
                 );
-                  aux1=aux1+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.qualityService)
-                  aux2=aux2+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.presentation)
-                  aux3=aux3+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.preparation)
-                  aux4=aux4+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.ingredients)
-                  aux5=aux5+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.price)
-                  aux6=aux6+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.textures)
-                  aux7=aux7+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.cookingPoint)
+              aux2 =
+                aux2 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.presentation
+                );
+              aux3 =
+                aux3 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.preparation
+                );
+              aux4 =
+                aux4 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.ingredients
+                );
+              aux5 =
+                aux5 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.price
+                );
+              aux6 =
+                aux6 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.textures
+                );
+              aux7 =
+                aux7 +
+                this.valnum(
+                  this.allReviews.products.edges[product].node.orders.edges[
+                    order
+                  ].node.review.cookingPoint
+                );
             }
-
-
-
-            }
-
           }
-
-
         }
-
+      }
 
       //promedios
-      conttam=comments.length;
+      conttam = comments.length;
       this.auxcont = conttam;
       aux1 = Math.round(aux1 / conttam);
       this.aux1 = aux1;
@@ -187,8 +241,8 @@ export default {
       aux7 = Math.round(aux7 / conttam);
       this.aux7 = aux7;
       this.comments = comments;
-      var calculo=((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
-      this.valoration=calculo;
+      var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
+      this.valoration = calculo;
     },
 
     mostrar() {
@@ -212,7 +266,7 @@ export default {
             diasSemana.lunes.horaI +
             " Cierre: " +
             diasSemana.lunes.horaF;
-        }else{
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "martes") {
@@ -222,17 +276,20 @@ export default {
             diasSemana.martes.horaI +
             " Cierre: " +
             diasSemana.martes.horaF;
-        }else{
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "miercoles") {
-        if (diasSemana.miercoles.horaI != "" && diasSemana.miercoles.estado == true) {
+        if (
+          diasSemana.miercoles.horaI != "" &&
+          diasSemana.miercoles.estado == true
+        ) {
           this.varShedule =
             "Abierto: " +
             diasSemana.miercoles.horaI +
             " Cierre: " +
             diasSemana.miercoles.horaF;
-        }else{
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "jueves") {
@@ -242,17 +299,20 @@ export default {
             diasSemana.jueves.horaI +
             " Cierre: " +
             diasSemana.jueves.horaF;
-        }else {
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "viernes") {
-        if (diasSemana.viernes.horaI != "" && diasSemana.viernes.estado == true) {
+        if (
+          diasSemana.viernes.horaI != "" &&
+          diasSemana.viernes.estado == true
+        ) {
           this.varShedule =
             "Abierto: " +
             diasSemana.viernes.horaI +
             " Cierre: " +
             diasSemana.viernes.horaF;
-        }else {
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "sabado") {
@@ -262,17 +322,20 @@ export default {
             diasSemana.sabado.horaI +
             " Cierre: " +
             diasSemana.sabado.horaF;
-        }else {
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       } else if (dia == "domingo") {
-        if (diasSemana.domingo.horaI != "" && diasSemana.domingo.estado == true) {
+        if (
+          diasSemana.domingo.horaI != "" &&
+          diasSemana.domingo.estado == true
+        ) {
           this.varShedule =
             "Abierto: " +
             diasSemana.domingo.horaI +
             " Cierre: " +
             diasSemana.domingo.horaF;
-        }else {
+        } else {
           this.varShedule = "Hoy no habra atencion";
         }
       }
