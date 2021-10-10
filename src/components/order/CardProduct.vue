@@ -11,11 +11,11 @@
       :alt="'Imagen de ' + product.name"
     />
     <div class="card-body footer_descripcion pb-1">
-      <h6 class="card-title">
+      <h6 class="card-title name">
         <b style="color: #f2ae30">{{ product.name | capitalize }}</b>
       </h6>
       <span class="card-text">Precio: ${{ product.price | capitalize }}</span>
-      <br />
+
     </div>
   </div>
 </template>
@@ -46,6 +46,9 @@ export default {
 img {
   height: 100%;
   width: 100%;
+}
+.name{
+  height: 5rem;
 }
 @media only screen and (max-width: 768px) {
   .img {

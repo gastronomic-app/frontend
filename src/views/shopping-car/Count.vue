@@ -1,12 +1,12 @@
-<template v-show="prueba()">
-  <li id="counting" class="nav-item" v-show="ok">
+<template>
+  <div>
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
       <b-icon icon="cart4" class="icon-cart"></b-icon>
       <h6 id="counting" class="count" v-if="$store.getters.getCount != 0">
         {{ $store.getters.getCount }}
       </h6>
     </a>
-  </li>
+  </div>
 </template>
 
 <script>
