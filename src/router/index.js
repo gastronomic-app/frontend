@@ -58,6 +58,7 @@ const routes = [
     path: "/register",
     name: "Register",
     component: () => import("@/views/user/Register.vue"),
+    props:true
   },
   {
     path: "/geolocation",
@@ -78,7 +79,7 @@ const routes = [
     path: "/report",
     name: "Report",
     component: () => import("@/views/deliveries/Report.vue"),
-    props:true,
+    props: true,
     // props: { deliveryId: "T3JkZXJOb2RlOjE=", enterprise: "Dom Burger" },
   },
   {
@@ -130,14 +131,21 @@ const routes = [
     path: "/add-Rating",
     name: "AddRating",
     component: () =>
-        import("@/views/ratings-comments/AddRating.vue"),
-      },
-      {
-        path: "/report-Enterprise/:id",
-        name: "reportEnterprise",
-        component: () =>
-          import("@/views/enterprise/Report.vue"),
-    },
+      import("@/views/ratings-comments/AddRating.vue"),
+  },
+  {
+    path: "/courier-list",
+    name: "CourierList",
+    component: () =>
+      import("@/views/couriers/CourierList.vue"),
+      props:true
+  },
+  {
+    path: "/report-Enterprise/:id",
+    name: "reportEnterprise",
+    component: () =>
+      import("@/views/enterprise/Report.vue"),
+  },
 ];
 
 const router = new VueRouter({

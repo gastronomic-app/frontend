@@ -1,16 +1,19 @@
 query couriersEnterprise($id: ID!){
   enterprise(id: $id) {
-    couriers {
+    couriers(type: "COURIER") {
       edges {
         node {
           id,
           email,
           isAvailable,
+          isActive,
           contact {
             edges {
               node {
                 names,
                 lastnames,
+                location,
+                telephone
               }
             }
           }
