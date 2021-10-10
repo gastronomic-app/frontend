@@ -38,6 +38,7 @@
               >
             </li>
             <Count></Count>
+            <!-- <Notification /> -->
             <li class="nav-item mr-3">
               <span class="nav-link separator">|</span>
             </li>
@@ -98,11 +99,14 @@
  */
 import GoogleLogin from "vue-google-login";
 import Count from "@/views/shopping-car/Count.vue";
+// import Notification from "@/views/deliveries/Notification.vue";
+
 export default {
   name: "NavBar",
   components: {
     GoogleLogin,
     Count,
+    // Notification,
   },
 
   data: () => ({
