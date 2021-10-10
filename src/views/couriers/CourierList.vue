@@ -68,6 +68,16 @@ import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 export default {
   name: "CourierList",
   components: { CourierCard, NotFound, LoadingGraphql },
+  props:{
+    enterpriseId: {
+      type: String,
+      require: true
+    },
+    enterpriseName:{
+      type:String,
+      require:true
+    }
+  },
 
   created() {
     this.queryCouriers();
@@ -75,7 +85,6 @@ export default {
   data() {
     return {
       courierList: [],
-      enterpriseId: "RW50ZXJwcmlzZU5vZGU6Mg==",
       found: undefined,
       paginate: ["courierList"],
       isReadyQuery: false,
@@ -83,6 +92,7 @@ export default {
   },
   methods: {
     async queryCouriers() {
+      console.log(this.enterpriseId)
       await this.$apollo
         .query({
           query: require("@/graphql/deliveries/couriersEnterprise.gql"),
@@ -132,7 +142,10 @@ export default {
       }
     },
      addCourier(){
-         console.log("agregando")
+         this.$router.push({
+           name: "Register",
+           params:{enterpriseId: this.enterpriseId}
+         })
     },
     changeStatus(value){
         console.log(value )

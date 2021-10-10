@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="mt-3">
-    <div v-if="$apollo.loading">
-      <LoadingGraphql />
-    </div>
-    <div v-else-if="error" class="d-flex justify-content-center">
-      <ConnectionErrorGraphql />
-    </div>
-    <!--PAGINACION-->
-    <paginate ref="paginator" name="Enterprises" :list="Enterprises" :per="3">
-    <div class="row">
-      <div
+      <div v-if="$apollo.loading">
+        <LoadingGraphql />
+      </div>
+      <div v-else-if="error" class="d-flex justify-content-center">
+        <ConnectionErrorGraphql />
+      </div>
+      <!--PAGINACION-->
+      <paginate ref="paginator" name="Enterprises" :list="Enterprises" :per="3">
+        <div class="row">
+          <div
             class="col-xl-4 col-md-6 col-sm-12"
             v-for="(enterprise, id) in paginated('Enterprises')"
             :key="enterprise.id"
@@ -18,26 +18,66 @@
             :id="id"
             :checkbox_use="true"
             v-show="enterprise.node.status"
-      >
-        <template>
-          <EnterpriseCard :enterprise="enterprise.node" :key="enterprise.node.id"/>
-          <div class="dropdown" >
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Administrar Establecimiento
-            </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <!--Redireccion de componentes-->
-            <a class="dropdown-item puntero"  @click= redirectEnterpriseEdit(enterprise.node.id)>Modificar Informacion basica</a>
-            <a class="dropdown-item" @click="redirectProductsList(enterprise.node.id)">Gestionar productos</a>
-            <a class="dropdown-item" href="#">Gestionar mensajeros</a>
-            <a class="dropdown-item puntero" @click= "redirectPendingOrders(enterprise.node.id, enterprise.node.name)">Gestionar pedidos</a>
-            <a class="dropdown-item puntero" @click= redirectEnterpriseReport(enterprise.node.id)>Obtener informes</a>
+          >
+            <template>
+              <EnterpriseCard
+                :enterprise="enterprise.node"
+                :key="enterprise.node.id"
+              />
+              <div class="dropdown">
+                <button
+                  class="btn btn-success dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  Administrar Establecimiento
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <!--Redireccion de componentes-->
+                  <a
+                    class="dropdown-item puntero"
+                    @click="redirectEnterpriseEdit(enterprise.node.id)"
+                    >Modificar Informacion basica</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    @click="redirectProductsList(enterprise.node.id)"
+                    >Gestionar productos</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    @click="
+                      redirectCourierManegement(
+                        enterprise.node.id,
+                        enterprise.node.name
+                      )
+                    "
+                    >Gestionar mensajeros</a
+                  >
+                  <a
+                    class="dropdown-item puntero"
+                    @click="
+                      redirectPendingOrders(
+                        enterprise.node.id,
+                        enterprise.node.name
+                      )
+                    "
+                    >Gestionar pedidos</a
+                  >
+                  <a
+                    class="dropdown-item puntero"
+                    @click="redirectEnterpriseReport(enterprise.node.id)"
+                    >Obtener informes</a
+                  >
+                </div>
+              </div>
+            </template>
           </div>
-          </div>
-        </template>
-      </div>
-    </div>
-    </paginate>
+        </div>
+      </paginate>
     </div>
     <div class="div-paginate">
       <paginate-links
@@ -60,7 +100,7 @@ import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 
 export default {
-  name: "EnterpriseList",
+  name: "st",
   components: {
     EnterpriseCard,
     LoadingGraphql,
@@ -86,56 +126,54 @@ export default {
     if (
       null === localStorage.getItem("existUser") ||
       false === localStorage.getItem("existUser")
-    ){
+    ) {
       this.$router.push({ name: "catalogSearch" });
-    }else{
+    } else {
+      let user = JSON.parse(localStorage.getItem("user"));
 
-    let user = JSON.parse(localStorage.getItem("user"));;
-
-    await this.$apollo
-      .query({
-        // Consulta
-        query: require("@/graphql/enterprise/IdAdmin.gql"),
-        variables: {
+      await this.$apollo
+        .query({
+          // Consulta
+          query: require("@/graphql/enterprise/IdAdmin.gql"),
+          variables: {
             email: user.email,
-        },
-        fetchPolicy: "no-cache",
-      })
-      .then((response) => {
-        this.idAdmin = response.data.allManagers.edges[0].node.id;
-        console.log(this.idAdmin)
-      });
+          },
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          this.idAdmin = response.data.allManagers.edges[0].node.id;
+          console.log(this.idAdmin);
+        });
 
-    //this.Admin = "TWFuYWdlck5vZGU6MzU="
+      //this.Admin = "TWFuYWdlck5vZGU6MzU="
 
-
-    await this.$apollo
-      .query({
-        // Consulta
-        query: require("@/graphql/enterprise/allEnterpriseManager.gql"),
-        variables: {
+      await this.$apollo
+        .query({
+          // Consulta
+          query: require("@/graphql/enterprise/allEnterpriseManager.gql"),
+          variables: {
             id: this.idAdmin,
-        },
-        fetchPolicy: "no-cache",
-      })
-      .then((response) => {
-        this.Enterprises = response.data.manager.enterprises.edges;
-        this.allEnterprises = response.data.manager.enterprises.edges;
-        //this.pages = response.data.allEnterprises.edges.length;
-      });
+          },
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          this.Enterprises = response.data.manager.enterprises.edges;
+          this.allEnterprises = response.data.manager.enterprises.edges;
+          //this.pages = response.data.allEnterprises.edges.length;
+        });
     }
   },
   methods: {
     redirectExampleAdd() {
       this.$router.push({ name: "ExampleAdd" });
     },
-   redirectProductsList(idEnterprise) {
+    redirectProductsList(idEnterprise) {
       this.$router.push({
         name: "ProductsList",
         params: { idEnt: idEnterprise },
       });
     },
-    redirectEnterpriseReport(idEnterprise){
+    redirectEnterpriseReport(idEnterprise) {
       //console.log("enviar id por url", idEnterprise);
       this.$router.push({
         name: "reportEnterprise",
@@ -157,10 +195,16 @@ export default {
      * Redirige a la vista de órdenes pendientes para
      * gestionar los pedidos por despachar.
      */
-    redirectPendingOrders(idEnterprise, enterpriseName){
+    redirectPendingOrders(idEnterprise, enterpriseName) {
       this.$router.push({
         name: "PendingOrders",
-        params: { id: idEnterprise, name: enterpriseName}
+        params: { id: idEnterprise, name: enterpriseName },
+      });
+    },
+    redirectCourierManegement(enterpriseId, enterpriseName) {
+      this.$router.push({
+        name: "CourierList",
+        params: { enterpriseId: enterpriseId, enterpriseName: enterpriseName },
       });
     },
     /**
@@ -179,7 +223,8 @@ export default {
         // al momento de cargar la vista
         refetchQueries: [
           {
-            query: require("@/graphql/enterprise/allEnterprises.gql") },
+            query: require("@/graphql/enterprise/allEnterprises.gql"),
+          },
         ],
       });
     },
@@ -204,7 +249,9 @@ export default {
 .dropdown {
   width: 250%;
 }
-a.puntero  { Cursor : pointer;}
+a.puntero {
+  cursor: pointer;
+}
 .pagination {
   height: 36px;
   margin: 18px 0;

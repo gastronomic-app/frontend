@@ -58,6 +58,7 @@ const routes = [
     path: "/register",
     name: "Register",
     component: () => import("@/views/user/Register.vue"),
+    props:true
   },
   {
     path: "/geolocation",
@@ -137,6 +138,7 @@ const routes = [
     name: "CourierList",
     component: () =>
       import("@/views/couriers/CourierList.vue"),
+      props:true
   },
   {
     path: "/report-Enterprise/:id",
