@@ -133,6 +133,12 @@ const routes = [
         import("@/views/ratings-comments/AddRating.vue"),
   },
   {
+    path: "/courier-list",
+    name: "CourierList",
+    component: () =>
+        import("@/views/couriers/CourierList.vue"),
+  },
+  {
     path: "/report-Enterprise/:id",
     name: "reportEnterprise",
     component: () =>
