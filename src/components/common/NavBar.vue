@@ -38,6 +38,7 @@
               >
             </li>
             <Count></Count>
+            <!-- <Notification /> -->
             <li class="nav-item mr-3">
               <span class="nav-link separator">|</span>
             </li>
@@ -54,7 +55,7 @@
               >
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item" style="color: var(--light)">Usuario: {{names}}</a>
-                  <a class="dropdown-item" style="color: var(--light)">Role: {{role}}</a>
+                  <a class="dropdown-item" style="color: var(--light)">Rol: {{role}}</a>
                   <a class="dropdown-item" style="color: var(--light)">Email: {{email}}</a>
                   <a class="dropdown-item" style="color: var(--light)" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item" style="color: var(--light)"  @click="redirectEdit()">Editar usuario</a>
@@ -98,11 +99,14 @@
  */
 import GoogleLogin from "vue-google-login";
 import Count from "@/views/shopping-car/Count.vue";
+// import Notification from "@/views/deliveries/Notification.vue";
+
 export default {
   name: "NavBar",
   components: {
     GoogleLogin,
     Count,
+    // Notification,
   },
 
   data: () => ({
@@ -175,6 +179,7 @@ export default {
             // Define las variables
             variables: {
               id: this.id,
+              is_active: false,
             },
           })
           // El método mutate devuelve una promesa

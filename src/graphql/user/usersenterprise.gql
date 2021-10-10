@@ -1,9 +1,18 @@
-query usersEnterprise($id: ID!) {
-  user(id: $id) {
-    type
-    enterprise {
-      id
-      name
+query usersEnterprise($email: String) {
+  allManagers(email: $email) {
+    edges {
+      node {
+        id
+        email
+        enterprises {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
+      }
     }
   }
 }

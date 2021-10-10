@@ -1,5 +1,4 @@
 <template>
-<div>
   <div class="card bg-cart color-black">
     <img
       src="@/assets/enterprise.jpg"
@@ -37,21 +36,8 @@
       >
         Valoraciones
       </button>
-      {{getLocalStorage()}}
-      <template v-if="$store.getters.getCount!=0 && recovered != enterprise.id">
- <button
-        v-show="ok"
 
-        type="button"
-        class="btn btn-success btn-sm mr-4"
-        data-toggle="modal"
-                data-target="#deleteConfirmationModal"
-      >
-        Hacer Pedido
-      </button>
-      </template>
-      <template v-else>
- <button
+      <button
         v-show="ok"
         v-on:click="makeOrder(enterprise)"
         type="button"
@@ -59,59 +45,10 @@
       >
         Hacer Pedido
       </button>
-      </template>
-
     </div>
-  </div>
-
- <!-- Modals -->
-    <!-- Delete confirmation Modal -->
-    <div
-      class="modal fade"
-      id="deleteConfirmationModal"
-      data-backdrop="static"
-      data-keyboard="false"
-      tabindex="-1"
-      aria-labelledby="deleteConfirmationModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteConfirmationModalLabel">
-              Eliminar pedido
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            Está a punto de eliminar su último pedido ¿Desea continuar?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn_order" v-on:click="redirection()" data-dismiss="modal">
-              Cerrar
-            </button>
-            <button
-              type="button"
-              class="btn btn_order"
-              v-on:click="makeOrder(enterprise)"
-              data-dismiss="modal"
-            >
-              Eliminar pedido
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </template>
+
 <script>
 export default {
   name: "ExampleCard",
@@ -121,17 +58,8 @@ export default {
       allReviews: Object,
       valoration: 0,
       counter: 0,
-      recovered:"",
       varShedule: "",
-      aux1: 0,
-      aux2: 0,
-      aux3: 0,
-      aux4: 0,
-      aux5: 0,
-      aux6: 0,
-      aux7: 0,
-      auxprom: 0,
-      auxcont: 0,
+      calculo:0
     };
   },
 
@@ -165,46 +93,22 @@ export default {
   methods: {
     btnComments(id) {
       localStorage.idCaught = "";
+      //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
         params: { idCaught: id },
       });
     },
     makeOrder(Enterprise) {
-      if(Enterprise.id==localStorage.idEnterprise){
-        this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
-        localStorage.car = this.$store.getters.getCount;
-        this.$router.push({
+      localStorage.removeItem("items");
+      localStorage.removeItem("idRecovered");
+      localStorage.idEnterprise = "";
+      localStorage.enterpriseName = "";
+      this.$router.push({
         name: "ProductListOrder",
-        params: { id: Enterprise.id, name: Enterprise.name },
+        params: { selectedEnterprise: Enterprise },
       });
-      }else{
-        this.$store.dispatch("setCountAction", this.$store.getters.getCount);
-        localStorage.removeItem("items");
-        localStorage.removeItem("idRecovered");
-        localStorage.removeItem("car");
-        localStorage.idEnterprise = "";
-        localStorage.enterpriseName = "";
-        this.$router.push({
-          name: "ProductListOrder",
-          params: { id: Enterprise.id, name: Enterprise.name },
-        });
-      }
     },
-    redirection(){
-      if(localStorage.getItem("idEnterprise")){
-        this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
-        localStorage.car = this.$store.getters.getCount;
-        this.$router.push({
-        name: "ProductListOrder",
-        params: { id: localStorage.idEnterprise, name: localStorage.enterpriseName },
-      });
-      }
-    },
-    getLocalStorage(){
-      this.recovered = localStorage.getItem('idEnterprise');
-    }
-    ,
     valnum(texto) {
       var aux = 1;
       if (texto == "BUENO") {
@@ -214,8 +118,8 @@ export default {
       }
       return aux;
     },
-
-    async allReviewsMeth1() {
+    allReviewsMeth1() {
+      var comments=[]
       var aux1 = 0;
       var aux2 = 0;
       var aux3 = 0;
@@ -224,73 +128,49 @@ export default {
       var aux6 = 0;
       var aux7 = 0;
       var conttam = 0;
-      var comments = [];
-      var users = [];
+      //var users = [];
 
-      for (const product in this.allReviews.products.edges) {
-        for (const order in this.allReviews.products.edges[product].node.orders
-          .edges.review) {
-          comments.push(
-            this.allReviews.products.edges[product].node.orders.edges[order]
-              .node.review.comments
-          );
-          users.push(
-            this.allReviews.products.edges[product].node.orders.edges[order]
-              .node.client.email
-          );
-          aux1 = Math.round(
-            aux1 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.qualityService
-              )
-          );
-          aux2 = Math.round(
-            aux2 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.preparation
-              )
-          );
-          aux3 = Math.round(
-            aux3 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.presentation
-              )
-          );
-          aux4 = Math.round(
-            aux4 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.ingredients
-              )
-          );
-          aux5 = Math.round(
-            aux5 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.price
-              )
-          );
-          aux6 = Math.round(
-            aux6 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.textures
-              )
-          );
-          aux7 = Math.round(
-            aux7 +
-              this.valnum(
-                this.allReviews.products.edges[product].node.orders.edges[order]
-                  .node.review.cookingPoint
-              )
-          );
-          conttam = conttam + 1;
+        if(this.allReviews.products.edges.length === 0) {
+            return;
         }
-      }
+        for (
+          var product = 0;
+          product < this.allReviews.products.edges.length;
+          product++
+        ) {
+
+          if(this.allReviews.products.edges[product].node.orders.edges.length !== 0){
+              for (
+              var order = 0;
+              order <
+              this.allReviews.products.edges[product].node.orders.edges.length;
+              order++
+            ){
+            if(this.allReviews.products.edges[product].node.orders.edges[order].node.review !== null){
+               comments.push(
+                  this.allReviews.products.edges[product].node.orders.edges[order].node
+                );
+                  aux1=aux1+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.qualityService)
+                  aux2=aux2+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.presentation)
+                  aux3=aux3+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.preparation)
+                  aux4=aux4+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.ingredients)
+                  aux5=aux5+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.price)
+                  aux6=aux6+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.textures)
+                  aux7=aux7+this.valnum(this.allReviews.products.edges[product].node.orders.edges[order].node.review.cookingPoint)
+            }
+
+
+
+            }
+
+          }
+
+
+        }
+
+
       //promedios
+      conttam=comments.length;
       this.auxcont = conttam;
       aux1 = Math.round(aux1 / conttam);
       this.aux1 = aux1;
@@ -307,11 +187,10 @@ export default {
       aux7 = Math.round(aux7 / conttam);
       this.aux7 = aux7;
       this.comments = comments;
-      this.users = users;
-      this.valoration = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(
-        1
-      );
+      var calculo=((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
+      this.valoration=calculo;
     },
+
     mostrar() {
       let diasSemana = JSON.parse(this.enterprise.businessHours);
       let dias = [
@@ -457,17 +336,5 @@ export default {
 }
 .checked {
   color: orange;
-}
-.btn_order {
-  background-color: var(--orange-x);
-  color: var(--dark);
-}
-.btn_order:hover {
-  /*background: var(--grey-hover);*/
-  background: var(--orange-x-hover);
-  color: var(--dark);
-}
-.btn_order:focus {
-  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 </style>
