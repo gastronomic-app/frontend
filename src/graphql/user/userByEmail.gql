@@ -1,0 +1,18 @@
+query userByEmail($email: String!){
+  allUsers(email: $email) {
+    edges {
+      node {
+        contact {
+          edges {
+            node {
+              names
+              lastnames
+              location
+              telephone
+            }
+          }
+        }
+      }
+    }
+  }
+}

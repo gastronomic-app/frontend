@@ -215,3 +215,8 @@ body{
   background-color: var(--dark-x);
   color: whitesmoke;
 }
+.div-paginate {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}

@@ -18,14 +18,11 @@
 
       <!--NO HAY PEDIDOS-->
       <div v-if="!existsOrders">
-        <h4>
-          Tus clientes aún no realizan pedidos <b></b>
-        </h4>
+        <h4>Tus clientes aún no realizan pedidos <b></b></h4>
         <not-found></not-found>
       </div>
 
       <div v-if="existsOrders">
-
         <!--SELECCIONAR TODOS-->
         <div class="d-flex justify-content-end">
           <label class="form-check-label">
@@ -34,28 +31,29 @@
           </label>
         </div>
 
-        <!--PAGINACIÓN-->
-        <paginate ref="paginator" name="orders" :list="orders" :per="5">
-          <template v-for="order in paginated('orders')">
-            <!--LISTADO DE PEDIDOS-->
-            <accordion
-              :key="order.id"
-              :item="order"
-              :id="order.idx"
-              :checkbox_use="true"
-              v-if="order.status"
-            >
-              <div class="card-body">
-                <h5><b>Resumen del pedido</b></h5>
-                <p></p>
-                <h6><b>Productos: </b>{{ order.products }}</h6>
-                <h6><b>Precio total: </b> ${{ order.price }}</h6>
-                <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
-              </div>
-            </accordion>
-          </template>
-        </paginate>
-
+        <div class="accordion" id="accordion">
+          <!--PAGINACIÓN-->
+          <paginate ref="paginator" name="orders" :list="orders" :per="5">
+            <template v-for="order in paginated('orders')">
+              <!--LISTADO DE PEDIDOS-->
+              <collapsible-card
+                :key="order.id"
+                :item="order"
+                :id="order.idx"
+                :checkbox_use="true"
+                v-if="order.status"
+              >
+                <div class="card-body">
+                  <h5><b>Resumen del pedido</b></h5>
+                  <p></p>
+                  <h6><b>Productos: </b>{{ order.products }}</h6>
+                  <h6><b>Precio total: </b> ${{ order.price }}</h6>
+                  <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
+                </div>
+              </collapsible-card>
+            </template>
+          </paginate>
+        </div>
         <div class="div-paginate">
           <paginate-links
             for="orders"
@@ -83,14 +81,14 @@
 </template>
 
 <script>
-import Accordion from "@/components/common/Accordion.vue";
+import CollapsibleCard from "@/components/common/CollapsibleCard.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 
 export default {
   name: "PendingOrders",
   components: {
-    Accordion,
+    CollapsibleCard,
     LoadingGraphql,
     ConnectionErrorGraphql,
   },

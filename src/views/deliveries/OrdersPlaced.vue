@@ -3,7 +3,7 @@
     class="container justify-content-center align-items-center"
     style="margin-top: 1em"
   >
-    <h3><b>Mis Pedidos</b></h3>
+    <h2><b>Mis Pedidos</b></h2>
 
     <div v-if="!isReady">
       <div v-if="!exitsOrders">
@@ -17,12 +17,17 @@
       </div>
     </div>
 
-    <div v-else id="accordionList">
-      <paginate name="orders" :list="orders" :per="5">
+    <div v-else ref="accordionList" class="accordion" id="accordion">
+      <paginate ref="paginator" name="orders" :list="orders" :per="5">
         <template v-for="(order, idx) in paginated('orders')">
-          <accordion :key="order.id" :item="order" :id="idx">
+          <collapsible-card
+            :key="order.id"
+            :item="order"
+            :id="idx"
+            :header="'Pediste a ' + order.enterprise"
+          >
             <div class="card-body">
-              <h4>Resumen de pedido <br /></h4>
+              <h5 class="order-summary"><b>Resumen de pedido </b><br /></h5>
               <div>
                 <table class="table table-bordered">
                   <thead>
@@ -41,16 +46,14 @@
                   </tbody>
                 </table>
               </div>
-              <h5>
-                Establecimiento: <b>{{ order.enterprise }}</b>
-              </h5>
-              <h5>Lugar de entrega: {{ order.route.destination }}</h5>
-              <h5>
-                Tiempo estimado de preparation:
+              <h6><b> Establecimiento: </b>{{ order.enterprise }}</h6>
+              <h6><b>Lugar de entrega: </b>{{ order.route.destination }}</h6>
+              <h6>
+                <b> Tiempo estimado de preparation: </b>
                 {{ order.preparationTime }} minutos.
-              </h5>
-              <h5>
-                Tu pedido llegara en:
+              </h6>
+              <h6>
+                <b> Tu pedido llegara en:</b>
                 <b style="color: var(--orange)"
                   ><countdown
                     :id="order.id"
@@ -81,11 +84,9 @@
                       :buttonPrimaryAction="redirect"
                     ></simple-modal> </countdown
                 ></b>
-              </h5>
-              <h5>
-                Costo Total: <b>${{ order.cost }}</b>
-              </h5>
-              <div class="track-order-container">
+              </h6>
+              <h6><b> Costo Total: </b>${{ order.cost }}</h6>
+              <div v-if="order.route.status" class="track-order-container">
                 <button
                   :ref="order.id"
                   type="button "
@@ -95,17 +96,29 @@
                   Seguir Pedido
                 </button>
               </div>
+              <div  v-else class="no-track-order">
+                <span>La opción de seguir pedido no está disponible para la ubicación que colocaste.</span>
+              </div>
             </div>
-          </accordion>
+          </collapsible-card>
         </template>
       </paginate>
-      <div v-if="orders.length === 5" class="div-paginate">
-        <paginate-links
-          for="orders"
-          :classes="{ ul: 'pagination' }"
-          :show-step-links="true"
-        ></paginate-links>
-      </div>
+      <section v-if="orders.length > 5">
+        <div class="div-paginate">
+          <paginate-links
+            for="orders"
+            :classes="{ ul: 'pagination' }"
+            :show-step-links="true"
+          ></paginate-links>
+        </div>
+
+        <div class="div-paginate">
+          <span v-if="$refs.paginator">
+            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+          </span>
+        </div>
+      </section>
+
       <br />
       <div v-show="showmap" class="map-container">
         <div class="map" ref="map"></div>
@@ -116,28 +129,29 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkQNpJPrbKgjmDPbJCZjTEXw2rJ4bwyS0"></script>
 <script>
-import Accordion from "@/components/common/Accordion.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
 import NotFound from "@/components/common/NotFound.vue";
 import Countdown from "@/views/deliveries/Countdown.vue";
 import SimpleModal from "../../components/common/SimpleModal.vue";
+import CollapsibleCard from "../../components/common/CollapsibleCard.vue";
 
 export default {
   components: {
-    Accordion,
     LoadingGraphql,
     ConnectionErrorGraphql,
     NotFound,
     SimpleModal,
     Countdown,
+    CollapsibleCard,
   },
   name: "OrdersPlaced",
   created() {
     let elements = JSON.parse(localStorage.getItem("deliveryTimes"));
     try {
-      if (elements.length > 0) {
-        this.currentTimes = elements;
+      if (elements.deliveryTimes.length > 0) {
+        this.localTimes = elements;
+        this.updateTimes();
         this.existsTimes = true;
       }
     } catch (error) {
@@ -165,7 +179,7 @@ export default {
       user: {},
       showmap: false,
       orders: [],
-      currentTimes: [],
+      localTimes: {},
       //Paginator
       currentPage: 1,
       paginate: ["orders"],
@@ -173,7 +187,7 @@ export default {
   },
   methods: {
     leaving() {
-      if (this.$store.state.deliveryTimes.length > 0) {
+      if (this.$store.state.deliveryTimesLocal.deliveryTimes.length > 0) {
         this.$store.dispatch("setDeliveryTimesAction");
       }
     },
@@ -185,7 +199,7 @@ export default {
         .then((response) => {
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
             if (value) {
-              this.getDurationDistance(this.orders);
+              this.getDurationDistance(this.orders)
             } else {
               this.exitsOrders = false;
             }
@@ -217,41 +231,54 @@ export default {
     getOriginsDestinations() {
       let origins = [];
       let destinations = [];
+      let objRoutes = [];
       for (const order of this.orders) {
         origins.push(order.route.origin);
         destinations.push(order.route.destination);
+        if (origins.length === 9) {
+          objRoutes.push({ origins: origins, destinations: destinations });
+          origins = [];
+          destinations = [];
+        }
       }
-      return { origins: origins, destinations: destinations };
+      objRoutes.push({ origins: origins, destinations: destinations });
+      return objRoutes;
     },
     async getDurationDistance(orders) {
-      const objRoute = this.getOriginsDestinations();
-
-      const distanceMatrix = new google.maps.DistanceMatrixService();
-      distanceMatrix.getDistanceMatrix(
-        {
-          origins: objRoute.origins,
-          destinations: objRoute.destinations,
-          travelMode: "DRIVING",
-        },
-        async (response) => {
-          for (let i = 0; i < response.rows.length; i++) {
-            if (response.rows[0].elements[0].status === "OK") {
-              let elements = await response.rows[i].elements[i];
-
-              orders[i].route.distance = await elements.distance.text;
-              orders[i].route.duration.durationFormatted = await elements
-                .duration.text;
-              orders[i].route.duration.durationInSec = await elements.duration
-                .value;
-            } else {
-              orders[i].route.distance = 0;
-              orders[i].route.duration.durationFormatted = 0;
-              orders[i].route.duration.durationInSec = 0;
+      let idx = 0;
+      const objRoutes = this.getOriginsDestinations();
+      for await(const routes of objRoutes) {
+        const distanceMatrix = new google.maps.DistanceMatrixService();
+        await distanceMatrix.getDistanceMatrix(
+          {
+            origins: routes.origins,
+            destinations: routes.destinations,
+            travelMode: "DRIVING",
+          },
+         async (response) => {
+         
+            for (let j = 0; j < response.rows.length; j++) {
+              if (response.rows[j].elements[j].status === "OK") {
+                let elements = await response.rows[j].elements[j];
+                orders[idx].route.distance = await elements.distance.text;
+                orders[idx].route.duration.durationFormatted = await elements
+                  .duration.text;
+                orders[idx].route.duration.durationInSec = await elements
+                  .duration.value;
+                orders[idx].route.status = true;
+              } else {
+                orders[idx].route.distance = 0;
+                orders[idx].route.duration.durationFormatted = 0;
+                orders[idx].route.duration.durationInSec = 0;
+                orders[idx].route.status = false;
+              }
+              idx++;
             }
+            
           }
-          this.getEstimatedTime();
-        }
-      );
+        );
+      }
+      this.getEstimatedTime();
     },
     showRoute(routes) {
       const directionsService = new google.maps.DirectionsService();
@@ -338,6 +365,7 @@ export default {
               destination: {},
               duration: { durationFormatted: "", durationInSec: "" },
               distance: "",
+              status: false,
             },
           };
           for (let product of order.node.details.edges) {
@@ -370,7 +398,7 @@ export default {
     },
     getCurrentUser() {
       let localUser = JSON.parse(localStorage.getItem("user"));
-      if (localUser.type === "CLIENT") {
+      if (localUser.type === "CLIENT" || localUser.type === "COURIER") {
         this.user = localUser;
       } else {
         this.$destroy();
@@ -378,10 +406,21 @@ export default {
       }
     },
     getEstimatedTime() {
+      let idx = -1;
       for (const order of this.orders) {
         if (this.existsTimes) {
-          const localtime = this.currentTimes.find(({ id }) => id === order.id);
-          order.estimatedTime = this.thereisTime(localtime) ? localtime : 0;
+          idx = this.localTimes.deliveryTimes.findIndex(
+            (time) => time.id === order.id
+          );
+        }
+
+        if (idx >= 0) {
+          order.estimatedTime = {
+            hours: this.localTimes.deliveryTimes[idx].hours,
+            min: this.localTimes.deliveryTimes[idx].min,
+            sec: this.localTimes.deliveryTimes[idx].sec,
+          };
+          idx = -1;
         } else {
           let preparation =
             order.preparationTime > 0
@@ -396,20 +435,20 @@ export default {
       this.exitsOrders = true;
       this.isReady = true;
     },
-    thereisTime(time) {
+    updateTimes() {
       const date = new Date();
-      const currenttime = {
-        hours: date.getHours(),
-        min: date.getMinutes(),
-        sec: date.getSeconds(),
-      };
-      let hours = currenttime.hours - parseInt(time.hours);
-      let min = currenttime.min - parseInt(time.min);
-      let sec = currenttime.sec - parseInt(time.sec);
-      if (hours <= 0 && min <= 0 && sec <= 0) {
-        return false;
-      }
-      return true;
+      const elapsedMilisec = date - new Date(this.localTimes.lastActiveTime);
+      const elapsed = this.secondsToString(elapsedMilisec / 1000);
+      this.localTimes.deliveryTimes.forEach((time) => {
+        time.hours =
+          time.hours - elapsed.hours > 0
+            ? time.hours - parseInt(elapsed.hours)
+            : 0;
+        time.min =
+          time.min - elapsed.min > 0 ? time.min - parseInt(elapsed.min) : 0;
+        time.sec =
+          time.sec - elapsed.sec > 0 ? time.sec - parseInt(elapsed.sec) : 0;
+      });
     },
     redirect(orderID) {
       const order = this.orders.find((order) => order.id === orderID);
@@ -426,6 +465,11 @@ export default {
 
 //General Component styles
 <style scope>
+.container {
+  width: 80%;
+  margin: auto;
+  padding: auto;
+}
 .btn-black {
   background-color: var(--dark);
   color: var(--white);
@@ -455,7 +499,11 @@ export default {
   background-color: var(--orange-x-hover);
   color: var(--black);
 }
-
+.no-track-order{
+  text-align: center;
+  font-size:.7em;
+  color: red;
+}
 .card-header:hover {
   background-color: var(--grey);
   color: var(--black);
@@ -464,9 +512,13 @@ export default {
   background-color: var(--white);
   color: var(--black);
 }
-.map-container{
-  padding-left:2.5em;
-  margin:auto;
+.map-container {
+  padding-left: 2.5em;
+  margin: auto;
+}
+.order-summary {
+  display: flex;
+  justify-content: center;
 }
 .map {
   height: 25em;
