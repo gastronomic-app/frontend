@@ -1,0 +1,14 @@
+query allNotifications($id: ID!) {
+  user(id: $id) {
+    notifications {
+      edges {
+        node {
+          id
+          title
+          message
+          created
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
   <section>
     <nav class="navbar navbar-expand-lg nav-bar fixed-top static-top navbar-bg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
           <img class="logo" src="@/assets/logo.png" alt="" />
         </a>
 
@@ -26,14 +26,21 @@
               </a>
             </li>
             <li class="nav-item mr-3" v-show="ok">
-              <a class="nav-link text-light font-weight-bold" href="/geolocationSearch">Busqueda geolocalización</a>
+              <a
+                class="nav-link text-light font-weight-bold"
+                href="/geolocation-search"
+                >Busqueda geolocalización</a
+              >
             </li>
             <li class="nav-item mr-3" v-show="ok">
-              <a class="nav-link text-light font-weight-bold" href="#">Servicios</a>
+              <a class="nav-link text-light font-weight-bold" href="#"
+                >Servicios</a
+              >
             </li>
             <Count></Count>
+            <!-- <Notification /> -->
             <li class="nav-item mr-3">
-              <span class="nav-link separator" href="#">|</span>
+              <span class="nav-link separator">|</span>
             </li>
 
             <li class="nav-item">
@@ -42,102 +49,34 @@
                 class="nav-link dropdown-toggle text-white font-orange"
                 data-toggle="dropdown"
                 role="button"
-                aria-haspopup="true"
+                aria-haspopup="false"
                 aria-expanded="false"
                 >Usuario</a
               >
-              <div class="dropdown-menu dropdown-menu-right">
-                <div class="row-fluid user-infos cyruxx">
-                  <div class="span10 offset1">
-                    <div class="panel panel-primary">
-                      <center>
-                        <div class="panel-heading">
-                          <h3 class="panel-title">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="28"
-                              height="28"
-                              fill="currentColor"
-                              class="bi bi-person-badge-fill"
-                              viewBox="0 0 16 16"
-                            >
-                              <path
-                                d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"
-                              /></svg
-                            >Usuario: {{ names }}
-                          </h3>
-                        </div>
-                      </center>
-                      <div class="panel-body">
-                        <div class="row-fluid">
-                          <div class="span3"></div>
-                          <div class="span6">
-                            <table
-                              class="
-                                table
-                                table-condensed
-                                table-responsive
-                                table-user-information
-                              "
-                            >
-                              <tbody>
-                                <tr>
-                                  <td>Rol:</td>
-                                  <td>{{ role }}</td>
-                                </tr>
-                                <tr>
-                                  <td>email:</td>
-                                  <td>{{ email }}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                      <center class="botones">
-                        <span class="float-left">
-                          <button
-                            class="btn btn-success"
-                            type="button"
-                            data-toggle="tooltip"
-                            @click="redirectEdit()"
-                            data-original-title="Editar usuario"
-                          >
-                            <i class="icon-edit icon-white">Editar usuario</i>
-                          </button>
-                        </span>
-                        <span class="float-right">
-                          <button
-                            class="btn btn-danger"
-                            type="button"
-                            data-toggle="tooltip"
-                            @click="removeClient()"
-                            data-original-title="Darse de baja"
-                          >
-                            <i class="icon-remove icon-white">Darme de baja</i>
-                          </button>
-                        </span>
-                      </center>
-                    </div>
-                  </div>
-                </div>
-                <center>
-                  <div class="dropdown-divider"></div>
-                  <GoogleLogin
-                    class="btn btn-warning"
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" style="color: var(--light)">Usuario: {{names}}</a>
+                  <a class="dropdown-item" style="color: var(--light)">Role: {{role}}</a>
+                  <a class="dropdown-item" style="color: var(--light)">Email: {{email}}</a>
+                  <a class="dropdown-item" style="color: var(--light)" href="/orders">Mis pedidos</a>
+                  <a class="dropdown-item" style="color: var(--light)"  @click="redirectEdit()">Editar usuario</a>
+                  <a class="dropdown-item" style="color: var(--light)"  @click="removeClient()">Darme de baja</a>
+                  <a class="dropdown-item log-out">
+                   <GoogleLogin
+                    class="btn"
+                    style="color: var(--light)"
                     :params="params"
                     :onSuccess="onSuccess"
                     :logoutButton="true"
                     >Cerrar sesión</GoogleLogin
                   >
-                </center>
-              </div>
+                  </a>
+                </div>
             </li>
             <li v-show="!ok" class="nav-item">
               <a
                 class="nav-link navbar-orange-text font-weight-bold login"
                 href="/login"
-               ><strong>Iniciar Sesión</strong></a
+                ><strong>Iniciar Sesión</strong></a
               >
             </li>
             <li v-show="!ok" class="nav-item">
@@ -160,11 +99,14 @@
  */
 import GoogleLogin from "vue-google-login";
 import Count from "@/views/shopping-car/Count.vue";
+// import Notification from "@/views/deliveries/Notification.vue";
+
 export default {
   name: "NavBar",
   components: {
     GoogleLogin,
     Count,
+    // Notification,
   },
 
   data: () => ({
@@ -200,8 +142,23 @@ export default {
         this.email = user.email;
         this.names = user.names;
         this.role = user.type;
-        this.$store.dispatch("setStorageCountAction", this.$store.getters.getCount);
+        this.$store.dispatch(
+          "setStorageCountAction",
+          this.$store.getters.getCount
+        );
         return true;
+      }
+      return false;
+    },
+    client() {
+      this.ok = localStorage.getItem("existUser");
+      if (this.ok) {
+        let user = JSON.parse(localStorage.getItem("user"));
+        this.role = user.type;
+        if (this.role == "CLIENT") {
+          return true;
+        }
+        return false;
       }
       return false;
     },
@@ -227,7 +184,10 @@ export default {
           // El método mutate devuelve una promesa
           // que puede usarse para agregar más logica
           .then((response) => {
-            console.log("Desactivado", response.data.updateClient.client.isActive);
+            console.log(
+              "Desactivado",
+              response.data.updateClient.client.isActive
+            );
             this.makeToast(
               "danger",
               "Desactivado",
@@ -286,5 +246,18 @@ a:active {
 }
 .container-general {
   min-height: calc(100vh - var(--height-navbar) - var(--height-footer));
+}
+.dropdown-menu{
+  box-sizing: content-box;
+  min-width: 15vw;
+  background: var(--dark-x);
+  color: var(--orange) !important;
+}
+.dropdown-menu>.dropdown-item:hover{
+  background: var(--orange-x);
+}
+.log-out{
+  display:flex;
+  justify-content: center;
 }
 </style>
