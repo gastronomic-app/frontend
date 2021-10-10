@@ -2,7 +2,9 @@
   <div>
     <!-- Header -->
     <div class="header-container">
-      <h2 class="title"><b> Lista de mensajeros adscritos.</b></h2>
+      <h2 class="title">
+        Lista de mensajeros adscritos a <b> {{ enterpriseName }}</b>
+      </h2>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
           <span class="input-group-text" id="basic-addon1"
@@ -19,23 +21,32 @@
           @keyup.enter="search($refs.search.value)"
         />
       </div>
-      <button class="new-courier btn btn-success"  @click="addCourier" type="button">Agregar</button>
+      <button
+        class="new-courier btn btn-success"
+        @click="addCourier"
+        type="button"
+      >
+        Agregar
+      </button>
     </div>
     <!-- Section List -->
     <div v-if="!isReadyQuery">
       <div v-if="courierList.length === 0">
         <loading-graphql></loading-graphql>
       </div>
-    
     </div>
     <div v-else>
       <div v-show="found !== undefined">
-        <courier-card :courier-info="found" :fn="changeStatus" ></courier-card>
+        <courier-card :courier-info="found" :fn="changeStatus"></courier-card>
       </div>
       <paginate ref="paginator" name="courierList" :list="courierList" :per="6">
         <section v-show="!found" class="container">
           <template v-for="(courier, idx) in paginated('courierList')">
-            <courier-card :key="idx" :courier-info="courier" :fn="changeStatus"></courier-card>
+            <courier-card
+              :key="idx"
+              :courier-info="courier"
+              :fn="changeStatus"
+            ></courier-card>
           </template>
         </section>
       </paginate>
@@ -55,9 +66,9 @@
         </div>
       </section>
     </div>
-      <div v-show="isReadyQuery && courierList.length==0">
-        <not-found></not-found>
-      </div>
+    <div v-show="isReadyQuery && courierList.length == 0">
+      <not-found></not-found>
+    </div>
   </div>
 </template>
 <script>
@@ -68,19 +79,35 @@ import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 export default {
   name: "CourierList",
   components: { CourierCard, NotFound, LoadingGraphql },
-  props:{
+  props: {
     enterpriseId: {
       type: String,
-      require: true
+      require: true,
     },
-    enterpriseName:{
-      type:String,
-      require:true
-    }
+    enterpriseName: {
+      type: String,
+      require: true,
+    },
   },
 
   created() {
+    const id = JSON.parse(localStorage.getItem("enterpId"));
+    const name = JSON.parse(localStorage.getItem("enterpName"));
+
+    if (id !== null) {
+      this.enterpriseId = id;
+      this.enterpriseName = name;
+    }
+    window.addEventListener("beforeunload", this.leaving);
+
     this.queryCouriers();
+  },
+  ready: function () {
+    window.beforeunload = this.leaving;
+    window.onblur = this.leaving;
+  },
+  destroyed() {
+    this.leaving();
   },
   data() {
     return {
@@ -91,8 +118,14 @@ export default {
     };
   },
   methods: {
+    leaving() {
+      if (localStorage.getItem("enterpId") !== undefined) {
+        localStorage.setItem("enterpId", JSON.stringify(this.enterpriseId));
+        localStorage.setItem("enterpName", JSON.stringify(this.enterpriseName));
+      }
+    },
     async queryCouriers() {
-      console.log(this.enterpriseId)
+      console.log(this.enterpriseId);
       await this.$apollo
         .query({
           query: require("@/graphql/deliveries/couriersEnterprise.gql"),
@@ -106,7 +139,7 @@ export default {
           this.isReadyQuery = true;
         });
     },
-   
+
     prepareData(data) {
       data.forEach((courier) => {
         let newCourier = {
@@ -114,7 +147,7 @@ export default {
           email: courier.node.email,
           isAvailable:
             courier.node.isAvailable == true ? "Disponible" : "Asignado",
-          isActive: courier.node.isActive == true ? "Activo" : "Inactivo",
+          isActive: courier.node.isActive,
           names: courier.node.contact.edges[0].node.names,
           last: courier.node.contact.edges[0].node.lastnames,
           location: courier.node.contact.edges[0].node.location,
@@ -141,15 +174,28 @@ export default {
         this.found = undefined;
       }
     },
-     addCourier(){
-         this.$router.push({
-           name: "Register",
-           params:{enterpriseId: this.enterpriseId}
-         })
+    addCourier() {
+      this.$router.push({
+        name: "Register",
+        params: { enterpriseId: this.enterpriseId },
+      });
     },
-    changeStatus(value){
-        console.log(value )
-    }
+    changeStatus(courier, state) {
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/client/deactivateClient.gql"),
+          variables: {
+            id: courier,
+            is_active: !state,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "Desactivado",
+            response.data.updateClient.client.isActive
+          );
+        });
+    },
   },
 };
 </script>
