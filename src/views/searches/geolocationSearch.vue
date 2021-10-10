@@ -76,28 +76,10 @@ export default {
         })
         .then((response) => {
           this.allEnterprises = response.data.allEnterprises.edges;
-          //this.pages = response.data.allEnterprises.edges.length;
         });
       this.getCompleteAddress(location).then((value) => {
         this.showUserLocation(value.lat, value.lng);
       });
-
-      // const autocomplete = new google.maps.places.Autocomplete(
-      //   document.getElementById("autocomplete"),
-      //   {
-      //     bounds: google.maps.LatLngBounds(
-      //       new google.maps.LatLng(2.45, -76.6167)
-      //     ),
-      //   }
-      // );
-      // autocomplete.addListener("place_changed", () => {
-      //   const place = autocomplete.getPlace();
-
-      //   this.showUserLocation(
-      //     place.geometry.location.lat(),
-      //     place.geometry.location.lng()
-      //   );
-      // });
     }
   },
   created() {
@@ -175,14 +157,24 @@ export default {
     },
     showEnterpriseLocation(lat, lon, enterprise) {
 
+      const image = {
+        url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+        size: new google.maps.Size(20, 32),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(0, 32),
+      };
+
       window.enterprise = enterprise;
       const contentString =
-        `<b>` +
-        enterprise.name +
-        `<br><input type='submit' id='butSubmit' value='Ver info' onclick='showAllEnterpise(`+JSON.stringify(enterprise)+`)'><div id='bar'></div></b>`;
+        `<center><font size='+2' color='#FF5733'>` +
+        enterprise.name.toUpperCase() +
+        `</font></center>
+        <center><input type='submit' id='butSubmit' value='Ver negocio' onclick='showAllEnterpise(`+JSON.stringify(enterprise)+`)'></center>
+        <div id='bar'></div>`;
       const marker = new google.maps.Marker({
         position: new google.maps.LatLng(lat, lon),
         map: this.map,
+        icon: image
       });
       const infowindow = new google.maps.InfoWindow({
         content: contentString,

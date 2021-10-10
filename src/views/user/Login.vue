@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div>
     <div class="wrapper fadeInDown">
       <div id="formContent">
         <!-- Tabs Titles -->
@@ -82,13 +82,13 @@
                   <button
                     type="submit"
                     data-dismiss="modal"
-                    class="btn btn-primary"
+                    class="btn btn-color"
                   >
                     Reactivar Usuario
                   </button>
                   <button
                     type="button"
-                    class="btn btn-secondary"
+                    class="btn btn-dark btn-black"
                     data-dismiss="modal"
                     @click="show_modal = false"
                   >
@@ -179,6 +179,79 @@ export default {
     onFailure(error) {
       console.log(error);
     },
+    async getData() {
+      await this.$apollo
+        .query({
+          // Establece la consulta para recuperar la empresa
+          query: require("@/graphql/user/autentication.gql"),
+          // Define las variables
+          variables: {
+            email: this.email,
+          },
+        })
+        // El método query devuelve una promesa
+        // que puede usarse para agregar más logica
+        .then((response) => {
+             if (response.data.allUsers.edges[0].node.isActive) {
+              this.user.id = response.data.allUsers.edges[0].node.id;
+              this.user.email = response.data.allUsers.edges[0].node.email;
+              //this.user.isalternative =  response.data.allUsers.edges[0].node.isalternative;
+              // this.user.password = response.data.allUsers.edges[0].node.password;
+              // this.user.isActive = response.data.allUsers.edges[0].node.isActive;
+              // this.user.isSuperuser = response.data.allUsers.edges[0].node.isSuperuser;
+              this.user.type = response.data.allUsers.edges[0].node.type;
+              this.user.names = response.data.allUsers.edges[0].node.contact.edges[0].node.names;
+              // this.user.lastnames = response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
+              this.user.location =
+                response.data.allUsers.edges[0].node.contact.edges[0].node.location;
+              // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
+              localStorage.setItem("user", JSON.stringify(this.user));
+              localStorage.setItem("existUser", true);
+              this.show_charging = false;
+              if (this.user.type == "CLIENT") {
+                 this.$router.push({ name: "catalogSearch" }).then(() => {
+                  this.makeToast(
+                  "success",
+                  "Bienvenido",
+                  "Usuario: " + this.user.names,
+                  3000
+                );
+              });
+              }else if (this.user.type == "MANAGER") {
+                this.$router.push({ name: "EnterpriseList" , params: { id: this.user.id }}).then(() => {
+                this.makeToast(
+                  "success",
+                  "Bienvenido Admin",
+                  "Usuario: " + this.user.names,
+                  3000
+                );
+              });
+              } else {
+                //TODO Redireccionar menú de mensajero
+                this.$router.push({ name: "catalogSearch" }).then(() => {
+                  this.makeToast(
+                  "success",
+                  "Bienvenido mensajero",
+                  "Usuario: " + this.user.names,
+                  3000
+                );
+              });
+              }
+
+              window.location.reload();
+              this.$store.dispatch("setStorageCountAction", 0);
+            } else {
+              this.error_msg = "El usuario esta inactivo";
+              if (this.user.type == 'CLIENT') {
+                this.error_inactive = true;
+                this.show_charging = false;
+              }
+              this.error = true;
+
+            }
+        });
+    },
+
     async startSesion() {
       this.show_charging = true;
       if (!this.google && this.password === "") {
@@ -186,10 +259,11 @@ export default {
         this.error = true;
         return false;
       }
-      await this.$apollo
-        .query({
-          // Establece la consulta para recuperar la empresa
-          query: require("@/graphql/user/autentication.gql"),
+      try {
+        await this.$apollo
+        .mutate({
+            // Establece la mutación de editar
+            mutation: require("@/graphql/user/tockenAuth.gql"),
           // Define las variables
           variables: {
             email: this.email,
@@ -201,7 +275,7 @@ export default {
         .then((response) => {
           // En este caso se usa para cargar el formulario
           // con los datos obtenidos
-          if (response.data.allUsers.edges[0] == null) {
+          if (response.data.tokenAuth == null) {
             if (this.google) {
               this.error_msg = "Usuario de Google no registrado";
               localStorage.clear();
@@ -214,44 +288,15 @@ export default {
             }
             this.error = true;
           } else {
-            if (response.data.allUsers.edges[0].node.isActive) {
-              this.user.id = response.data.allUsers.edges[0].node.id;
-              this.user.email = response.data.allUsers.edges[0].node.email;
-              //this.user.isalternative =  response.data.allUsers.edges[0].node.isalternative;
-              // this.user.password = response.data.allUsers.edges[0].node.password;
-              // this.user.isActive = response.data.allUsers.edges[0].node.isActive;
-              // this.user.isSuperuser = response.data.allUsers.edges[0].node.isSuperuser;
-              this.user.type = response.data.allUsers.edges[0].node.type;
-              this.user.names =
-                response.data.allUsers.edges[0].node.contact.edges[0].node.names;
-              // this.user.lastnames = response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
-              this.user.location =
-                response.data.allUsers.edges[0].node.contact.edges[0].node.location;
-              // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
-              localStorage.setItem("user", JSON.stringify(this.user));
-              localStorage.setItem("existUser", true);
-              this.show_charging = false;
-              this.$router.push({ name: "catalogSearch" }).then(() => {
-                this.makeToast(
-                  "success",
-                  "Bienvenido",
-                  "Usuario: " + this.user.names,
-                  3000
-                );
-              });
-              window.location.reload();
-              this.$store.dispatch("setStorageCountAction", 0);
-            } else {
-              this.error_msg = "El usuario esta inactivo";
-              if (response.data.allUsers.edges[0].node.type == 'CLIENT') {
-                this.error_inactive = true;
-                this.show_charging = false;
-              }
-              this.error = true;
-
-            }
+            this.getData();
           }
         });
+      } catch (error) {
+        this.error_msg = "Datos inválidos";
+        this.show_charging = false;
+        this.error = true;
+      }
+
     },
     async activateUser() {
       this.show_charging = true;
@@ -323,7 +368,7 @@ export default {
 }
 /* BASIC */
 html {
-  background-color: #ff6079;
+  background-color: var(--orange);
 }
 body {
   font-family: "Poppins", sans-serif;
@@ -381,13 +426,13 @@ h2.inactive {
 }
 h2.active {
   color: #0d0d0d;
-  border-bottom: 2px solid #ff6079;
+  border-bottom: 2px solid var(--orange);
 }
 /* FORM TYPOGRAPHY*/
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
-  background-color: #ff6079;
+  background-color: var(--orange);
   border: none;
   color: white;
   padding: 15px 80px;
@@ -410,7 +455,7 @@ input[type="reset"] {
 input[type="button"]:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover {
-  background-color: #ff6079;
+  background-color: var(--orange);
 }
 input[type="button"]:active,
 input[type="submit"]:active,
@@ -443,7 +488,7 @@ input {
 }
 input:focus {
   background-color: #fff;
-  border-bottom: 2px solid #ff6079;
+  border-bottom: 2px solid var(--orange);
 }
 input:placeholder {
   color: #cccccc;
@@ -546,7 +591,7 @@ input:placeholder {
   bottom: -10px;
   width: 0;
   height: 2px;
-  background-color: #ff6079;
+  background-color: var(--orange);
   content: "";
   transition: width 0.2s;
 }

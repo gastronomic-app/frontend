@@ -207,6 +207,14 @@ body{
   border: solid 1px var(--orange);
   color: var(--dark);
 }
+.btn-color {
+  background-color: var(--orange);
+  color: whitesmoke;
+}
+.btn-black {
+  background-color: var(--dark-x);
+  color: whitesmoke;
+}
 .div-paginate {
   margin: 0 auto;
   display: flex;

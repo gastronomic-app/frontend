@@ -55,7 +55,7 @@
               >
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item" style="color: var(--light)">Usuario: {{names}}</a>
-                  <a class="dropdown-item" style="color: var(--light)">Role: {{role}}</a>
+                  <a class="dropdown-item" style="color: var(--light)">Rol: {{role}}</a>
                   <a class="dropdown-item" style="color: var(--light)">Email: {{email}}</a>
                   <a class="dropdown-item" style="color: var(--light)" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item" style="color: var(--light)"  @click="redirectEdit()">Editar usuario</a>
@@ -179,6 +179,7 @@ export default {
             // Define las variables
             variables: {
               id: this.id,
+              is_active: false,
             },
           })
           // El método mutate devuelve una promesa
