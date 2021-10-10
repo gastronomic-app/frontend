@@ -35,8 +35,7 @@ export default {
         .query({
           query: require("@/graphql/notifications/allNotifications.gql"),
           variables: {
-            // id: userData.id,
-            id: "VXNlck5vZGU6Mg==",
+            id: userData.id,
           },
         })
         .then((response) => {
