@@ -357,31 +357,81 @@ export default {
    * Ciclo de vida del componente
    * donde realiza la consulta si llega un id por props
    */
-  async mounted() {
+async mounted() {
     if (localStorage.getItem("user")) {
       let user = JSON.parse(localStorage.getItem("user"));
       if (user.type === "MANAGER") {
+        this.idEnterprise = this.$route.params.idEnt;
         await this.$apollo
           .query({
             query: require("@/graphql/user/usersenterprise.gql"),
             variables: {
-              id: user.id,
+              email: user.email,
             },
           })
           .then((response) => {
-            if (response.data.user.enterprise !== null) {
-              localStorage.idEnterprise = response.data.user.enterprise.id;
-              localStorage.nameEnterprise = response.data.user.enterprise.name;
-              this.idEnterprise = localStorage.getItem("idEnterprise");
+            if (
+              response.data.allManagers.edges[0].node.enterprises.edges.length >
+              0
+            ) {
+              let enterprise =
+                response.data.allManagers.edges[0].node.enterprises.edges.filter(
+                  (element) => element.node.id == this.idEnterprise
+                );
+              if (enterprise.length > 0) {
+                enterprise = enterprise[0].node;
+                localStorage.idEnterprise = enterprise.id;
+                localStorage.nameEnterprise = enterprise.name;
+                this.idEnterprise = localStorage.getItem("idEnterprise");
+                this.nameEnterprise = localStorage.getItem("nameEnterprise");
+              } else {
+                this.$router.push({ name: "EnterpriseList" });
+
+                setTimeout(() => {
+                  this.makeToast(
+                    "warning",
+                    "Lista de productos",
+                    "No tiene permiso para administrar los productos de este establecimiento.",
+                    6000
+                  );
+                }, 500);
+              }
             } else {
               this.$router.push({ name: "EnterpriseList" });
+
+              setTimeout(() => {
+                this.makeToast(
+                  "warning",
+                  "Lista de productos",
+                  "No tiene permiso para administrar los productos de este establecimiento.",
+                  6000
+                );
+              }, 500);
             }
           });
       } else {
         this.$router.push({ name: "EnterpriseList" });
+
+        setTimeout(() => {
+          this.makeToast(
+            "warning",
+            "Lista de productos",
+            "No puede realizar esta acción con su rol actual.",
+            6000
+          );
+        }, 500);
       }
     } else {
       this.$router.push({ name: "EnterpriseList" });
+
+      setTimeout(() => {
+        this.makeToast(
+          "warning",
+          "Lista de productos",
+          "Debe ingresar como usuario administrador del establecimiento.",
+          6000
+        );
+      }, 500);
     }
     console.log("id en el formulario", this.id);
 
@@ -416,7 +466,6 @@ export default {
       this.fillRecommendations();
     }
   },
-
   methods: {
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
@@ -427,7 +476,10 @@ export default {
       });
     },
     redirectProductList() {
-      this.$router.push({ name: "ProductsList" });
+     this.$router.push({
+        name: "ProductsList",
+        params: { idEnt: this.idEnterprise },
+      });
     },
     checkProduct(event) {
       event.preventDefault();
@@ -500,7 +552,10 @@ export default {
             4000
           );
         });
-      this.$router.push({ name: "ProductsList" });
+      this.$router.push({
+        name: "ProductsList",
+        params: { idEnt: this.idEnterprise },
+      });
     },
 
     editProduct() {
@@ -544,7 +599,10 @@ export default {
           removed_recommendations.forEach((recommendation) => {
             this.deleteRecommendations(this.id, recommendation);
           });
-          this.$router.push({ name: "ProductsList" });
+          this.$router.push({
+        name: "ProductsList",
+        params: { idEnt: this.idEnterprise },
+      });
         });
     },
     uploadFiles(event) {

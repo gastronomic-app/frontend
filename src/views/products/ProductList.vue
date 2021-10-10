@@ -43,7 +43,7 @@
 
       <br />
       <div class="col-md-10">
-        <h1 class="text-center">Lista de productos</h1>
+        <h1 class="text-center">Lista de productos - {{ this.nameEnterprise }}</h1>
         <br />
         <button
           type="button"
@@ -234,6 +234,7 @@ export default {
       leaveType: "",
       searchString: "",
       idEnterprise: "",
+      nameEnterprise: "",
       productToDisable: "",
 
       productsTypes: [
@@ -286,31 +287,81 @@ export default {
       },
     };
   },
-  async mounted() {
+ async mounted() {
     if (localStorage.getItem("user")) {
       let user = JSON.parse(localStorage.getItem("user"));
       if (user.type === "MANAGER") {
+        this.idEnterprise = this.$route.params.idEnt;
         await this.$apollo
           .query({
             query: require("@/graphql/user/usersenterprise.gql"),
             variables: {
-              id: user.id,
+              email: user.email,
             },
           })
           .then((response) => {
-            if (response.data.user.enterprise !== null) {
-              localStorage.idEnterprise = response.data.user.enterprise.id;
-              localStorage.nameEnterprise = response.data.user.enterprise.name;
-              this.idEnterprise = localStorage.getItem("idEnterprise");
+            if (
+              response.data.allManagers.edges[0].node.enterprises.edges.length >
+              0
+            ) {
+              let enterprise =
+                response.data.allManagers.edges[0].node.enterprises.edges.filter(
+                  (element) => element.node.id == this.idEnterprise
+                );
+              if (enterprise.length > 0) {
+                enterprise = enterprise[0].node;
+                localStorage.idEnterprise = enterprise.id;
+                localStorage.nameEnterprise = enterprise.name;
+                this.idEnterprise = localStorage.getItem("idEnterprise");
+                this.nameEnterprise = localStorage.getItem("nameEnterprise");
+              } else {
+                this.$router.push({ name: "EnterpriseList" });
+
+                setTimeout(() => {
+                  this.makeToast(
+                    "warning",
+                    "Lista de productos",
+                    "No tiene permiso para administrar los productos de este establecimiento.",
+                    6000
+                  );
+                }, 500);
+              }
             } else {
               this.$router.push({ name: "EnterpriseList" });
+
+              setTimeout(() => {
+                this.makeToast(
+                  "warning",
+                  "Lista de productos",
+                  "No tiene permiso para administrar los productos de este establecimiento.",
+                  6000
+                );
+              }, 500);
             }
           });
       } else {
         this.$router.push({ name: "EnterpriseList" });
+
+        setTimeout(() => {
+          this.makeToast(
+            "warning",
+            "Lista de productos",
+            "No puede realizar esta acción con su rol actual.",
+            6000
+          );
+        }, 500);
       }
     } else {
       this.$router.push({ name: "EnterpriseList" });
+
+      setTimeout(() => {
+        this.makeToast(
+          "warning",
+          "Lista de productos",
+          "Debe ingresar como usuario administrador del establecimiento.",
+          6000
+        );
+      }, 500);
     }
   },
   methods: {
@@ -322,8 +373,13 @@ export default {
         solid: true,
       });
     },
-    redirectProductAdd() {
-      this.$router.push({ name: "ProductAdd" });
+   redirectProductAdd() {
+      this.$router.push({
+        name: "ProductAdd",
+        params: {
+          idEnt: this.idEnterprise,
+        },
+      });
     },
     /**
      * Redirige a la vista de editar empresa
@@ -334,7 +390,7 @@ export default {
 
       this.$router.push({
         name: "ProductEdit",
-        params: { id: idProduct },
+        params: { id: idProduct, idEnt: this.idEnterprise },
       });
     },
     /**
