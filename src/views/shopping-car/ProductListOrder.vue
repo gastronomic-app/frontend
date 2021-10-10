@@ -38,6 +38,7 @@
               (element) =>
                 element.node.productType.includes(leaveType) &&
                 element.node.name.includes(searchString.toLowerCase())
+                && element.node.active == true
             )"
             :key="product.node.id"
           >
@@ -79,6 +80,7 @@
       <!--Carrito-->
 
       <div class="col-xl-5 col-xs-12" v-if="this.items.length > 1">
+
         <div class="card border-dark car-border car mb-2">
           <div class="row">
             <div class="col-sm mt-3" style="text-align: left; margin-left: 1em">
@@ -181,6 +183,29 @@
           </div>
           <br />
         </div>
+<h3>Recomendaciones</h3>
+        <ol id="lista-recomendaciones" class="list-group list-group-numbered">
+          <li
+            v-for="recommendation in this.recommendation_list"
+            class="
+              list-group-item
+              d-flex
+              justify-content-between
+              align-items-start
+            "
+            :key="recommendation.node.id"
+          >
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">{{ recommendation.node.name }}</div>
+              Ingredientes: {{ recommendation.node.ingredients }}
+            </div>
+            <span
+              class="badge bg-outline-primary rounded-pill orange-background"
+              >$ {{ recommendation.node.price }}</span
+            >
+          </li>
+        </ol>
+
       </div>
     </div>
 
@@ -246,7 +271,12 @@
             </button>
           </div>
           <div class="modal-body">
-            <img class="d-block w-100" :src="productView.imageUrl" />
+            <img class="d-block w-100"  :src="
+                productView.imageUrl.substring(0, 5) === 'https'
+                  ? productView.imageUrl
+                  : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' +
+                    productView.imageUrl
+              " />
             <div class="row">
               <div class="table-responsive">
                 <table class="table table-borderless">
@@ -322,6 +352,7 @@ export default {
       enterpriseName: "",
       prods: [],
       paginate: ["products"],
+      recomendation_list: [],
       // Variable que recibe el error de la consulta
       error: null,
 
@@ -435,7 +466,17 @@ export default {
       });
       this.productView.imageUrl = producto.images.edges[0].node.url;
     },
+    fillRecommendations(Item) {
+      let producto = this.allProducts.edges.filter(
+        (element) => element.node.id == Item
+      )[0].node;
 
+      this.recommendation_list = [];
+      console.log(producto);
+      producto.accompaniments.edges.forEach((product) =>
+        this.recommendation_list.push(product)
+      );
+    },
     addItem(product) {
       var bandera = false;
       if (localStorage.getItem("existUser")) {
@@ -452,6 +493,7 @@ export default {
             this.items.push({ recoveredProduct: product.node, counter: 1 });
           }
         }
+        this.fillRecommendations(product.node.id);
         this.saveItems();
         this.$store.dispatch("incrementCountAction");
         localStorage.car = this.$store.getters.getCount;

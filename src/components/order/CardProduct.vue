@@ -1,7 +1,12 @@
 <template>
   <div class="content card">
     <img
-      :src="product.images.edges[0].node.url"
+      :src="
+        product.images.edges[0].node.url.substring(0, 5) === 'https'
+          ? product.images.edges[0].node.url
+          : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' +
+            product.images.edges[0].node.url
+      "
       class="card-img-top img"
       :alt="'Imagen de ' + product.name"
     />
