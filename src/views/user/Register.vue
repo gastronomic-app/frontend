@@ -112,8 +112,7 @@
         <label for="location"
           >Direccion <span class="text-danger">*</span></label
         >
-        <Geolocation novalidate required="" v-on:value="ral_Location" :showmap="true"
-            :disable_input="true" />
+        <Geolocation novalidate required="" v-on:value="ral_Location" :showmap="true" />
         <br />
         <p>
           Los campos marcados con <span class="text-danger">*</span> son
@@ -138,6 +137,25 @@ export default {
     GoogleLogin,
     Geolocation,
   },
+  props:{
+    enterpriseId: {
+      type: String,
+      require: false,
+      default: "Null"
+    },
+  },
+
+    async mounted() {
+    if (localStorage.getItem("existUser")) {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user.type === 'MANAGER') {
+        this.type = "COURIER"
+      }
+      else{
+        this.$router.push({ name: "catalogSearch" });
+      }
+    }
+  },
 
   data() {
     return {
@@ -153,7 +171,6 @@ export default {
       location: null,
       login: null,
       type: "CLIENT",
-      enterpriseId: "",
       params: {},
     };
   },
@@ -244,7 +261,17 @@ export default {
           enterpriseId: this.enterpriseId
         },
       });
-      this.$router.push({ name: "login" }).then(() => {
+      if (this.type === 'COURIER') {
+        this.$router.push({ name: "EnterpriseList" }).then(() => {
+        this.makeToast(
+          "success",
+          "Usuario creado",
+          "Usuario creado, correctamente ",
+          4000
+        );
+      });
+      }else{
+        this.$router.push({ name: "login" }).then(() => {
         this.makeToast(
           "success",
           "Usuario creado",
@@ -252,6 +279,7 @@ export default {
           4000
         );
       });
+      }
     },
     async checkEmail() {
       await this.$apollo
@@ -260,6 +288,7 @@ export default {
           variables: {
             email: this.email,
           },
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           if (response.data.allUsers.edges.length === 1) {

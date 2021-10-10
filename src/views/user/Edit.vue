@@ -202,7 +202,7 @@ export default {
       null === localStorage.getItem("existUser") ||
       false === localStorage.getItem("existUser")
     ) {
-      this.$router.push({ name: "catalog-search" });
+      this.$router.push({ name: "catalogSearch" });
     } else {
       if (this.id) {
         await this.$apollo
