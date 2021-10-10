@@ -200,8 +200,7 @@ export default {
               // this.user.isActive = response.data.allUsers.edges[0].node.isActive;
               // this.user.isSuperuser = response.data.allUsers.edges[0].node.isSuperuser;
               this.user.type = response.data.allUsers.edges[0].node.type;
-              this.user.names =
-                response.data.allUsers.edges[0].node.contact.edges[0].node.names;
+              this.user.names = response.data.allUsers.edges[0].node.contact.edges[0].node.names;
               // this.user.lastnames = response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
               this.user.location =
                 response.data.allUsers.edges[0].node.contact.edges[0].node.location;
@@ -243,7 +242,7 @@ export default {
               this.$store.dispatch("setStorageCountAction", 0);
             } else {
               this.error_msg = "El usuario esta inactivo";
-              if (response.data.allUsers.edges[0].node.type == 'CLIENT') {
+              if (this.user.type == 'CLIENT') {
                 this.error_inactive = true;
                 this.show_charging = false;
               }
@@ -339,7 +338,7 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("existUser")) {
-      this.$router.push({ name: "catalog-search" });
+      this.$router.push({ name: "catalogSearch" });
     }
   },
 };

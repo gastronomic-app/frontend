@@ -152,6 +152,8 @@ export default {
       passwordConfirmation: "",
       location: null,
       login: null,
+      type: "CLIENT",
+      enterpriseId: "",
       params: {},
     };
   },
@@ -238,6 +240,8 @@ export default {
           telephone: this.telephone,
           lastnames: this.lastNames,
           location: this.location,
+          type: this.type,
+          enterpriseId: this.enterpriseId
         },
       });
       this.$router.push({ name: "login" }).then(() => {

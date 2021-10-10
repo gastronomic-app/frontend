@@ -1,5 +1,5 @@
-mutation deactivateClient($id: ID!){
-  updateClient(input: {id: $id, isActive: false}){
+ mutation deactivateClient($id: ID!,$is_active: Boolean!){
+  updateClient(input: {id: $id, isActive: $is_active}){
     client{
       id
       isActive

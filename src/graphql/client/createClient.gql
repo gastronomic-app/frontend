@@ -1,5 +1,5 @@
-mutation createClient ($email: String!, $password: String!,$is_alternative:Boolean!, $names: String!, $telephone: String!, $lastnames: String!, $location: String!){
-  createClient(input: {email: $email, password: $password, isAlternative: $is_alternative, names: $names, lastnames: $lastnames, location: $location, telephone: $telephone}){
+mutation createClient ($email: String!, $password: String!,$is_alternative:Boolean!, $names: String!, $telephone: String!, $lastnames: String!, $location: String!, $type: String,$enterpriseId: ID){
+  createClient(input: {email: $email, password: $password, isAlternative: $is_alternative, names: $names, lastnames: $lastnames, location: $location, telephone: $telephone, type: $type, enterpriseId: $enterpriseId}){
     client{
       email
       password
