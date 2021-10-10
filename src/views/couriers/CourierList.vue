@@ -7,19 +7,18 @@
       </h2>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1"
-            ><b-icon-search></b-icon-search
+          <span class="input-group-text" id="basic-addon1" style="height:2.4em"
+            ><b-icon-search ></b-icon-search
           ></span>
         </div>
         <input
           ref="search"
-          :v-model="search"
           type="text"
           class="form-control"
           placeholder="Buscar"
           aria-label="search"
           aria-describedby="basic-addon1"
-  
+          @keyup.enter="search($refs.search.value)"
         />
       </div>
       <button
@@ -158,16 +157,10 @@ export default {
       });
     },
 
-    search() {
-      const value = this.$refs.search.value;
+    search(value) {
       console.log(value)
-      const capitalize = value.toLowerCase();
-
       const found = this.courierList.find((courier) => {
-        if (
-          courier.names ==
-          value.charAt(0).toUpperCase() + capitalize.slice(1)
-        ) {
+        if (courier.names.toLowerCase() === value.toLowerCase() ) {
           return true;
         }
       });
