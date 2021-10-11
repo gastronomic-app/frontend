@@ -8,6 +8,7 @@ query findEnterprises($name_Icontains: String){
         businessHours
         created
         status
+        image
       }
     }
   }
