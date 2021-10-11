@@ -96,8 +96,11 @@
                   Seguir Pedido
                 </button>
               </div>
-              <div  v-else class="no-track-order">
-                <span>La opción de seguir pedido no está disponible para la ubicación que colocaste.</span>
+              <div v-else class="no-track-order">
+                <span
+                  >La opción de seguir pedido no está disponible para la
+                  ubicación que colocaste.</span
+                >
               </div>
             </div>
           </collapsible-card>
@@ -199,7 +202,7 @@ export default {
         .then((response) => {
           this.tansformQuery(response.data.allOrders.edges).then((value) => {
             if (value) {
-              this.getDurationDistance(this.orders)
+              this.getDurationDistance(this.orders);
             } else {
               this.exitsOrders = false;
             }
@@ -232,22 +235,33 @@ export default {
       let origins = [];
       let destinations = [];
       let objRoutes = [];
-      for (const order of this.orders) {
-        origins.push(order.route.origin);
-        destinations.push(order.route.destination);
-        if (origins.length === 9) {
-          objRoutes.push({ origins: origins, destinations: destinations });
-          origins = [];
-          destinations = [];
+      let orders =this.orders
+      for (const order of orders) {
+        if (
+          typeof order.route.origin === "string" &&
+          typeof order.route.destination === "string"
+        ) {
+          origins.push(order.route.origin);
+          destinations.push(order.route.destination);
+          if (origins.length === 9) {
+            objRoutes.push({ origins: origins, destinations: destinations });
+            origins = [];
+            destinations = [];
+          }
+        } else {
+  
+          order.route.origin = "";
+          order.route.destination = "";
         }
+        objRoutes.push({ origins: origins, destinations: destinations });
       }
-      objRoutes.push({ origins: origins, destinations: destinations });
+
       return objRoutes;
     },
     async getDurationDistance(orders) {
       let idx = 0;
       const objRoutes = this.getOriginsDestinations();
-      for await(const routes of objRoutes) {
+      for await (const routes of objRoutes) {
         const distanceMatrix = new google.maps.DistanceMatrixService();
         await distanceMatrix.getDistanceMatrix(
           {
@@ -255,8 +269,7 @@ export default {
             destinations: routes.destinations,
             travelMode: "DRIVING",
           },
-         async (response) => {
-         
+          async (response) => {
             for (let j = 0; j < response.rows.length; j++) {
               if (response.rows[j].elements[j].status === "OK") {
                 let elements = await response.rows[j].elements[j];
@@ -274,7 +287,6 @@ export default {
               }
               idx++;
             }
-            
           }
         );
       }
@@ -499,9 +511,9 @@ export default {
   background-color: var(--orange-x-hover);
   color: var(--black);
 }
-.no-track-order{
+.no-track-order {
   text-align: center;
-  font-size:.7em;
+  font-size: 0.7em;
   color: red;
 }
 .card-header:hover {

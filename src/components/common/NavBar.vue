@@ -32,7 +32,14 @@
                 >Busqueda geolocalización</a
               >
             </li>
-            <Count></Count>
+
+            <li id="counting" class="nav-item" v-show="ok">
+              <keep-alive>
+                <Count></Count>
+              </keep-alive>
+            </li>
+
+
             <!-- <Notification /> -->
             <li class="nav-item mr-3">
               <span class="nav-link separator">|</span>

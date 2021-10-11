@@ -229,7 +229,7 @@ export default {
     updateStatusOrder() {
       this.$apollo
         .mutate({
-          mutation: require("@/graphql/deliveries/updateOrder.gql"),
+          mutation: require("@/graphql/deliveries/updateOrderByID.gql"),
           variables: {
             id: this.delivery.orderID,
             status: "entregado",

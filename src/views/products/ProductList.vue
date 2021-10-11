@@ -43,14 +43,39 @@
 
       <br />
       <div class="col-md-10">
-        <h1 class="text-center">Lista de productos - {{ this.nameEnterprise }}</h1>
+        <h1 class="text-center">
+          Lista de productos - {{ this.nameEnterprise }}
+        </h1>
         <br />
         <button
           type="button"
-          class="btn black-button btn-lg orange font-weight-bold btn-block bg-cart"
+          class="
+            btn
+            black-button
+            btn-lg
+            orange
+            font-weight-bold
+            btn-block
+            bg-cart
+          "
           @click="redirectProductAdd"
         >
           Crear Producto
+        </button>
+        <button
+          type="button"
+          class="
+            btn
+            black-button
+            btn-lg
+            orange
+            font-weight-bold
+            btn-block
+            bg-cart
+          "
+          @click="redirectEnterpriseList"
+        >
+          Volver a la lista de establecimientos
         </button>
         <br />
         <div v-if="$apollo.loading">
@@ -66,49 +91,47 @@
               (element) =>
                 element.node.productType.includes(leaveType) &&
                 element.node.name.includes(searchString.toLowerCase()) &&
-                element.node.active == true &&
                 element.node.enterprise.id == this.idEnterprise
             )"
             :key="product.node.id"
           >
-
-              <template>
-                <ProductCard
-                  :product="product.node"
-                  :image="
+            <template>
+              <ProductCard
+                :product="product.node"
+                :image="
                   product.node.images.edges[0] !== undefined
                     ? product.node.images.edges[0].node.url
                     : 'https://icones.pro/wp-content/uploads/2021/04/icone-de-nourriture-orange-symbole-png.png'
                 "
-                />
-                <br />
-                <button
-                  type="button"
-                  class="btn btn-dark btn-sm mr-4 orange-button"
-                  @click="redirectProductEdit(product.node.id)"
-                >
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  class="btn black-button btn-sm mr-4"
-                  data-toggle="modal"
-                  data-target="#deleteConfirmationModal"
-                  @click="productToDisable = product.node.id"
-                >
-                  Deshabilitar
-                </button>
-                <button
-                  type="button"
-                  class="btn black-button btn-sm"
-                  data-toggle="modal"
-                  data-target="#viewProductModal"
-                  @click="showProduct(product.node.id)"
-                >
-                  Ver
-                </button>
-                <hr />
-              </template>            
+              />
+              <br />
+              <button
+                type="button"
+                class="btn btn-dark btn-sm mr-4 orange-button"
+                @click="redirectProductEdit(product.node.id)"
+              >
+                Editar
+              </button>
+              <button
+                type="button"
+                class="btn black-button btn-sm mr-4"
+                data-toggle="modal"
+                data-target="#deleteConfirmationModal"
+                @click="stateToChange = product.node.id"
+              >
+                {{ product.node.active ? "Deshabilitar" : "Habilitar" }}
+              </button>
+              <button
+                type="button"
+                class="btn black-button btn-sm"
+                data-toggle="modal"
+                data-target="#viewProductModal"
+                @click="showProduct(product.node.id)"
+              >
+                Ver
+              </button>
+              <hr />
+            </template>
           </div>
         </div>
       </div>
@@ -129,7 +152,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="deleteConfirmationModalLabel">
-              Deshabilitar producto
+              Cambiar estado de producto
             </h5>
             <button
               type="button"
@@ -141,23 +164,19 @@
             </button>
           </div>
           <div class="modal-body">
-            Está a punto de deshabilitar un producto ¿Desea continuar?
+            Está a punto de cambiar el estado de un producto ¿Desea continuar?
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn black-button"
-              data-dismiss="modal"
-            >
+            <button type="button" class="btn black-button" data-dismiss="modal">
               Cerrar
             </button>
             <button
               type="button"
               class="btn orange-button"
-              @click="disableProduct(productToDisable)"
+              @click="changeState(stateToChange)"
               data-dismiss="modal"
             >
-              Deshabilitar
+              Continuar
             </button>
           </div>
         </div>
@@ -190,11 +209,46 @@
             <p>
               <b>Preparación:</b> {{ productView.preparation | capitalize }}
             </p>
-            <p><b>Tiempo:</b> {{ productView.preparation_time }}</p>
+            <p><b>Tiempo:</b> {{ productView.preparation_time }} minutos</p>
             <p>
               <b>Tipo de producto:</b>
               {{ productView.product_type | capitalize }}
             </p>
+            <h4 v-if="this.recommendation_list.length > 0" class="orange">
+              Acompañamientos:
+            </h4>
+            <ol
+              id="lista-recomendaciones"
+              class="list-group list-group-numbered"
+            >
+              <li
+                v-for="recommendation in this.recommendation_list"
+                class="
+                  list-group-item
+                  d-flex
+                  justify-content-between
+                  align-items-start
+                  bg-cart
+                  color-black
+                  outlineOrange
+                "
+                :key="recommendation.node.id"
+              >
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold">{{ recommendation.node.name }}</div>
+                </div>
+                <span
+                  class="
+                    badge
+                    bg-outline-primary
+                    rounded-pill
+                    orange-background
+                    text-black
+                  "
+                  >$ {{ recommendation.node.price }}</span
+                >
+              </li>
+            </ol>
           </div>
           <div class="modal-footer">
             <button
@@ -235,7 +289,8 @@ export default {
       searchString: "",
       idEnterprise: "",
       nameEnterprise: "",
-      productToDisable: "",
+      stateToChange: "",
+      recommendation_list: [],
 
       productsTypes: [
         [
@@ -287,7 +342,7 @@ export default {
       },
     };
   },
- async mounted() {
+  async mounted() {
     if (localStorage.getItem("user")) {
       let user = JSON.parse(localStorage.getItem("user"));
       if (user.type === "MANAGER") {
@@ -373,7 +428,7 @@ export default {
         solid: true,
       });
     },
-   redirectProductAdd() {
+    redirectProductAdd() {
       this.$router.push({
         name: "ProductAdd",
         params: {
@@ -396,11 +451,11 @@ export default {
     /**
      * Elimina una empresa y actualiza el cache con refetchQueries
      */
-    async disableProduct(idProduct) {
+    async changeState(idProduct) {
       console.log("enviar id por url", idProduct);
       await this.$apollo.mutate({
         // Establece la consulta a realizar
-        mutation: require("@/graphql/product/disableProduct.gql"),
+        mutation: require("@/graphql/product/changeState.gql"),
         // Define la variable
         variables: {
           id: idProduct,
@@ -413,8 +468,8 @@ export default {
       });
       this.makeToast(
         "success",
-        "Deshabilitar producto",
-        "El producto ha sido deshabilitado.",
+        "Cambio de estado de producto",
+        "El producto ha cambiado su estado.",
         4000
       );
     },
@@ -436,7 +491,26 @@ export default {
         });
       });
       this.productView.imageUrl = producto.images.edges[0].node.url;
+      this.fillRecommendations(idProduct);
       console.log("Viendo producto ", producto.name);
+    },
+    fillRecommendations(Item) {
+      let producto = this.allProducts.edges.filter(
+        (element) => element.node.id == Item
+      )[0].node;
+
+      this.recommendation_list = [];
+      console.log(producto);
+      producto.accompaniments.edges.forEach((product) => {
+        if (product.node.active) {
+          this.recommendation_list.push(product);
+        }
+      });
+    },
+    redirectEnterpriseList() {
+      this.$router.push({
+        name: "EnterpriseList",
+      });
     },
   },
   /**
@@ -456,8 +530,6 @@ export default {
 </script>
 
 <style scoped>
-
-h1 { color:black; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 4; }
 
 .name-app {
   color: var(--primary-x);
@@ -492,6 +564,15 @@ h1 { color:black; font-family: 'Trocchi', serif; font-size: 45px; font-weight: n
   background-color: black;
   color: white;
   font-weight: bold;
+}
+.orange-background {
+  background-color: orange;
+}
+.text-black {
+  color: black;
+}
+.outlineOrange {
+  border-inline-color: orange;
 }
 
 .orange-button:hover,
