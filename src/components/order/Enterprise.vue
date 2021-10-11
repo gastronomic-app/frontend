@@ -5,8 +5,13 @@
         <div class="col-lg-2">
           <!-- <img :src="image" class="card-img-top" :alt="'logo ' + name" /> -->
           <img
-            src="@/assets/enterprise.jpg"
-            class="card-img-top"
+            :src="
+              enterprise.image.substring(0, 5) === 'https'
+                ? enterprise.image
+                : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' +
+                  enterprise.image
+            "
+            class="card-img-top img-fluid img-responsive"
             :alt="'logo ' + name"
           />
         </div>
@@ -33,6 +38,7 @@ export default {
   props: {
     name: String,
     image: String,
+    enterprise:Object,
     section: String,
   },
   methods: {
