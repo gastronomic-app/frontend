@@ -1,0 +1,8 @@
+mutation changeState($id: ID!){
+  changeState(input: $id) {
+    product {
+      id
+      name
+    }
+  }
+}
