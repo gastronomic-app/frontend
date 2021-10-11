@@ -195,16 +195,15 @@ export default {
              if (response.data.allUsers.edges[0].node.isActive) {
               this.user.id = response.data.allUsers.edges[0].node.id;
               this.user.email = response.data.allUsers.edges[0].node.email;
-              //this.user.isalternative =  response.data.allUsers.edges[0].node.isalternative;
-              // this.user.password = response.data.allUsers.edges[0].node.password;
-              // this.user.isActive = response.data.allUsers.edges[0].node.isActive;
-              // this.user.isSuperuser = response.data.allUsers.edges[0].node.isSuperuser;
               this.user.type = response.data.allUsers.edges[0].node.type;
-              this.user.names = response.data.allUsers.edges[0].node.contact.edges[0].node.names;
-              // this.user.lastnames = response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
-              this.user.location =
-                response.data.allUsers.edges[0].node.contact.edges[0].node.location;
-              // this.user.telephone = response.data.allUsers.edges[0].node.contact.edges[0].node.telephone;
+              if(response.data.allUsers.edges[0].node.contact?.edges[0]){
+                this.user.names = response.data.allUsers.edges[0].node.contact.edges[0].node.names;
+                this.user.location =
+                  response.data.allUsers.edges[0].node.contact.edges[0].node.location;
+              }else{
+                this.user.names = "Admin";
+                this.user.location = "Cl. 6 #643, Popayán, Cauca, Colombia";
+              }
               localStorage.setItem("user", JSON.stringify(this.user));
               localStorage.setItem("existUser", true);
               this.show_charging = false;
@@ -227,7 +226,6 @@ export default {
                 );
               });
               } else {
-                //TODO Redireccionar menú de mensajero
                 this.$router.push({ name: "DeliveryDone" }).then(() => {
                   this.makeToast(
                   "success",
@@ -240,7 +238,7 @@ export default {
 
             } else {
               this.error_msg = "El usuario esta inactivo";
-              if (this.user.type == 'CLIENT') {
+              if (response.data.allUsers.edges[0].node.type === 'CLIENT') {
                 this.error_inactive = true;
                 this.show_charging = false;
               }
@@ -264,7 +262,7 @@ export default {
             mutation: require("@/graphql/user/tockenAuth.gql"),
           // Define las variables
           variables: {
-            email: this.email,
+            email: this.email.trim(),
             password: this.password,
           },
         })

@@ -48,7 +48,7 @@
             required
           ></b-form-input>
           <b-form-invalid-feedback :state="validateTelephone">
-            Telefono debe ser valido (10 o 6 digitos).
+            Telefono debe ser valido (10 o 7 digitos).
           </b-form-invalid-feedback>
 
           <!-- geolocalizacion-->
@@ -234,7 +234,7 @@ export default {
       } else {
         const re = /^[a-zA-Z]+$/;
         const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
-        if (re.test(this.name) || reL.test(this.name)) {
+        if (re.test(this.name.trim()) || reL.test(this.name.trim())) {
           return true;
         }
       }
@@ -246,7 +246,7 @@ export default {
       }
       const re = /^[a-zA-Z]+$/;
       const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
-      if (re.test(this.lastname) || reL.test(this.lastname)) {
+      if (re.test(this.lastname.trim()) || reL.test(this.lastname.trim())) {
         return true;
       }
       return false;
@@ -256,11 +256,11 @@ export default {
         return null;
       }
       const re = /^\d{10}$/;
-      const reT = /^\d{6}$/;
-      if (reT.test(this.telephone) || re.test(this.telephone)) {
+      const reT = /^\d{7}$/;
+      if (reT.test(this.telephone)) {
         return true;
       }
-      return null;
+      return re.test(this.telephone);
     },
     validation() {
       if (this.passwordNew.length > 0) {
@@ -340,8 +340,8 @@ export default {
             // Define las variables
             variables: {
               id: this.idAux,
-              names: this.name,
-              lastnames: this.lastname,
+              names: this.name.trim(),
+              lastnames: this.lastname.trim(),
               location: this.location,
               telephone: this.telephone,
             },
