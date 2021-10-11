@@ -588,10 +588,10 @@ async mounted() {
           );
 
           added_recommendations.forEach((recommendation) => {
-            this.addRecommendations(this.id, recommendation);
+            this.addRecommendations(response.data.updateProduct.product.id, recommendation);
           });
           removed_recommendations.forEach((recommendation) => {
-            this.deleteRecommendations(this.id, recommendation);
+            this.deleteRecommendations(response.data.updateProduct.product.id, recommendation);
           });
           this.$router.push({
         name: "ProductsList",

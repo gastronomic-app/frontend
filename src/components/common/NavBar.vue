@@ -33,7 +33,7 @@
               >
             </li>
 
-            <li id="counting" class="nav-item" v-show="ok">
+            <li v-if="role=='CLIENT'" id="counting" class="nav-item" v-show="ok">
               <keep-alive>
                 <Count></Count>
               </keep-alive>
@@ -60,6 +60,7 @@
                   <a class="dropdown-item " style="color: var(--light)" >Usuario: {{names}}</a>
                   <a class="dropdown-item " style="color: var(--light)" >Rol: {{role}}</a>
                   <a class="dropdown-item " style="color: var(--light)" >Email: {{email}}</a>
+                  <a class="dropdown-item" style="color: var(--light)" v-if="role=='MANAGER'" href="/enterprise-list">Administrar establecimiento</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role!='MANAGER'" @click="redirectEdit()">Editar usuario</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" @click="removeClient()">Darme de baja</a>
