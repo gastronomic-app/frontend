@@ -21,11 +21,11 @@
 
         <br />
       </div>
-      <div v-if="enterprise != null" class="col">
+      <div v-if="enterprise != null" class="col-sm-4">
         <template>
           <EnterpriseCard :enterprise="enterprise" :key="enterprise.id" />
-          <br />
         </template>
+        <br />
       </div>
     </div>
   </div>
