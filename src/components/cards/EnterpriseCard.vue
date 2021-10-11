@@ -34,8 +34,10 @@
       </p>
 
       <button
-        v-show="ok"
+
+        v-show="user.type!='MANAGER'"
         v-on:click="btnComments(enterprise.id,enterprise.name,enterprise)"
+
         type="button"
         class="btn btn-success btn-sm mr-4"
       >
@@ -43,7 +45,8 @@
       </button>
 
       <button
-        v-show="ok"
+
+        v-show="user.type!='MANAGER'"
         v-on:click="makeOrder(enterprise,enterprise)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -60,6 +63,7 @@ export default {
   data() {
     return {
       ok: localStorage.getItem("existUser"),
+      user: "",
       allReviews: Object,
       valoration: 0,
       counter: 0,
@@ -76,15 +80,10 @@ export default {
     enterprise: Object,
   },
   created() {
-    if(this.ok){
-    let user = JSON.parse(localStorage.getItem("user"));
-    if (user.type === "MANAGER") {
-      this.ok=false;
-    }else{
-      this.ok=true;
-    }
-    }
 
+    if(this.ok){
+       this.user = JSON.parse(localStorage.getItem("user"))
+    }
     this.$apollo
       .query({
         // Consulta

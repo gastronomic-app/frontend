@@ -1,0 +1,11 @@
+query enterprises ($id: ID!){
+  enterprise (id: $id){
+    managers{
+      edges{
+        node{
+          email
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,10 @@
         id
         status
         location
+        date
+        client{
+          email
+        }
         details {
           edges {
             node {
