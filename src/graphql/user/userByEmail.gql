@@ -2,6 +2,7 @@ query userByEmail($email: String!){
   allUsers(email: $email) {
     edges {
       node {
+        id
         contact {
           edges {
             node {
