@@ -57,8 +57,11 @@ img {
 }
 @media only screen and (max-width: 1200px) {
   .img {
-    height: 200px;
+    height: 250px;
     object-fit: cover;
+  }
+  .name {
+    height: 0.8rem;
   }
 }
 @media only screen and (min-width: 1200px) {
