@@ -201,7 +201,11 @@
             </button>
           </div>
           <div class="modal-body">
-            <img class="d-block w-100" :src="productView.imageUrl" />
+            <img class="d-block w-100" :src="
+        productView.imageUrl.substring(0, 5) === 'https'
+          ? productView.imageUrl
+          : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' + productView.imageUrl
+          " />
             <p><b>Precio:</b> ${{ productView.price }}</p>
             <p>
               <b>Ingredientes:</b> {{ productView.ingredients | capitalize }}
