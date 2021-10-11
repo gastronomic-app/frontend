@@ -82,7 +82,7 @@
             :item="comment"
             :checkbox_use="true"
           >
-            <div v-if="comment.comments != ''">
+            <div v-if="comment.node.comments != ''">
               <TextArea
                 :email="comment.node.order.client.email"
                 :comment="comment.node.comments"
