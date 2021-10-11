@@ -11,22 +11,31 @@
       <h5 class="card-title orange font-weight-bold">
         {{ courierInfo.names }} {{ courierInfo.last }}
       </h5>
-      <p class="card-text">Id: {{ courierInfo.id }}</p>
-      <p class="card-text">Email: {{ courierInfo.email }}</p>
-      <p class="card-text">Teléfono: {{ courierInfo.tel }}</p>
+      <p class="card-text"><b>Email: </b>{{ courierInfo.email }}</p>
+      <p class="card-text"><b> Teléfono: </b>{{ courierInfo.tel }}</p>
 
-      <p class="card-text">Ubicación: {{ courierInfo.location }}</p>
+      <p class="card-text"><b> Ubicación: </b>{{ courierInfo.location }}</p>
       <p class="card-text">
-        Estado:
-        <span style="color: var(--orange)"> {{ courierInfo.isAvailable }} </span>
+        <b>Estado: </b>
+        <span style="color: var(--orange)" v-show="courierInfo.isActive">
+          {{ courierInfo.isAvailable }}
+        </span>
+        <span style="color: red" v-show="!courierInfo.isActive">
+          Mensajero inactivo
+        </span>
       </p>
     </div>
     <div class="container">
-     
-      <select class="btn btn-success "  @change="fn(courierInfo.id)">
-          <option selected=""> {{courierInfo.isActive}}</option>
-        <option href="#">Inactivo</option>
+      <select
+        class="btn btn-success"
+        @change="fn(courierInfo.id, courierInfo.isActive)"
+      >
+        <option v-if="courierInfo.isActive" selected="">Activo</option>
+        <option v-else selected="">Inactivo</option>
+        <option v-if="courierInfo.isActive">Inactivo</option>
+        <option v-else>Activo</option>
       </select>
+
       <div class="dropdown-menu"></div>
     </div>
   </div>
@@ -36,9 +45,9 @@
 export default {
   name: "CourierCard",
   props: {
-      fn:{
-          type:Function
-      },
+    fn: {
+      type: Function,
+    },
     courierInfo: {
       type: Object,
       default: () => {
@@ -48,7 +57,7 @@ export default {
           last: "Pato",
           email: "elza@courier.com",
           isActive: "Activo",
-          isAvailable:"Disponible",
+          isAvailable: "Disponible",
           tel: "315",
           location: "Ni de acá ni de allá",
           image: " /img/logo.d205f58e.png",
@@ -58,9 +67,11 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      id: this.courierInfo.isActive,
+    };
   },
-
+  computed: {},
   methods: {},
 };
 </script>
@@ -70,8 +81,8 @@ export default {
   margin: 1em auto;
   width: 20em;
   min-width: 15em;
-  height: 29em;
-  border-radius: .7em;
+  min-height: 28em;
+  border-radius: 0.7em;
 }
 img {
   margin: 1.5em auto 0;

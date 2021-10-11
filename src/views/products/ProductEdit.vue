@@ -23,13 +23,10 @@ export default {
    * donde obtiene el parametro id pasado por la url
    */
   created() {
-    this.id = this.$route.params.id;
-    console.log("obtener id por url:", this.id);
+    this.id = this.$route.params.id;    
   },
 };
 </script>
 
-<style scoped>
-  h1 { color:black; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 4; }
-</style>
+
 

@@ -12,7 +12,12 @@
     />
 
     <div class="card-body container-md">
-      <h5 class="card-title orange font-weight-bold">
+      <h5 :class="
+          product.active
+            ? 'card-title orange font-weight-bold'
+            : 'card-title font-weight-bold'
+        "
+      >
         {{ product.name | capitalize }}
       </h5>
       <p class="card-text">Precio: ${{ product.price | capitalize }}</p>

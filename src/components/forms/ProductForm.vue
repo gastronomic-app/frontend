@@ -432,8 +432,7 @@ async mounted() {
           6000
         );
       }, 500);
-    }
-    console.log("id en el formulario", this.id);
+    }    
 
     // Si el id existe, realiza la consulta
     if (this.id) {
@@ -487,8 +486,7 @@ async mounted() {
         (element) =>
           element.node.name == this.form.name.toLowerCase() &&          
           element.node.enterprise.id === this.idEnterprise
-      );
-      console.log(producto);
+      );      
       if (producto.length == 0 && this.id === null) {
         this.addproduct();
       } else if (
@@ -536,8 +534,7 @@ async mounted() {
         })
         // El método mutate devuelve una promesa
         // que puede usarse para agregar más logica
-        .then((response) => {
-          console.log("creación de producto:", response.data);
+        .then((response) => {          
           this.uploadImage(response.data.createProduct.product.id);
           this.recommendation_id_list.forEach((recommendation) => {
             this.addRecommendations(
@@ -579,9 +576,6 @@ async mounted() {
           ],
         })
         .then((response) => {
-          console.log("actualización de producto:", response.data);
-          console.log(this.recommendation_id_list);
-
           if (this.form.images.length != 0) {
             this.updateImage(this.form.imageId);
           }
@@ -640,8 +634,7 @@ async mounted() {
     uploadImage(id) {
       if (!this.form.images.length) {
         return;
-      }
-      console.log(id);
+      }      
       this.$apollo.mutate({
         mutation: require("@/graphql/image/createImage.gql"),
         variables: {
@@ -658,7 +651,7 @@ async mounted() {
       if (!this.form.images.length) {
         return;
       }
-      console.log(id);
+     
       this.$apollo.mutate({
         mutation: require("@/graphql/image/updateImage.gql"),
         variables: {
