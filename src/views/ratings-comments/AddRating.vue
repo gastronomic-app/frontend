@@ -11,13 +11,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Calidad del servicio</h6>
-              <b-form-input
-                id="range-1"
-                v-model="quality"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-1" v-model="quality" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -75,13 +69,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Precio</h6>
-              <b-form-input
-                id="range-3"
-                v-model="price"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-3" v-model="price" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -91,13 +79,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Textura</h6>
-              <b-form-input
-                id="range-6"
-                v-model="texture"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-6" v-model="texture" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -107,13 +89,7 @@
           <b-row class="mb-2">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Punto de cocción</h6>
-              <b-form-input
-                id="range-7"
-                v-model="cooking"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-7" v-model="cooking" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -145,7 +121,7 @@
         <br />
         <b-row>
           <b-col lg="6" class="ml-5 text-center">
-            <b-button class="btn btn_order mr-3" v-on:click="link()" size="sm"
+            <b-button class="btn btn_order mr-3" v-on:click="back()" size="sm"
               >Cancelar</b-button
             >
             <b-button class="btn btn_order" size="sm" v-on:click="save()">
@@ -207,12 +183,33 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-          this.enterpriseName = this.enterprise.name; 
+          this.enterpriseName = this.enterprise.name;
           localStorage.enterpriseN = this.enterpriseName;
           //this.save();
         });
     },
-
+    makeToast(variant = null, title, info, time) {
+      console.log("Entro make toast");
+      this.$bvToast.toast(info, {
+        title: title,
+        autoHideDelay: time,
+        variant: variant,
+        solid: true,
+      });
+    },
+    back() {
+      this.$router.push({
+        name: "CommentsList",
+        params: { idCaught: this.id },
+      });
+    },
+    link(mensaje, tipo) {
+      this.$router
+        .push({ name: "CommentsList", params: { idCaught: this.id } })
+        .then(() => {
+          this.makeToast(tipo, "Mensaje", mensaje, 3000);
+        });
+    },
     define_Range(valor) {
       if (valor <= 15) {
         return "Malo";
@@ -267,54 +264,39 @@ export default {
           console.log("creación de Comment:", response.data);
         });
     },
-    link() {
-      localStorage.idCaught = "";
-      this.$router.push({
-        name: "CommentsList",
-        params: { idCaught: this.id },
-      });
-    },
+
     save() {
       let bnd_comment = 0;
       let bnd_review = 0;
       //if (this.enterprise.products.edges.length == 0) {
       //console.log("Empresa no tiene productos");
       //}else{
-      for (
-        var product = 0;
-        product < this.enterprise.products.edges.length;
-        product++
-      ) {
-        if (
-          this.enterprise.products.edges[product].node.orders.edges.length !== 0
-        ) {
+      for (var product = 0; product < this.enterprise.products.edges.length; product++) {
+        if (this.enterprise.products.edges[product].node.orders.edges.length !== 0) {
           for (
             var order = 0;
-            order <
-            this.enterprise.products.edges[product].node.orders.edges.length;
+            order < this.enterprise.products.edges[product].node.orders.edges.length;
             order++
           ) {
             if (
-              this.enterprise.products.edges[product].node.orders.edges[order]
-                .node !== null
+              this.enterprise.products.edges[product].node.orders.edges[order].node !==
+              null
             ) {
               this.update();
               //Condición para validar que el usuario registrado tenga ordenes
               if (
                 this.emailUser ==
-                this.enterprise.products.edges[product].node.orders.edges[order]
-                  .node.client.email
+                this.enterprise.products.edges[product].node.orders.edges[order].node
+                  .client.email
               ) {
                 //Guardo id de la orden
-                this.idOrder =
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.id;
+                this.idOrder = this.enterprise.products.edges[product].node.orders.edges[
+                  order
+                ].node.id;
                 //Mostramos review
                 if (
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review != null
+                  this.enterprise.products.edges[product].node.orders.edges[order].node
+                    .review != null
                 ) {
                   bnd_review++;
                 }
@@ -329,23 +311,18 @@ export default {
       }
 
       if (bnd_review == 0 && bnd_comment != 0) {
-        //console.log("Entro en sendData")
         this.sendData();
-        this.link();
+        this.link("Comentario Creado", "success");
       }
+
       if (bnd_review != 0) {
-        confirm("Ya tiene un comentario");
-        this.link();
+        this.link("Ya tiene Comentario", "danger");
       }
 
       if (bnd_comment == 0) {
-        confirm("No tiene orden");
-        this.link();
+        this.link("No tiene Orden", "danger");
       }
     },
-    //confirm("Empresa no tiene producto");
-    //this.link();
-    //},
   },
   computed: {
     commentState() {
@@ -354,7 +331,7 @@ export default {
   },
   created() {
     if (
-      localStorage.getItem("idComment") == "" 
+      localStorage.getItem("idComment") == ""
       //&&
       //localStorage.getItem("enterpriseN") == ""
     ) {

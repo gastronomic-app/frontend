@@ -188,11 +188,10 @@ export default {
 
     filterQuery(response) {
       this.reviews = response.filter(
-        (review) =>
-          review.node.order.products.edges[0].node.enterprise.id === this.id
+        (review) => review.node.order.products.edges[0].node.enterprise.id === this.id
       );
+      this.reviews.reverse();
       this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
-      console.log(this.reviews);
     },
 
     valnum(texto) {
@@ -224,88 +223,8 @@ export default {
         price += this.valnum(review.node.price);
         texture += this.valnum(review.node.texture);
         cookingPoint += this.valnum(review.node.cookingPoint);
-        comments.push(review.node.comments);
+        comments.unshift(review.node.comments);
       });
-
-      /*if (this.enterprise.products.edges.length === 0) {
-        return;
-      }
-      for (
-        var product = 0;
-        product < this.enterprise.products.edges.length;
-        product++
-      ) {
-        if (
-          this.enterprise.products.edges[product].node.orders.edges.length !== 0
-        ) {
-          for (
-            var order = 0;
-            order <
-            this.enterprise.products.edges[product].node.orders.edges.length;
-            order++
-          ) {
-            if (
-              this.enterprise.products.edges[product].node.orders.edges[order]
-                .node.review !== null
-            ) {
-              comments.push(
-                this.enterprise.products.edges[product].node.orders.edges[order]
-                  .node
-              );
-
-              aux1 =
-                aux1 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.qualityService
-                );
-              aux2 =
-                aux2 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.presentation
-                );
-              aux3 =
-                aux3 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.preparation
-                );
-              aux4 =
-                aux4 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.ingredients
-                );
-              aux5 =
-                aux5 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.price
-                );
-              aux6 =
-                aux6 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.textures
-                );
-              aux7 =
-                aux7 +
-                this.valnum(
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review.cookingPoint
-                );
-            }
-          }
-        }
-      }*/
 
       //promedios
       if (this.reviews.length > 0) {
@@ -326,9 +245,16 @@ export default {
         cookingPoint = Math.round(cookingPoint / conttam);
         this.aux7 = cookingPoint;
         //this.comments = comments;
-        var calculo = ((qualityService + presentation + preparation + ingredients + price + texture + cookingPoint) / 7).toFixed(
-          1
-        );
+        var calculo = (
+          (qualityService +
+            presentation +
+            preparation +
+            ingredients +
+            price +
+            texture +
+            cookingPoint) /
+          7
+        ).toFixed(1);
 
         this.calculo = calculo;
       }
@@ -341,7 +267,6 @@ export default {
       localStorage.idCaught = this.id;
       //this.prueba();
       this.queryReviews();
-      
     } else {
       this.id = localStorage.getItem("idCaught");
       //this.prueba();

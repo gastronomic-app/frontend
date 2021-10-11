@@ -67,7 +67,7 @@ img {
 @media only screen and (min-width: 1200px) {
   img {
     height: 200px;
-    width: 186px;
+    width: 185px;
     object-fit: cover;
   }
 }
