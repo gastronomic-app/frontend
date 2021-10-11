@@ -217,6 +217,7 @@ export default {
                   3000
                 );
               });
+              this.$store.dispatch("setStorageCountAction", 0);
               }else if (this.user.type === 'MANAGER') {
                 this.$router.push({ name: "EnterpriseList"}).then(() => {
                 this.makeToast(
