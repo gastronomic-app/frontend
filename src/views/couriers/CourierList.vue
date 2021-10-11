@@ -7,8 +7,8 @@
       </h2>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1" style="height:2.4em"
-            ><b-icon-search ></b-icon-search
+          <span class="input-group-text" id="basic-addon1" style="height: 2.4em"
+            ><b-icon-search></b-icon-search
           ></span>
         </div>
         <input
@@ -125,7 +125,6 @@ export default {
       }
     },
     async queryCouriers() {
-      console.log(this.enterpriseId);
       await this.$apollo
         .query({
           query: require("@/graphql/deliveries/couriersEnterprise.gql"),
@@ -156,11 +155,21 @@ export default {
         this.courierList.push(newCourier);
       });
     },
+    /*Actualizar el estado del mensajero*/
+    updateStatusCourier(courier, status) {
+      this.courier.courierStatus = status;
+      this.$apollo.mutate({
+        mutation: require("@/graphql/deliveries/updateCourier.gql"),
+        variables: {
+          id: courier,
+          isAvailable: !status,
+        },
+      });
+    },
 
     search(value) {
-      console.log(value)
       const found = this.courierList.find((courier) => {
-        if (courier.names.toLowerCase() === value.toLowerCase() ) {
+        if (courier.names.toLowerCase() === value.toLowerCase()) {
           return true;
         }
       });
@@ -177,20 +186,14 @@ export default {
       });
     },
     changeStatus(courier, state) {
-      this.$apollo
-        .mutate({
-          mutation: require("@/graphql/client/deactivateClient.gql"),
-          variables: {
-            id: courier,
-            is_active: !state,
-          },
-        })
-        .then((response) => {
-          console.log(
-            "Desactivado",
-            response.data.updateClient.client.isActive
-          );
-        });
+      this.$apollo.mutate({
+        mutation: require("@/graphql/client/deactivateClient.gql"),
+        variables: {
+          id: courier,
+          is_active: !state,
+        },
+      });
+      this.updateStatusCourier(courier, state);
     },
   },
 };
