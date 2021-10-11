@@ -235,7 +235,8 @@ export default {
       let origins = [];
       let destinations = [];
       let objRoutes = [];
-      let orders =this.orders
+      let orders = this.orders;
+      
       for (const order of orders) {
         if (
           typeof order.route.origin === "string" &&
@@ -249,18 +250,22 @@ export default {
             destinations = [];
           }
         } else {
-  
-          order.route.origin = "";
-          order.route.destination = "";
+         
+          order.route.origin = typeof order.route.origin === "string" ? order.route.origin : "";
+          order.route.destination = typeof order.route.destination === "string" ?  order.route.destination: "";
+          origins.push(order.route.origin);
+          destinations.push(order.route.destination);
         }
-        objRoutes.push({ origins: origins, destinations: destinations });
-      }
 
+    
+      }
+    objRoutes.push({ origins: origins, destinations: destinations });
       return objRoutes;
     },
     async getDurationDistance(orders) {
       let idx = 0;
       const objRoutes = this.getOriginsDestinations();
+    
       for await (const routes of objRoutes) {
         const distanceMatrix = new google.maps.DistanceMatrixService();
         await distanceMatrix.getDistanceMatrix(
@@ -270,8 +275,10 @@ export default {
             travelMode: "DRIVING",
           },
           async (response) => {
+        
             for (let j = 0; j < response.rows.length; j++) {
               if (response.rows[j].elements[j].status === "OK") {
+           
                 let elements = await response.rows[j].elements[j];
                 orders[idx].route.distance = await elements.distance.text;
                 orders[idx].route.duration.durationFormatted = await elements
