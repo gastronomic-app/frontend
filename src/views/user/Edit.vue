@@ -2,7 +2,7 @@
   <div class="wrapper fadeInDown align-self-lg-center">
     <h1>Actualización de datos</h1>
     <div class="card-body container align-self-center">
-      <form v-on:submit.stop.prevent="editContact()">
+      <form v-on:submit.prevent="editContact()">
         <div>
           <label for="validationName"
             >Nombre<span class="text-danger">*</span></label
@@ -68,7 +68,7 @@
       </form>
        <br />
       <button
-        :disabled="disable()"
+        v-show="!disable()"
         type="submit"
         class="btn btn-black"
         v-b-modal.ModalCenter
@@ -342,7 +342,7 @@ export default {
               id: this.idAux,
               names: this.name.trim(),
               lastnames: this.lastname.trim(),
-              location: this.location,
+              location: this.$refs.foo.address,
               telephone: this.telephone,
             },
             // Actualiza el cache de GraphQL para visualizar la eliminación
@@ -364,7 +364,7 @@ export default {
             //Llenar cache
             let user = JSON.parse(localStorage.getItem("user"));
             user.names = this.name;
-            user.location = this.location;
+            user.location = this.$refs.foo.address;
             localStorage.setItem("user", JSON.stringify(user));
             this.$router.push({ name: "catalogSearch" }).then(() => {
               this.makeToast(

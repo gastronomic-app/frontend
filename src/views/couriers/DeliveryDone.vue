@@ -131,7 +131,6 @@ export default {
         });
     },
     async tansformQuery(data) {
-      console.log(this.courier);
       let delivery = data.filter((user) => {
         if (user.node.courier !== null) {
           if (user.node.courier.email === this.courier.email) {
@@ -140,7 +139,7 @@ export default {
         }
       });
 
-      if (delivery !== undefined) {
+      if (delivery.lenght>0) {
         if (delivery[0].node.status == "DESPACHADO") {
           let newDelivery = {
             orderID: delivery[0].node.id,

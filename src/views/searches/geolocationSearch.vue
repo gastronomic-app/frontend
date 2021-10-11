@@ -21,9 +21,9 @@
 
         <br />
       </div>
-      <div v-if="enterprise!=null" class="col">
-        <template >
-          <EnterpriseCard :enterprise="enterprise" :key="enterprise.id"/>
+      <div v-if="enterprise != null" class="col">
+        <template>
+          <EnterpriseCard :enterprise="enterprise" :key="enterprise.id" />
           <br />
         </template>
       </div>
@@ -53,7 +53,7 @@ export default {
       address: "",
       error: "",
       map: Object,
-      enterprise: null
+      enterprise: null,
     };
   },
   props: ["showinput", "showmap"],
@@ -86,7 +86,7 @@ export default {
     let vm = this;
     window.showAllEnterpise = function (enterprise) {
       vm.showAllEnterpise(enterprise);
-      vm.enterprise=enterprise
+      vm.enterprise = enterprise;
     };
   },
   methods: {
@@ -153,13 +153,12 @@ export default {
       });
     },
     showAllEnterpise(enterprise) {
-      this.enterprise= enterprise;
+      this.enterprise = enterprise;
     },
     showEnterpriseLocation(lat, lon, enterprise) {
-
       const image = {
-        url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
-        size: new google.maps.Size(20, 32),
+        url: "https://img.icons8.com/fluency/48/000000/restaurant-.png",
+        size: new google.maps.Size(50, 40),
         origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(0, 32),
       };
@@ -169,12 +168,14 @@ export default {
         `<center><font size='+2' color='#FF5733'>` +
         enterprise.name.toUpperCase() +
         `</font></center>
-        <center><input type='submit' id='butSubmit' value='Ver negocio' onclick='showAllEnterpise(`+JSON.stringify(enterprise)+`)'></center>
+        <center><input type='submit' id='butSubmit' value='Ver negocio' onclick='showAllEnterpise(` +
+        JSON.stringify(enterprise) +
+        `)'></center>
         <div id='bar'></div>`;
       const marker = new google.maps.Marker({
         position: new google.maps.LatLng(lat, lon),
         map: this.map,
-        icon: image
+        icon: image,
       });
       const infowindow = new google.maps.InfoWindow({
         content: contentString,

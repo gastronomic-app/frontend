@@ -29,7 +29,6 @@
       </p>
 
       <button
-        v-show="ok"
         v-on:click="btnComments(enterprise.id)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -38,7 +37,6 @@
       </button>
 
       <button
-        v-show="ok"
         v-on:click="makeOrder(enterprise)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -109,6 +107,7 @@ export default {
       });
     },
     makeOrder(Enterprise) {
+      if(this.ok){
       if (Enterprise.id == localStorage.idEnterprise) {
         this.$store.dispatch(
           "setStorageCountAction",
@@ -130,6 +129,9 @@ export default {
           name: "ProductListOrder",
           params: { id: Enterprise.id, name: Enterprise.name },
         });
+      }
+      }else{
+           this.$router.push({name:"login"});
       }
     },
     valnum(texto) {
