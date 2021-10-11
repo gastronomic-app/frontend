@@ -200,22 +200,22 @@
     </button>
     <button
         v-if="id !== null"
-        id="buttonBack"
         type="button"
         class="btn btn-primary"
-        :disabled="inputsEmpty"
-        @click="ReturnEnterprises"
-    >
-        Volver
-    </button>
-    <button
-        v-if="id !== null"
-        type="button"
-        class="btn btn-success"
         :disabled="inputsEmpty"
         @click="editEnterprise"
     >
         Actualizar empresa
+    </button>
+        <button
+        v-if="id !== null"
+        id="buttonBack"
+        type="button"
+        class="btn btn-black"
+        :disabled="inputsEmpty"
+        @click="ReturnEnterprises"
+    >
+        Volver
     </button>
     </form>
     <br>
@@ -358,6 +358,8 @@ methods: {
             type: 'warning',
             icon: 'question',
             showCancelButton:true,
+            confirmButtonColor:'rgba(255, 68, 0, 0.877)',
+            cancelButtonColor:'#111111',
             confirmButtonText:'Si, modificar',
             cancelButtonText:'No, modificar',
             showCloseButton:true,
@@ -504,6 +506,15 @@ computed: {
     font-weight: normal;
 }
 #buttonBack {
-    margin-right: 10px;
+    margin-left: 10px;
+}
+.btn-primary {
+  background-color: var(--orange);
+  color: whitesmoke;
+  border: none;
+}
+.btn-black {
+  background-color: var(--dark-x);
+  color: whitesmoke;
 }
 </style>
