@@ -71,12 +71,15 @@ export default {
     enterprise: Object,
   },
   created() {
+    if(this.ok){
     let user = JSON.parse(localStorage.getItem("user"));
     if (user.type === "MANAGER") {
       this.ok=false;
     }else{
       this.ok=true;
     }
+    }
+
     this.$apollo
       .query({
         // Consulta
