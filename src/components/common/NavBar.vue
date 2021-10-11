@@ -173,6 +173,7 @@ export default {
       this.$store.dispatch("setStorageCountAction", 0);
       localStorage.removeItem("idEnterprise");
       localStorage.getItem("enterpriseName");
+      window.location.reload();
     },
     removeClient() {
       if (confirm("¿Seguro que desea darse de baja?", false)) {

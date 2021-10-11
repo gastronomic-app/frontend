@@ -133,6 +133,7 @@ export default {
       // de la consulta definida en la sección apollo
       reviews: [],
       enterpriseName: "",
+      ok: localStorage.getItem("existUser"),
       id: "",
       // Variable que recibe el error de la consulta
       error: null,
@@ -152,12 +153,16 @@ export default {
   },
   methods: {
     link() {
+      if(this.ok){
       localStorage.idComment = "";
       //localStorage.enterpriseN = "";
       this.$router.push({
         name: "AddRating",
         params: { enterpriseId: this.id },
       });
+      }else{
+           this.$router.push({name:"login"});
+      }
     },
     async queryReviews() {
       await this.$apollo
