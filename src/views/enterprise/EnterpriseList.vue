@@ -192,6 +192,8 @@ export default {
      * gestionar los pedidos por despachar.
      */
     redirectPendingOrders(idEnterprise, enterpriseName) {
+      localStorage.setItem("entID", idEnterprise);
+      localStorage.setItem("entName", enterpriseName);
       this.$router.push({
         name: "PendingOrders",
         params: { id: idEnterprise, name: enterpriseName },

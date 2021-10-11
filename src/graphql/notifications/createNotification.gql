@@ -1,7 +1,8 @@
-mutation createNotification($title: String!, $message: String!, $userId: ID!) {
+mutation createNotification($title: String!, $message: String!, $userId: String!) {
   createNotification(input: {title: $title, message: $message, userId: $userId}) {
     notification {
       id
+      title
       message
       created
     }

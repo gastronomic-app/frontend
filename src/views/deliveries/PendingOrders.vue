@@ -18,7 +18,8 @@
 
       <!--NO HAY PEDIDOS-->
       <div v-if="!existsOrders">
-        <h4>Tus clientes aún no realizan pedidos <b></b></h4>
+        <br />
+        <h5><b>No tienes pedidos por despachar :c</b></h5>
         <not-found></not-found>
       </div>
 
@@ -47,6 +48,7 @@
                   <h5><b>Resumen del pedido</b></h5>
                   <p></p>
                   <h6><b>Productos: </b>{{ order.products }}</h6>
+                  <h6><b>Envío: </b> ${{ order.delivery }}</h6>
                   <h6><b>Precio total: </b> ${{ order.price }}</h6>
                   <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
                 </div>
@@ -84,6 +86,7 @@
 import CollapsibleCard from "@/components/common/CollapsibleCard.vue";
 import LoadingGraphql from "@/components/common/LoadingGraphql.vue";
 import ConnectionErrorGraphql from "@/components/common/ConnectionErrorGraphql.vue";
+import NotFound from "@/components/common/NotFound.vue";
 
 export default {
   name: "PendingOrders",
@@ -91,6 +94,7 @@ export default {
     CollapsibleCard,
     LoadingGraphql,
     ConnectionErrorGraphql,
+    NotFound,
   },
   data() {
     return {
@@ -118,26 +122,35 @@ export default {
 
     /*Asignar un mensajero disponible a la orden y cambiar estado del pedido*/
     asignCourier(orderId) {
-      let availableCouriers = this.getAvailableCouriers();
-      if (availableCouriers.length === 0) {
-        this.toastDispatchFailed();
-      } else {
-        let courier = availableCouriers[0].node;
-        this.updateStatusCourier(courier.id, false);
-        this.updateStatusOrder(orderId, "despachado");
-        this.toastDispatchSuccessful(
-          orderId,
-          courier.contact.edges[0].node.names,
-          courier.contact.edges[0].node.lastnames
-        );
-        //this.emitNotificationCostumer(orderId, courier);
-      }
+      let availableCouriers;
+      this.getAvailableCouriers().then((value) => {
+        availableCouriers = value;
+        if (availableCouriers.length === 0) {
+          this.toastDispatchFailed();
+        } else {
+          let courier = availableCouriers[0].node;
+          this.notificate(orderId, courier.email);
+          this.updateStatusOrder(orderId, "despachado", courier.id);
+          this.updateStatusCourier(courier.id, false);
+          this.toastDispatchSuccessful(
+            orderId,
+            courier.contact.edges[0].node.names,
+            courier.contact.edges[0].node.lastnames
+          );
+        }
+      });
     },
 
     /*Obtener los mensajeros disponibles*/
-    getAvailableCouriers() {
-      this.queryCouriers();
-      return this.couriers.filter((courier) => courier.node.isAvailable);
+    async getAvailableCouriers() {
+      let availableCouriers = [];
+      await this.queryCouriers().then(() => {
+        availableCouriers = this.couriers.filter(
+          (courier) =>
+            courier.node.isAvailable && courier.node.contact.edges.length > 0
+        );
+      });
+      return availableCouriers;
     },
 
     /*Seleccionar todos */
@@ -161,7 +174,10 @@ export default {
             location: order.node.location,
             products: productsOrder.names,
             price: productsOrder.price,
+            delivery: "4000",
             selected: false,
+            email: order.node.client.email,
+            date: order.node.date,
           });
           count++;
         }
@@ -189,7 +205,7 @@ export default {
       return {
         belongs: belong,
         names: prodNames.substring(0, prodNames.length - 2),
-        price: prodTotal,
+        price: prodTotal + 4000,
       };
     },
 
@@ -218,6 +234,92 @@ export default {
       );
     },
 
+    /**Notification with vuesax */
+    makeNotification(titleN, textN, colorN, iconN, durationN, positionN) {
+      this.$vs.notification({
+        icon: iconN,
+        color: colorN,
+        position: positionN,
+        duration: durationN,
+        progress: "auto",
+        title: titleN,
+        text: textN,
+      });
+    },
+
+    notificate(orderId, courierEmail) {
+      //CLIENT
+      let idx = this.orders.findIndex((order) => order.id === orderId);
+      let order = this.orders[idx];
+      this.notificateClient(order.email, order.products, order.price);
+
+      //COURIER
+      this.notificateCourier(courierEmail);
+    },
+
+    notificateClient(userEmail, products, price) {
+      let notification = {
+        userId: "",
+        title: "¡Tu pedido va en camino!",
+        message: `El pedido de ${products} que realizaste a ${this.enterpriseName} por un valor de ${price} fue despachado`,
+      };
+      this.getUserId(userEmail).then((result) => {
+        console.log("result:", result);
+        notification.userId = result;
+        this.createNotification(notification);
+      });
+    },
+
+    notificateCourier(userEmail) {
+      let notification = {
+        userId: "",
+        title: "¡Tienes una nueva entrega!",
+        message: "Se te ha asignado un nuevo pedido para entregar.",
+      };
+      this.getUserId(userEmail).then((result) => {
+        console.log("result:", result);
+        notification.userId = result;
+        this.createNotification(notification);
+      });
+    },
+
+    async getUserId(userEmail) {
+      let id = "";
+      await this.$apollo
+        .query({
+          query: require("@/graphql/user/userByEmail.gql"),
+          variables: {
+            email: userEmail,
+          },
+        })
+        .then((response) => {
+          id = response.data.allUsers.edges[0].node.id;
+          console.log("userId: ", id);
+        });
+      return id;
+    },
+
+    createNotification(notification) {
+      console.log(notification);
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/notifications/createNotification.gql"),
+          variables: {
+            title: notification.title,
+            message: notification.message,
+            userId: notification.userId,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "creada notificación para: ",
+            notification.userId,
+            " ",
+            response
+          );
+        });
+    },
+
     /*Actualizar el estado del mensajero*/
     updateStatusCourier(courierId, status) {
       let idx = this.couriers.findIndex(
@@ -242,17 +344,20 @@ export default {
         })
         .then((response) => {
           console.log("actualización de courier:", response.data);
+          this.queryCouriers();
         });
     },
 
     /*Actualizar el estado de la orden*/
-    updateStatusOrder(orderId, orderStatus) {
+    updateStatusOrder(orderId, orderStatus, courierId) {
+      console.log("idCourier:",courierId, "orderStatus:", orderStatus, "orderId", orderId);
       this.$apollo
         .mutate({
           mutation: require("@/graphql/deliveries/updateOrder.gql"),
           variables: {
             id: orderId,
             status: orderStatus,
+            courierId: courierId
           },
           refetchQueries: [
             { query: require("@/graphql/deliveries/pendingOrders.gql") },
@@ -264,19 +369,6 @@ export default {
 
       let idx = this.orders.findIndex((order) => order.id === orderId);
       this.orders.splice(idx, 1);
-    },
-
-    /**Notification with vuesax */
-    makeNotification(titleN, textN, colorN, iconN, durationN, positionN) {
-      this.$vs.notification({
-        icon: iconN,
-        color: colorN,
-        position: positionN,
-        duration: durationN,
-        progress: "auto",
-        title: titleN,
-        text: textN,
-      });
     },
 
     queryOrders() {
@@ -292,8 +384,8 @@ export default {
         });
     },
 
-    queryCouriers() {
-      this.$apollo
+    async queryCouriers() {
+      await this.$apollo
         .query({
           query: require("@/graphql/deliveries/couriersEnterprise.gql"),
           variables: {
@@ -313,27 +405,14 @@ export default {
   },
 
   created() {
-    this.enterpriseId = this.$route.params.id;
-    this.enterpriseName = this.$route.params.name;
-    console.log("obtener id por url:", this.enterpriseId);
-  },
-
-  apollo: {
-    /*enterprise: {
-      query: require("@/graphql/deliveries/couriersEnterprise.gql"),
-      variables: {
-        id: this.enterpriseId
-      },
-      error(error) {
-        this.error = JSON.stringify(error.message);
-      },
-    },
-    allOrders: {
-      query: require("@/graphql/deliveries/pendingOrders.gql"),
-      error(error) {
-        this.error = JSON.stringify(error.message);
-      },
-    },*/
+    let entId = localStorage.getItem("entID");
+    if (entId === "") {
+      this.enterpriseId = this.$route.params.id;
+      this.enterpriseName = this.$route.params.name;
+    } else {
+      this.enterpriseId = localStorage.getItem("entID");
+      this.enterpriseName = localStorage.getItem("entName");
+    }
   },
 };
 </script>

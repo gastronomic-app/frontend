@@ -1,5 +1,5 @@
-mutation updateOrder($id: ID!, $status: String) {
-  updateOrder(input: { id: $id, status: $status}) {
+mutation updateOrder($id: ID!, $status: String!, $courierId: ID!) {
+  updateOrder(input: { id: $id, status: $status, courierId: $courierId}) {
     order {
       id
       status
