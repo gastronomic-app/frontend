@@ -11,13 +11,13 @@
       <h5 class="card-title orange font-weight-bold">
         {{ courierInfo.names }} {{ courierInfo.last }}
       </h5>
-      <p class="card-text">Email: {{ courierInfo.email }}</p>
-      <p class="card-text">Teléfono: {{ courierInfo.tel }}</p>
+      <p class="card-text"><b>Email: </b>{{ courierInfo.email }}</p>
+      <p class="card-text"><b> Teléfono: </b>{{ courierInfo.tel }}</p>
 
-      <p class="card-text">Ubicación: {{ courierInfo.location }}</p>
+      <p class="card-text"><b> Ubicación: </b>{{ courierInfo.location }}</p>
       <p class="card-text">
-        Estado:
-        <span style="color: var(--orange)" v-show="$refs.courierInfo.id">
+        <b>Estado: </b>
+        <span style="color: var(--orange)" v-show="courierInfo.isActive">
           {{ courierInfo.isAvailable }}
         </span>
         <span style="color: red" v-show="!courierInfo.isActive">
@@ -27,7 +27,6 @@
     </div>
     <div class="container">
       <select
-      :ref="courierInfo.id"
         class="btn btn-success"
         @change="fn(courierInfo.id, courierInfo.isActive)"
       >
