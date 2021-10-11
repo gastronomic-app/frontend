@@ -9,6 +9,7 @@
         created
         status
         historicalReview
+        image
       }
     }
   }

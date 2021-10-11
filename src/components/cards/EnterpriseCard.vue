@@ -1,9 +1,14 @@
 <template>
   <div class="card bg-cart color-black">
     <img
-      src="@/assets/enterprise.jpg"
-      class="card-img-top"
-      alt="logo establecimiento"
+      :src="
+      enterprise.image.substring(0, 5) === 'https'
+          ? enterprise.image
+          : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' + enterprise.image
+          "
+      class="card-img-top img-fluid img-responsive"
+      :alt="'Imagen de ' + enterprise.name"
+      style="width: 23rem; height: 18rem"
     />
     <div class="card-body container-md">
       <div>

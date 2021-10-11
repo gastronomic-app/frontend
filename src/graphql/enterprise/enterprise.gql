@@ -6,5 +6,6 @@ query enterprise($id: ID!) {
     status
     businessHours
     historicalReview
+    image
   }
 }

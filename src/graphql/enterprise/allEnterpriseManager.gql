@@ -10,6 +10,7 @@ query manager($id: ID!){
                 created
                 status
                 historicalReview
+                image
               }
             }
           }
