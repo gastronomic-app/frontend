@@ -1,9 +1,14 @@
 <template>
   <div class="card bg-cart color-black">
     <img
-      src="@/assets/enterprise.jpg"
-      class="card-img-top"
-      alt="logo establecimiento"
+      :src="
+      enterprise.image.substring(0, 5) === 'https'
+          ? enterprise.image
+          : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' + enterprise.image
+          "
+      class="card-img-top img-fluid img-responsive"
+      :alt="'Imagen de ' + enterprise.name"
+      style="width: 23rem; height: 18rem"
     />
     <div class="card-body container-md">
       <div>
@@ -29,6 +34,7 @@
       </p>
 
       <button
+        v-show="ok"
         v-on:click="btnComments(enterprise.id)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -37,6 +43,7 @@
       </button>
 
       <button
+        v-show="ok"
         v-on:click="makeOrder(enterprise)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -69,12 +76,15 @@ export default {
     enterprise: Object,
   },
   created() {
+    if(this.ok){
     let user = JSON.parse(localStorage.getItem("user"));
     if (user.type === "MANAGER") {
       this.ok=false;
     }else{
       this.ok=true;
     }
+    }
+
     this.$apollo
       .query({
         // Consulta
