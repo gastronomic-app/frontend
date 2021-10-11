@@ -1,5 +1,5 @@
-query all_reports($id:String,$sDate:DateTime,$fDate:DateTime){
-  
+query all_reports($id:ID,$sDate:DateTime,$fDate:DateTime){
+
   reports(enterprise: $id, startDate: $ sDate, finalDate:$fDate) {
     enterprise
     reportList{

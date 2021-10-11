@@ -214,31 +214,6 @@ export default {
     this.idEnterprise = this.$route.params.id;
   },
   methods: {
-    generatePDF() {
-      var description = this.reportEnterprise.enterprise;
-      description =
-        "Informe para el establecimineto: " +
-        description +
-        "\nEntre las fechas: " +
-        this.reportEnterprise.startDate +
-        " - " +
-        this.reportEnterprise.finalDate +
-        "\nRecaudo total: " +
-        this.total;
-      this.doc.setFontSize(15).text(description, 0.5, 1.0);
-      this.doc.setLineWidth(0.01).line(0.5, 1.6, 8.0, 1.6);
-      var dataTable = [];
-      this.reportEnterprise.reportList.forEach((element) => {
-        dataTable.push([element.reportDate, element.paymentValue]);
-      });
-
-      this.doc.autoTable({
-        head: [["Fecha del pedido", "Costo del pedido"]],
-        body: dataTable,
-        margin: { left: 0.5, top: 2 },
-      });
-      this.doc.save("a4.pdf");
-    },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
         title: title,
@@ -307,14 +282,37 @@ export default {
       this.consult(this.date1, this.date2);
       this.isHidden = false;
     },
+    generatePDF() {
+      var description = this.reportEnterprise.enterprise;
+      description =
+        "Informe para el establecimineto: " +
+        description +
+        "\nEntre las fechas: " +
+        new Date(this.reportEnterprise.startDate).toLocaleDateString("en-US") +
+        " - " +
+        new Date(this.reportEnterprise.finalDate).toLocaleDateString("en-US") +
+        "\nRecaudo total: " +
+        this.total;
+      this.doc.setFontSize(15).text(description, 0.5, 1.0);
+      this.doc.setLineWidth(0.01).line(0.5, 1.6, 8.0, 1.6);
+      var dataTable = [];
+      this.reportEnterprise.reportList.forEach((element) => {
+        dataTable.push([element.reportDate, element.paymentValue]);
+      });
+
+      this.doc.autoTable({
+        head: [["Fecha del pedido", "Costo del pedido"]],
+        body: dataTable,
+        margin: { left: 0.5, top: 2 },
+      });
+      this.doc.save("informe.pdf");
+    },
     consult(startDate, finalDate) {
-      var auxid = window.atob(this.idEnterprise);
-      var aux = auxid.split("EnterpriseNode:")[1]
       this.$apollo
         .query({
           query: require("@/graphql/enterprise/enterpriseReport.gql"),
           variables: {
-            id: aux,
+            id: this.idEnterprise,
             sDate: startDate,
             fDate: finalDate,
           },
@@ -348,6 +346,9 @@ export default {
 }
 #btnPdf {
   float: right;
+  background-color: var(--orange);
+  color: whitesmoke;
+  border: none;
 }
 #range {
   width: 100%;
@@ -364,5 +365,14 @@ p {
 }
 h5 {
   font-weight: bold;
+}
+.btn-primary {
+  background-color: var(--orange);
+  color: whitesmoke;
+  border: none;
+}
+.btn-secondary{
+background-color: var(--dark-x);
+  color: whitesmoke;
 }
 </style>
