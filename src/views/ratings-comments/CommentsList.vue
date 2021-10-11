@@ -2,6 +2,7 @@
   <div class="container-fluid">
     <Enterprise
       :name="enterpriseName"
+      :enterprise="enterpriseNode"
       :image="'@/assets/enterprise.jpg'"
       section="Valoraciones y Comentarios"
     >
@@ -133,6 +134,7 @@ export default {
       // de la consulta definida en la sección apollo
       reviews: [],
       enterpriseName: "",
+      enterpriseNode:Object,
       ok: localStorage.getItem("existUser"),
       id: "",
       // Variable que recibe el error de la consulta
@@ -187,6 +189,7 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
+          
           this.allReviewsMeth1();
         });
     },
@@ -196,7 +199,7 @@ export default {
         (review) => review.node.order.products.edges[0].node.enterprise.id === this.id
       );
       this.reviews.reverse();
-      this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
+      //this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
     },
 
     valnum(texto) {
@@ -269,6 +272,8 @@ export default {
   created() {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
+      this.enterpriseName=this.$route.params.nameenterprise;
+      this.enterpriseNode=this.$route.params.enterpriseNode;
       localStorage.idCaught = this.id;
       //this.prueba();
       this.queryReviews();

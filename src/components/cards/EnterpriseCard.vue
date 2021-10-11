@@ -34,8 +34,10 @@
       </p>
 
       <button
+
         v-show="user.type!='MANAGER'"
-        v-on:click="btnComments(enterprise.id)"
+        v-on:click="btnComments(enterprise.id,enterprise.name,enterprise)"
+
         type="button"
         class="btn btn-success btn-sm mr-4"
       >
@@ -43,8 +45,9 @@
       </button>
 
       <button
+
         v-show="user.type!='MANAGER'"
-        v-on:click="makeOrder(enterprise)"
+        v-on:click="makeOrder(enterprise,enterprise)"
         type="button"
         class="btn btn-success btn-sm mr-4"
       >
@@ -101,15 +104,15 @@ export default {
     this.mostrar();
   },
   methods: {
-    btnComments(id) {
+    btnComments(id,name,enterprise) {
       localStorage.idCaught = "";
       //console.log("redirigir");
       this.$router.push({
         name: "CommentsList",
-        params: { idCaught: id },
+        params: { idCaught: id ,nameenterprise:name,enterpriseNode:enterprise},
       });
     },
-    makeOrder(Enterprise) {
+    makeOrder(Enterprise,enterprise) {
       if(this.ok){
       if (Enterprise.id == localStorage.idEnterprise) {
         this.$store.dispatch(
@@ -119,7 +122,7 @@ export default {
         localStorage.car = this.$store.getters.getCount;
         this.$router.push({
           name: "ProductListOrder",
-          params: { id: Enterprise.id, name: Enterprise.name },
+          params: { id: Enterprise.id, name: Enterprise.name ,enterpriseNode:enterprise},
         });
       } else {
         this.$store.dispatch("setCountAction", this.$store.getters.getCount);
@@ -130,7 +133,7 @@ export default {
         localStorage.enterpriseName = "";
         this.$router.push({
           name: "ProductListOrder",
-          params: { id: Enterprise.id, name: Enterprise.name },
+          params: { id: Enterprise.id, name: Enterprise.name,enterpriseNode:enterprise },
         });
       }
       }else{

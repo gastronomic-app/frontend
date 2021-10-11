@@ -208,6 +208,7 @@ export default {
               localStorage.setItem("existUser", true);
               this.show_charging = false;
               if (this.user.type === 'CLIENT') {
+                this.$store.dispatch("setStorageCountAction", 0);
                  this.$router.push({ name: "catalogSearch" }).then(() => {
                   this.makeToast(
                   "success",

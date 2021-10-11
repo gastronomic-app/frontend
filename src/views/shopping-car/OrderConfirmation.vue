@@ -2,6 +2,7 @@
   <div class="container-fluid">
     <Enterprise
       :name="enterpriseName"
+      :enterprise="enterpriseNode"
       :image="'@/assets/enterprise.jpg'"
       section="Completa tu dirección de entrega"
     ></Enterprise>
@@ -108,7 +109,7 @@ export default {
       // de la consulta definida en la sección apollo
       allProducts: Object,
       // Variable que recibe el error de la consulta
-
+      enterpriseNode:Object,
       items: [{ recoveredProduct: Object, counter: null }],
       ok: localStorage.getItem("existUser"),
       enterpriseName: "",
@@ -330,6 +331,7 @@ export default {
   created() {
     this.items = this.$route.params.listado;
     this.enterpriseName = this.$route.params.enterpriseName;
+    this.enterpriseNode=this.$route.params.enterpriseNode;
   },
 };
 </script>

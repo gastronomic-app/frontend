@@ -2,6 +2,7 @@
   <div class="container-fluid">
     <Enterprise
       :name="enterpriseName"
+      :enterprise="enterpriseNode"
       :image="'@/assets/enterprise.jpg'"
       section="Realizar pedido"
     ></Enterprise>
@@ -175,7 +176,7 @@
           <div class="container text-center">
             <button
               class="btn btn_order btn-sm mt-3"
-              v-on:click="continueOrder()"
+              v-on:click="continueOrder(enterpriseNode)"
             >
               continuar
             </button>
@@ -346,7 +347,7 @@ export default {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
       allProducts: Object,
-
+      enterpriseNode:Object,
       items: [{ recoveredProduct: Object, counter: null }],
       total: 0,
       envio: 4000,
@@ -566,10 +567,10 @@ export default {
       this.$store.dispatch("setStorageCountAction", 0);
       localStorage.car = 0;
     },
-    continueOrder() {
+    continueOrder(enterprise) {
       this.$router.push({
         name: "OrderConfirmation",
-        params: { listado: this.items, enterpriseName: this.enterpriseName },
+        params: { listado: this.items, enterpriseName: this.enterpriseName,enterpriseNode:enterprise},
       });
     },
     deleteVariables() {
@@ -613,6 +614,7 @@ export default {
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;
     }
+    this.enterpriseNode=this.$route.params.enterpriseNode;
   },
 };
 </script>
