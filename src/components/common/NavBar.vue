@@ -32,11 +32,6 @@
                 >Busqueda geolocalización</a
               >
             </li>
-            <li class="nav-item mr-3" v-show="ok">
-              <a class="nav-link text-light font-weight-bold" href="#"
-                >Servicios</a
-              >
-            </li>
 
             <li v-if="role=='CLIENT'" id="counting" class="nav-item" v-show="ok">
               <keep-alive>
@@ -51,23 +46,24 @@
             </li>
 
             <li class="nav-item">
+
               <a
                 v-if="update()"
-                class="nav-link dropdown-toggle text-white font-orange"
+                class="nav-link text-white font-orange "
                 data-toggle="dropdown"
                 role="button"
                 aria-haspopup="false"
                 aria-expanded="false"
-                >Usuario</a
+                ><img class="img-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"/></a
               >
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" style="color: var(--light)">Usuario: {{names}}</a>
-                  <a class="dropdown-item" style="color: var(--light)">Rol: {{role}}</a>
-                  <a class="dropdown-item" style="color: var(--light)">Email: {{email}}</a>
+                  <a class="dropdown-item " style="color: var(--light)" >Usuario: {{names}}</a>
+                  <a class="dropdown-item " style="color: var(--light)" >Rol: {{role}}</a>
+                  <a class="dropdown-item " style="color: var(--light)" >Email: {{email}}</a>
                   <a class="dropdown-item" style="color: var(--light)" v-if="role=='MANAGER'" href="/enterprise-list">Administrar establecimiento</a>
-                  <a class="dropdown-item" style="color: var(--light)" v-if="role=='CLIENT'" href="/orders">Mis pedidos</a>
-                  <a class="dropdown-item" style="color: var(--light)"  @click="redirectEdit()">Editar usuario</a>
-                  <a class="dropdown-item" style="color: var(--light)" v-if="role=='CLIENT'" @click="removeClient()">Darme de baja</a>
+                  <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" href="/orders">Mis pedidos</a>
+                  <a class="dropdown-item btn" style="color: var(--light)" v-if="role!='MANAGER'" @click="redirectEdit()">Editar usuario</a>
+                  <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" @click="removeClient()">Darme de baja</a>
                   <a class="dropdown-item log-out">
                    <GoogleLogin
                     class="btn"
@@ -268,5 +264,11 @@ a:active {
 .log-out{
   display:flex;
   justify-content: center;
+}
+.img-avatar {
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 14.4px;
 }
 </style>

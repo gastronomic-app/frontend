@@ -71,7 +71,7 @@
           required=""
         ></b-form-input>
         <b-form-invalid-feedback :state="validateTelephone">
-          Telefono debe ser valido (10 o 6 digitos).
+          Telefono debe ser valido (10 o 7 digitos).
         </b-form-invalid-feedback>
         <div v-if="!google">
           <label for="exampleInputPassword"
@@ -181,7 +181,7 @@ export default {
       }
       const re =
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(String(this.email).toLowerCase());
+      return re.test(String(this.email.trim()).toLowerCase());
     },
     validateNames() {
       if (this.names == null) {
@@ -189,10 +189,10 @@ export default {
       }
       const re = /^[a-zA-Z]+$/;
       const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
-      if (re.test(this.names)) {
+      if (re.test(this.names.trim())) {
         return true;
       }
-      return reL.test(this.names);
+      return reL.test(this.names.trim());
     },
     validateLastNames() {
       if (this.lastNames == null) {
@@ -200,17 +200,17 @@ export default {
       }
       const re = /^[a-zA-Z]+$/;
       const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
-      if (re.test(this.lastNames)) {
+      if (re.test(this.lastNames.trim())) {
         return true;
       }
-      return reL.test(this.lastNames);
+      return reL.test(this.lastNames.trim());
     },
     validateTelephone() {
       if (this.telephone == null) {
         return null;
       }
       const re = /^\d{10}$/;
-      const reT = /^\d{6}$/;
+      const reT = /^\d{7}$/;
       if (reT.test(this.telephone)) {
         return true;
       }
@@ -250,12 +250,12 @@ export default {
       this.$apollo.mutate({
         mutation: require("@/graphql/client/createClient.gql"),
         variables: {
-          email: this.email,
+          email: this.email.trim(),
           password: this.password,
           is_alternative: this.is_alternative,
-          names: this.names,
+          names: this.names.trim(),
           telephone: this.telephone,
-          lastnames: this.lastNames,
+          lastnames: this.lastNames.trim(),
           location: this.location,
           type: this.type,
           enterpriseId: this.enterpriseId
