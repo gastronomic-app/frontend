@@ -37,8 +37,8 @@
             v-for="product in list_products_enterprise.filter(
               (element) =>
                 element.node.productType.includes(leaveType) &&
-                element.node.name.includes(searchString.toLowerCase())
-                && element.node.active == true
+                element.node.name.includes(searchString.toLowerCase()) &&
+                element.node.active == true
             )"
             :key="product.node.id"
           >
@@ -80,7 +80,6 @@
       <!--Carrito-->
 
       <div class="col-xl-5 col-xs-12" v-if="this.items.length > 1">
-
         <div class="card border-dark car-border car mb-2">
           <div class="row">
             <div class="col-sm mt-3" style="text-align: left; margin-left: 1em">
@@ -183,29 +182,31 @@
           </div>
           <br />
         </div>
-<h3>Recomendaciones</h3>
-        <ol id="lista-recomendaciones" class="list-group list-group-numbered">
-          <li
-            v-for="recommendation in this.recommendation_list"
-            class="
-              list-group-item
-              d-flex
-              justify-content-between
-              align-items-start
-            "
-            :key="recommendation.node.id"
-          >
-            <div class="ms-2 me-auto">
-              <div class="fw-bold">{{ recommendation.node.name }}</div>
-              Ingredientes: {{ recommendation.node.ingredients }}
-            </div>
-            <span
-              class="badge bg-outline-primary rounded-pill orange-background"
-              >$ {{ recommendation.node.price }}</span
+        <h3>Recomendaciones</h3>
+        <div>
+          <ol id="lista-recomendaciones" class="list-group list-group-numbered">
+            <li
+              v-for="recommendation in this.recommendation_list"
+              class="
+                list-group-item
+                d-flex
+                justify-content-between
+                align-items-start
+              "
+              :key="recommendation.node.id"
             >
-          </li>
-        </ol>
-
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{ recommendation.node.name }}</div>
+                Ingredientes: {{ recommendation.node.ingredients }}
+              </div>
+              <span
+                class="badge bg-outline-primary rounded-pill orange-background"
+                >$ {{ recommendation.node.price }}</span
+              >
+            </li>
+          </ol>
+        </div>
+        <br />
       </div>
     </div>
 
@@ -271,12 +272,15 @@
             </button>
           </div>
           <div class="modal-body">
-            <img class="d-block w-100"  :src="
+            <img
+              class="d-block w-100"
+              :src="
                 productView.imageUrl.substring(0, 5) === 'https'
                   ? productView.imageUrl
                   : 'https://res.cloudinary.com/dcbzwrn30/image/upload/v1/' +
                     productView.imageUrl
-              " />
+              "
+            />
             <div class="row">
               <div class="table-responsive">
                 <table class="table table-borderless">
@@ -352,7 +356,7 @@ export default {
       enterpriseName: "",
       prods: [],
       paginate: ["products"],
-      recomendation_list: [],
+      recommendation_list: [],
       // Variable que recibe el error de la consulta
       error: null,
 

@@ -15,7 +15,6 @@
         <b style="color: #f2ae30">{{ product.name | capitalize }}</b>
       </h6>
       <span class="card-text">Precio: ${{ product.price | capitalize }}</span>
-
     </div>
   </div>
 </template>
@@ -47,8 +46,8 @@ img {
   height: 100%;
   width: 100%;
 }
-.name{
-  height: 5rem;
+.name {
+  height: 4rem;
 }
 @media only screen and (max-width: 768px) {
   .img {
@@ -61,11 +60,14 @@ img {
     height: 250px;
     object-fit: cover;
   }
+  .name {
+    height: 0.8rem;
+  }
 }
 @media only screen and (min-width: 1200px) {
   img {
-    height: 250px;
-    width: 186px;
+    height: 200px;
+    width: 185px;
     object-fit: cover;
   }
 }

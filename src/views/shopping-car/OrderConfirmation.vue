@@ -22,7 +22,7 @@
             </select>
           </div>
         </div>
-        <br>
+        <br />
         <template>
           <template v-if="selected === 'Añadir dirección'">
             {{ resetLocation() }}
@@ -123,7 +123,7 @@ export default {
       orderId: "",
       total: 0,
       envio: 4000,
-     // msjError: "",
+      // msjError: "",
       error: null,
     };
   },
@@ -224,21 +224,21 @@ export default {
       if (this.selected === "") {
         //this.msjError = "Seleccione un tipo de dirección";
         this.makeToast(
-              "danger",
-              "Error",
-              "Seleccione un tipo de dirección",
-              3000
-            );
+          "danger",
+          "Error",
+          "Seleccione un tipo de dirección",
+          3000
+        );
         return false;
       }
       if (this.location.length == 0) {
         //this.msjError = "Ingrese una direccion o seleccione en el mapa";
         this.makeToast(
-              "danger",
-              "Error",
-              "Ingrese una dirección o seleccione una en el mapa",
-              3000
-            );
+          "danger",
+          "Error",
+          "Ingrese una dirección o seleccione una en el mapa",
+          3000
+        );
         return false;
       }
       return true;
@@ -255,7 +255,10 @@ export default {
       });
     },
     confirmOrder() {
-      this.$store.dispatch("setStorageCountAction", parseInt(localStorage.getItem("car")));
+      this.$store.dispatch(
+        "setStorageCountAction",
+        parseInt(localStorage.getItem("car"))
+      );
 
       if (this.validate()) {
         this.$store.dispatch("setStorageCountAction", 0);
