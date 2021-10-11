@@ -34,6 +34,7 @@
       </p>
 
       <button
+        v-show="ok"
         v-on:click="btnComments(enterprise.id)"
         type="button"
         class="btn btn-success btn-sm mr-4"
@@ -42,6 +43,7 @@
       </button>
 
       <button
+        v-show="ok"
         v-on:click="makeOrder(enterprise)"
         type="button"
         class="btn btn-success btn-sm mr-4"
