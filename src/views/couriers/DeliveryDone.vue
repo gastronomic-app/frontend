@@ -103,6 +103,7 @@ export default {
         typeof JSON.parse(localStorage.getItem("user")) === "object"
           ? JSON.parse(localStorage.getItem("user"))
           : null;
+          
       if (user !== null) {
         if (user.type === "COURIER") {
           this.courier = user;
@@ -191,8 +192,10 @@ export default {
       return user;
     },
     deliver() {
-      this.updateStatusOrder(this.delivery);
+      this.updateStatusOrder("entregado");
       this.updateStatusCourier(true);
+    
+      this.updatePayment(this.delivery.orderID, "efectivo", this.delivery.cost.toString())
 
       this.delivered = true;
       setTimeout(() => {
@@ -229,6 +232,20 @@ export default {
         variables: {
           id: this.delivery.orderID,
           status: status,
+        },
+        refetchQueries: [
+          { query: require("@/graphql/couriers/couriersDeliveries.gql") },
+        ],
+      });
+    },
+    updatePayment(orderID, paymenttype,paymentvalue){
+
+      this.$apollo.mutate({
+        mutation: require("@/graphql/payments/createPayment.gql"),
+        variables: {
+          orderId:orderID,
+          paymentType: paymenttype,
+          paymentValue:paymentvalue
         },
         refetchQueries: [
           { query: require("@/graphql/couriers/couriersDeliveries.gql") },
