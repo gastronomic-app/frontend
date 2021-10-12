@@ -1,5 +1,5 @@
 <template>
-  <div class="container jumbotron container-image" style="margin-top: 1em">
+  <div class="container-image" style="margin-top: 1em">
     <div v-if="!isReadyQuery">
       <div v-if="exitsDelivery === false">
         <h3>
@@ -13,12 +13,12 @@
     </div>
 
     <div v-else v-show="exitsDelivery">
-      <h3><b>Entrega pendiente</b></h3>
+      <h3 style="color: var(--orange)"><b>Entrega pendiente</b></h3>
       <div class="card-body">
         <h4>Resumen de pedido <br /></h4>
         <div>
           <table class="table table-bordered">
-            <thead>
+            <thead class="thead">
               <tr>
                 <th>Productos</th>
                 <th>Cantidad</th>
@@ -34,36 +34,31 @@
             </tbody>
           </table>
         </div>
+        <h5><b> Establecimiento: </b>{{ delivery.enterprise }}</h5>
         <h5>
-          <b>
-          Establecimiento: </b>{{ delivery.enterprise }}
+          <b> Destinatario:</b>
+
+          {{ delivery.orderUser.name }} {{ delivery.orderUser.lastname }}
         </h5>
+        <h5><b> Ubicación:</b> {{ delivery.orderUser.location }}</h5>
+        <h5><b> Contacto:</b> {{ delivery.orderUser.telephone }}</h5>
+        <h5><b> Método de pago: </b>{{ delivery.payType }}</h5>
         <h5>
-           <b>
-          Destinatario:</b>
-         
-            {{ delivery.orderUser.name }} {{ delivery.orderUser.lastname }}
-          
-        </h5>
-        <h5>
-          <b>
-          Ubicación:</b>  {{ delivery.orderUser.location }}
+          <b> Costo Total: ${{ delivery.cost }}</b>
         </h5>
         <h5>
           <b>
-          Método de pago: </b>{{ delivery.payType }}
-        </h5>
-        <h5> <b>
-          Costo Total: ${{ delivery.cost }}</b>
-        </h5>
-        <h5>
-          <b>
-          Estado: <span style="color:var(--orange)">{{ delivery.status }}</span></b>
+            Estado:
+            <span style="color: var(--orange)">Despachada</span></b
+          >
         </h5>
       </div>
       <div class="container-button">
-        <button type="button" class="btn btn-black" @click="deliver">
+        <button type="button" class="btn btn-color" @click="deliver">
           Entregar
+        </button>
+        <button type="button" class="btn btn-black" @click="toRefuse">
+          Rechazar
         </button>
       </div>
       <br />
@@ -104,9 +99,17 @@ export default {
   },
   methods: {
     getCurrentUser() {
-      let user = JSON.parse(localStorage.getItem("user"));
-      if (user.type === "COURIER") {
-        this.courier = user;
+      let user =
+        typeof JSON.parse(localStorage.getItem("user")) === "object"
+          ? JSON.parse(localStorage.getItem("user"))
+          : null;
+      if (user !== null) {
+        if (user.type === "COURIER") {
+          this.courier = user;
+        } else {
+          this.$destroy();
+          this.$router.push({ path: "/" });
+        }
       } else {
         this.$destroy();
         this.$router.push({ path: "/" });
@@ -131,48 +134,37 @@ export default {
         });
     },
     async tansformQuery(data) {
-      let delivery = data.filter((user) => {
-        if (user.node.courier !== null) {
-          if (user.node.courier.email === this.courier.email) {
-            return true;
-          }
-        }
-      });
-
-      if (delivery.lenght>0) {
-        if (delivery[0].node.status == "DESPACHADO") {
-          let newDelivery = {
-            orderID: delivery[0].node.id,
-            deliveryTime: delivery[0].node.estimatedTime,
-            products: [],
-            enterprise: "",
-            payType: "Efectivo",
-            cost: 0,
-            status: delivery[0].node.status,
-            selected: false,
-            orderUser: {},
-            courierStatus: false,
-          };
-          await this.getOrderUser(delivery[0].node.client.email).then(
-            (value) => {
-              newDelivery.orderUser = value;
-              for (let product of delivery[0].node.details.edges) {
-                newDelivery.products.push({
-                  name: product.node.product.name,
-                  quantity: product.node.quantity,
-                  cost: product.node.product.price,
-                });
-                newDelivery.cost +=
-                  parseInt(product.node.product.price) *
-                  parseInt(product.node.quantity);
-                newDelivery.enterprise = product.node.product.enterprise.name;
-              }
-              this.delivery = newDelivery;
-            }
-          );
+      let delivery = data.filter((order) => {
+        if (order.node.courier.email === this.courier.email) {
           return true;
         }
-        return false;
+      }, this.courier);
+      if (delivery.length > 0) {
+        let newDelivery = {
+          orderID: delivery[0].node.id,
+          deliveryTime: delivery[0].node.estimatedTime,
+          products: [],
+          enterprise: "",
+          payType: "Efectivo",
+          cost: 0,
+          orderUser: {},
+        };
+        await this.getOrderUser(delivery[0].node.client.email).then((value) => {
+          newDelivery.orderUser = value;
+          for (let product of delivery[0].node.details.edges) {
+            newDelivery.products.push({
+              name: product.node.product.name,
+              quantity: product.node.quantity,
+              cost: product.node.product.price,
+            });
+            newDelivery.cost +=
+              parseInt(product.node.product.price) *
+              parseInt(product.node.quantity);
+            newDelivery.enterprise = product.node.product.enterprise.name;
+          }
+          this.delivery = newDelivery;
+        });
+        return true;
       } else {
         return false;
       }
@@ -208,38 +200,40 @@ export default {
         this.exitsDelivery = false;
       }, 2000);
     },
+    toRefuse() {
+      this.updateStatusOrder("nuevo");
+      this.updateStatusCourier(true);
+
+      this.delivered = true;
+      setTimeout(() => {
+        this.makeToast("success", "", "Orden rechazada", 5000);
+        this.exitsDelivery = false;
+      }, 2000);
+    },
+
     /*Actualizar el estado del mensajero*/
     updateStatusCourier(status) {
-      this.courier.courierStatus = status;
-      this.$apollo
-        .mutate({
-          mutation: require("@/graphql/deliveries/updateCourier.gql"),
-          variables: {
-            id: this.courier.id,
-            isAvailable: status,
-          },
-        })
-        .then((response) => {
-          console.log("actualización de courier:", response.data);
-        });
+      this.$apollo.mutate({
+        mutation: require("@/graphql/deliveries/updateCourier.gql"),
+        variables: {
+          id: this.courier.id,
+          isAvailable: status,
+        },
+      });
     },
 
     /*Actualizar el estado de la orden*/
-    updateStatusOrder() {
-      this.$apollo
-        .mutate({
-          mutation: require("@/graphql/deliveries/updateOrderByID.gql"),
-          variables: {
-            id: this.delivery.orderID,
-            status: "entregado",
-          },
-          refetchQueries: [
-            { query: require("@/graphql/couriers/couriersDeliveries.gql") },
-          ],
-        })
-        .then((response) => {
-          console.log("actualización de order:", response.data);
-        });
+    updateStatusOrder(status) {
+      this.$apollo.mutate({
+        mutation: require("@/graphql/deliveries/updateOrderByID.gql"),
+        variables: {
+          id: this.delivery.orderID,
+          status: status,
+        },
+        refetchQueries: [
+          { query: require("@/graphql/couriers/couriersDeliveries.gql") },
+        ],
+      });
     },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
@@ -256,28 +250,40 @@ export default {
 <style scope>
 .container-image {
   background: linear-gradient(
-      rgba(255, 255, 255, 0.88),
-      rgba(255, 255, 255, 0.88)
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.9)
     ),
     url("https://delivery-food-frontend.herokuapp.com/img/logo.d205f58e.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
-  border-style: solid;
-  width: 60vw;
+  padding: 2.5em;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1em;
+  border-radius: 1em;
+  box-shadow: 0 -3em 5em 2em rgba(231, 231, 231, 0.93);
+}
+.table {
+  text-align: center;
+}
+.thead {
+  background-color: var(--dark);
+  color:var(--light)
 }
 .container-button {
   display: flex;
   justify-content: flex-end;
   margin-right: 2em;
+  gap: 3em;
 }
 .btn-black {
-  background-color: var(--orange);
-  color: var(--black);
+  background-color: var(--dark);
+  color: var(--light);
 }
 .btn-black:hover {
-  background-color: var(--orange-x);
-  color: var(--black);
+  background-color: var(--dark-xx);
+  color: var(--light);
 }
 .color-text-tar {
   color: var(--black);
