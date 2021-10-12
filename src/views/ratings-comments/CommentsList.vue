@@ -3,7 +3,6 @@
     <Enterprise
       :name="enterpriseName"
       :enterprise="enterpriseNode"
-      :image="'@/assets/enterprise.jpg'"
       section="Valoraciones y Comentarios"
     >
     </Enterprise>
@@ -134,7 +133,7 @@ export default {
       // de la consulta definida en la sección apollo
       reviews: [],
       enterpriseName: "",
-      enterpriseNode:Object,
+      enterpriseNode: Object,
       ok: localStorage.getItem("existUser"),
       id: "",
       // Variable que recibe el error de la consulta
@@ -155,15 +154,18 @@ export default {
   },
   methods: {
     link() {
-      if(this.ok){
-      localStorage.idComment = "";
-      //localStorage.enterpriseN = "";
-      this.$router.push({
-        name: "AddRating",
-        params: { enterpriseId: this.id },
-      });
-      }else{
-           this.$router.push({name:"login"});
+      if (this.ok) {
+        localStorage.idComment = "";
+        //localStorage.enterpriseN = "";
+        this.$router.push({
+          name: "AddRating",
+          params: {
+            enterpriseId: this.id,
+            enterpriseNode: this.enterpriseNode,
+          },
+        });
+      } else {
+        this.$router.push({ name: "login" });
       }
     },
     async queryReviews() {
@@ -189,14 +191,15 @@ export default {
         })
         .then((response) => {
           this.enterprise = response.data.enterprise;
-          
+
           this.allReviewsMeth1();
         });
     },
 
     filterQuery(response) {
       this.reviews = response.filter(
-        (review) => review.node.order.products.edges[0].node.enterprise.id === this.id
+        (review) =>
+          review.node.order.products.edges[0].node.enterprise.id === this.id
       );
       this.reviews.reverse();
       //this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
@@ -269,11 +272,11 @@ export default {
     },
   },
   apollo: {},
-  created() {
+  async created() {
     if (localStorage.getItem("idCaught") == "") {
       this.id = this.$route.params.idCaught;
-      this.enterpriseName=this.$route.params.nameenterprise;
-      this.enterpriseNode=this.$route.params.enterpriseNode;
+      this.enterpriseName = this.$route.params.nameenterprise;
+
       localStorage.idCaught = this.id;
       //this.prueba();
       this.queryReviews();
@@ -281,6 +284,26 @@ export default {
       this.id = localStorage.getItem("idCaught");
       //this.prueba();
       this.queryReviews();
+    }
+    if (this.$route.params.enterpriseNode == undefined) {
+      await this.$apollo
+        .query({
+          // Consulta
+          query: require("@/graphql/enterprise/allEnterprises.gql"),
+        })
+        .then((response) => {
+          this.Enterprises = response.data.allEnterprises.edges;
+          //this.pages = response.data.allEnterprises.edges.length;
+        });
+
+      this.Enterprises.forEach((element) => {
+        if (element.node.name == localStorage.getItem("enterpriseName")) {
+          this.enterpriseNode = element.node;
+          this.enterpriseName = element.node.name;
+        }
+      });
+    } else {
+      this.enterpriseNode = this.$route.params.enterpriseNode;
     }
   },
   mounted() {},

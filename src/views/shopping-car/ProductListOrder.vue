@@ -3,7 +3,6 @@
     <Enterprise
       :name="enterpriseName"
       :enterprise="enterpriseNode"
-      :image="'@/assets/enterprise.jpg'"
       section="Realizar pedido"
     ></Enterprise>
 
@@ -159,7 +158,7 @@
           <div class="row ml-1">
             <div class="col">
               <p style="text-align: left; margin-left: 2%">
-                Envio <br />Sub-Total <br />
+                Envio Minimo <br />Sub-Total <br />
                 <span style="font-weight: bold">Total</span>
               </p>
             </div>
@@ -350,7 +349,7 @@ export default {
       enterpriseNode:Object,
       items: [{ recoveredProduct: Object, counter: null }],
       total: 0,
-      envio: 4000,
+      envio: 3000,
       estimatedTime: 0,
       counting: 0,
       idRecovered: "",
@@ -603,7 +602,7 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     if (
       localStorage.getItem("idEnterprise") == "" &&
       localStorage.getItem("enterpriseName") == ""
@@ -613,8 +612,28 @@ export default {
       //Guardar en localStorage datos recuperados.
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;
+      
     }
-    this.enterpriseNode=this.$route.params.enterpriseNode;
+    if(this.$route.params.enterpriseNode==undefined){
+    await this.$apollo
+                .query({
+                  // Consulta
+                  query: require("@/graphql/enterprise/allEnterprises.gql"),
+                })
+                .then((response) => {
+                  this.Enterprises = response.data.allEnterprises.edges;
+                  //this.pages = response.data.allEnterprises.edges.length;
+                });
+
+              this.Enterprises.forEach(element => {
+                if(element.node.name==localStorage.getItem("enterpriseName")){
+                  this.enterpriseNode=element.node;
+                }
+              });
+    }else{
+      this.enterpriseNode=this.$route.params.enterpriseNode;
+    }
+
   },
 };
 </script>

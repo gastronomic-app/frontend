@@ -123,7 +123,7 @@ export default {
       productId: "",
       orderId: "",
       total: 0,
-      envio: 4000,
+      envio: 3000,
       // msjError: "",
       error: null,
     };
@@ -309,7 +309,7 @@ export default {
             this.makeToast(
               "success",
               "Éxito",
-              "¡Su pedido fue enviado exitosamente!",
+              "¡Su pedido fue tomado exitosamente!",
               3000
             );
           });
@@ -328,10 +328,28 @@ export default {
   saveItems() {
     localStorage.setItem("items", JSON.stringify(this.items));
   },
-  created() {
+  async created() {
     this.items = this.$route.params.listado;
     this.enterpriseName = this.$route.params.enterpriseName;
-    this.enterpriseNode=this.$route.params.enterpriseNode;
+    if(this.$route.params.enterpriseNode==undefined){
+    await this.$apollo
+                .query({
+                  // Consulta
+                  query: require("@/graphql/enterprise/allEnterprises.gql"),
+                })
+                .then((response) => {
+                  this.Enterprises = response.data.allEnterprises.edges;
+                  //this.pages = response.data.allEnterprises.edges.length;
+                });
+
+              this.Enterprises.forEach(element => {
+                if(element.node.name==localStorage.getItem("enterpriseName")){
+                  this.enterpriseNode=element.node;
+                }
+              });
+    }else{
+      this.enterpriseNode=this.$route.params.enterpriseNode;
+    }
   },
 };
 </script>

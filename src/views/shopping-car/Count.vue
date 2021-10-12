@@ -17,6 +17,8 @@ export default {
     return {
       ok: "",
       total: 0,
+      Enterprises: [],
+      enterpriseNode: Object,
     };
   },
 
@@ -36,7 +38,7 @@ export default {
     prueba() {
       return this.$store.getters.getCount >= 0;
     },
-    order() {
+    async order() {
       var current_url = window.location.href;
       var page = current_url.split("/");
 
@@ -54,11 +56,28 @@ export default {
               localStorage.getItem("enterpriseName") &&
               this.$store.getters.getCount > 0
             ) {
+              await this.$apollo
+                .query({
+                  // Consulta
+                  query: require("@/graphql/enterprise/allEnterprises.gql"),
+                })
+                .then((response) => {
+                  this.Enterprises = response.data.allEnterprises.edges;
+                  //this.pages = response.data.allEnterprises.edges.length;
+                });
+
+              this.Enterprises.forEach(element => {
+                if(element.node.name==localStorage.getItem("enterpriseName")){
+                  this.enterpriseNode=element.node;
+                }
+              });
               this.$router.push({
                 name: "ProductListOrder",
                 params: {
                   id: localStorage.getItem("idEnterprise"),
                   name: localStorage.getItem("enterpriseName"),
+                  enterpriseNode: this.enterpriseNode
+                  //Debe ir el objeto de enterprise
                 },
               });
             } else {
