@@ -1,11 +1,11 @@
 mutation createPayment(
-  $deliveryId: ID!
+  $orderId: ID!
   $paymentValue: String!
   $paymentType: String!
 ) {
   createPayment(
     input: {
-      deliveryId: $deliveryId
+      orderId: $orderId
       paymentValue: $paymentValue
       paymentType: $paymentType
     }
