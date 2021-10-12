@@ -444,8 +444,7 @@ export default {
      * Redirige a la vista de editar empresa
      * pasando el id de la empresa por parametro en la url
      */
-    redirectProductEdit(idProduct) {
-      console.log("enviar id por url", idProduct);
+    redirectProductEdit(idProduct) {      
 
       this.$router.push({
         name: "ProductEdit",
@@ -455,8 +454,7 @@ export default {
     /**
      * Elimina una empresa y actualiza el cache con refetchQueries
      */
-    async changeState(idProduct) {
-      console.log("enviar id por url", idProduct);
+    async changeState(idProduct) {      
       await this.$apollo.mutate({
         // Establece la consulta a realizar
         mutation: require("@/graphql/product/changeState.gql"),
@@ -495,16 +493,14 @@ export default {
         });
       });
       this.productView.imageUrl = producto.images.edges[0].node.url;
-      this.fillRecommendations(idProduct);
-      console.log("Viendo producto ", producto.name);
+      this.fillRecommendations(idProduct);      
     },
     fillRecommendations(Item) {
       let producto = this.allProducts.edges.filter(
         (element) => element.node.id == Item
       )[0].node;
 
-      this.recommendation_list = [];
-      console.log(producto);
+      this.recommendation_list = [];      
       producto.accompaniments.edges.forEach((product) => {
         if (product.node.active) {
           this.recommendation_list.push(product);
