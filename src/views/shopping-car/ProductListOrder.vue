@@ -176,7 +176,7 @@
           </div>
           <br />
         </div>
-        <h4>Recomendacion Acompañamientos</h4>
+        <h4>Acompañamientos recomendados</h4>
         <div>
           <ol id="lista-recomendaciones" class="list-group list-group-numbered">
             <li

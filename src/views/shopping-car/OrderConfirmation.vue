@@ -279,7 +279,7 @@ export default {
             mutation: require("@/graphql/order/createOrder.gql"),
             // Define las variables
             variables: {
-              estimatedTime: this.estimatedTime,
+              estimatedTime: 0,
               location: this.location,
               clientId: this.clientId,
             },
