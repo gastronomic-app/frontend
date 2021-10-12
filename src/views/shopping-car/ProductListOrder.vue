@@ -92,16 +92,7 @@
               >
                 <span>
                   <i
-                    class="
-                      icon
-                      ion-md-trash
-                      lead
-                      align-middle
-                      pr-1
-                      pl-1
-                      alignment
-                      btn_order1
-                    "
+                    class="icon ion-md-trash lead align-middle pr-1 pl-1 alignment btn_order1"
                   ></i>
                 </span>
               </label>
@@ -181,20 +172,14 @@
           <ol id="lista-recomendaciones" class="list-group list-group-numbered">
             <li
               v-for="recommendation in this.recommendation_list"
-              class="
-                list-group-item
-                d-flex
-                justify-content-between
-                align-items-start
-              "
+              class="list-group-item d-flex justify-content-between align-items-start"
               :key="recommendation.node.id"
             >
               <div class="ms-2 me-auto">
                 <div class="fw-bold">{{ recommendation.node.name }}</div>
                 Ingredientes: {{ recommendation.node.ingredients }}
               </div>
-              <span
-                class="badge bg-outline-primary rounded-pill orange-background"
+              <span class="badge bg-outline-primary rounded-pill orange-background"
                 >$ {{ recommendation.node.price }}</span
               >
             </li>
@@ -221,12 +206,7 @@
             <h5 class="modal-title" id="deleteConfirmationModalLabel">
               Eliminar carrito
             </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -256,12 +236,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">{{ productView.name | capitalize }}</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -436,9 +411,7 @@ export default {
       var list_products_enterprise = [];
 
       for (const key in this.allProducts.edges) {
-        if (
-          this.allProducts.edges[key].node.enterprise.id == this.idRecovered
-        ) {
+        if (this.allProducts.edges[key].node.enterprise.id == this.idRecovered) {
           list_products_enterprise.push(this.allProducts.edges[key]);
         }
       }
@@ -498,7 +471,8 @@ export default {
       } else {
         /*this.$router.push({
           name: "Login",
-        });*/ window.location = "/login";
+        });*/ window.location =
+          "/login";
       }
     },
 
@@ -601,6 +575,14 @@ export default {
   },
 
   async created() {
+    if (localStorage.getItem("car")) {
+      this.$store.dispatch(
+        "setStorageCountAction",
+        parseInt(localStorage.getItem("car"))
+      );
+    } else {
+      this.$store.dispatch("setStorageCountAction", 0);
+    }
     if (
       localStorage.getItem("idEnterprise") == "" &&
       localStorage.getItem("enterpriseName") == ""
@@ -725,4 +707,3 @@ export default {
   margin-left: 81%;
 }
 </style>
-

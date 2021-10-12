@@ -3,7 +3,7 @@
     <a class="nav-link text-light font-weight-bold" v-on:click="order">
       <b-icon icon="cart4" class="icon-cart"></b-icon>
       <h6 id="counting" class="count" v-if="$store.getters.getCount != 0">
-        {{ $store.getters.getCount }}
+        {{ showNumber() }}
       </h6>
     </a>
   </div>
@@ -38,6 +38,14 @@ export default {
     prueba() {
       return this.$store.getters.getCount >= 0;
     },
+    showNumber() {
+      if (isNaN(this.$store.getters.getCount)) {
+        this.$store.dispatch("setStorageCountAction", 0);
+        return this.$store.getters.getCount;
+      } else {
+        return this.$store.getters.getCount;
+      }
+    },
     async order() {
       var current_url = window.location.href;
       var page = current_url.split("/");
@@ -66,9 +74,9 @@ export default {
                   //this.pages = response.data.allEnterprises.edges.length;
                 });
 
-              this.Enterprises.forEach(element => {
-                if(element.node.name==localStorage.getItem("enterpriseName")){
-                  this.enterpriseNode=element.node;
+              this.Enterprises.forEach((element) => {
+                if (element.node.name == localStorage.getItem("enterpriseName")) {
+                  this.enterpriseNode = element.node;
                 }
               });
               this.$router.push({
@@ -76,7 +84,7 @@ export default {
                 params: {
                   id: localStorage.getItem("idEnterprise"),
                   name: localStorage.getItem("enterpriseName"),
-                  enterpriseNode: this.enterpriseNode
+                  enterpriseNode: this.enterpriseNode,
                   //Debe ir el objeto de enterprise
                 },
               });
@@ -96,8 +104,15 @@ export default {
     },
   },
   created() {
+    if (localStorage.getItem("car")) {
+      this.$store.dispatch(
+        "setStorageCountAction",
+        parseInt(localStorage.getItem("car"))
+      );
+    } else {
+      this.$store.dispatch("setStorageCountAction", 0);
+    }
     this.ok = localStorage.getItem("existUser");
-    this.$store.dispatch("setStorageCountAction", 0);
   },
 };
 </script>
