@@ -605,7 +605,7 @@ async mounted() {
       const idxDot = fileName.lastIndexOf(".") + 1;
       const extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
       if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
-        this.form.images = event.target.files;
+        this.form.images = Array.from(event.target.files);
         this.images_urls = [];        
         this.form.images.forEach((file) => {
           const fileImage = file;
