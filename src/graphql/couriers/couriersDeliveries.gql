@@ -1,12 +1,19 @@
-
 {
-  allOrders {
-    edges {
-      node {
+ allOrders(status: "despachado") {
+   edges {
+     node {
+       id
+      estimatedTime
+      location
+      date
+      courier {
         id
-        estimatedTime
-        status
-            details {
+        email
+      }
+      client {
+        email
+      }
+     details {
           edges {
             node {
               quantity
@@ -21,17 +28,17 @@
             }
           }
         }
-        client {
-          id
-          email
+      products{
+      edges {
+        node {
+          price
+          
         }
-        courier {
-          id
-          email
-        }
-    
-        
       }
-    }
-  }
+      }
+      
+     }
+   }
+ }
 }
+
