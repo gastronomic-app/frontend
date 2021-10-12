@@ -443,7 +443,6 @@ export default {
       )[0].node;
 
       this.recommendation_list = [];
-      console.log(producto);
       producto.accompaniments.edges.forEach((product) =>
         this.recommendation_list.push(product)
       );
@@ -469,10 +468,7 @@ export default {
         this.$store.dispatch("incrementCountAction");
         localStorage.car = this.$store.getters.getCount;
       } else {
-        /*this.$router.push({
-          name: "Login",
-        });*/ window.location =
-          "/login";
+        window.location = "/login";
       }
     },
 
@@ -621,15 +617,10 @@ export default {
   font-weight: bold;
 }
 .btn_order {
-  /*background-color: var(--dark-xx);
-  color: var(--orange);
-  background-color: #E85D0C;
-  color: var(--dark);*/
   background-color: var(--orange-x);
   color: var(--dark);
 }
 .btn_order:hover {
-  /*background: var(--grey-hover);*/
   background: var(--orange-x-hover);
   color: var(--dark);
 }
@@ -638,7 +629,6 @@ export default {
 }
 .contentProduct {
   background-color: var(--dark-x);
-  /*background-color: #0d0d0d;*/
   padding-bottom: 0%;
   border-radius: 5px;
 }

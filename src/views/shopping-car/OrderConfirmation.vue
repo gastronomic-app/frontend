@@ -3,7 +3,6 @@
     <Enterprise
       :name="enterpriseName"
       :enterprise="enterpriseNode"
-      :image="'@/assets/enterprise.jpg'"
       section="Completa tu dirección de entrega"
     ></Enterprise>
 
@@ -115,7 +114,7 @@ export default {
       enterpriseName: "",
       emailUser: "",
       nameClient: "",
-      estimatedTime: 0,
+      //estimatedTime: "",
       selected: "",
       location: "",
       clientId: "",
@@ -147,9 +146,6 @@ export default {
     getLocation(value) {
       this.location = value;
     },
-    /*cleanError() {
-      this.msjError = "";
-    },*/
     update() {
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
@@ -211,22 +207,13 @@ export default {
       }
       this.saveItems();
     },
-    calculateEstimatedTime() {
-      var sumatoria = 0;
-      for (var index = 1; index < this.items.length; index++) {
-        sumatoria = sumatoria + this.items[index].recoveredProduct.estimatedTime;
-      }
-      this.estimatedTime = sumatoria;
-    },
+
     validate() {
-      //this.msjError = "error";
       if (this.selected === "") {
-        //this.msjError = "Seleccione un tipo de dirección";
         this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
         return false;
       }
       if (this.location.length == 0) {
-        //this.msjError = "Ingrese una direccion o seleccione en el mapa";
         this.makeToast(
           "danger",
           "Error",
@@ -256,14 +243,12 @@ export default {
 
       if (this.validate()) {
         this.$store.dispatch("setStorageCountAction", 0);
-        this.calculateEstimatedTime();
         this.ok = localStorage.getItem("existUser");
         if (this.ok) {
           let user = JSON.parse(localStorage.getItem("user"));
           this.clientId = user.id;
           this.nameClient = user.names;
           this.emailUser = user.email;
-          //this.location = user.location;
         }
 
         this.$apollo
@@ -272,7 +257,7 @@ export default {
             mutation: require("@/graphql/order/createOrder.gql"),
             // Define las variables
             variables: {
-              estimatedTime: 0,
+              estimatedTime: "0",
               location: this.location,
               clientId: this.clientId,
             },
@@ -332,7 +317,6 @@ export default {
         })
         .then((response) => {
           this.Enterprises = response.data.allEnterprises.edges;
-          //this.pages = response.data.allEnterprises.edges.length;
         });
 
       this.Enterprises.forEach((element) => {
@@ -356,7 +340,6 @@ export default {
   color: var(--dark);
 }
 .btn_order:hover {
-  /*background: var(--grey-hover);*/
   background: var(--orange-x-hover);
   color: var(--dark);
 }

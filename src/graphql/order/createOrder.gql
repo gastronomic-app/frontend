@@ -1,5 +1,5 @@
 mutation createPedido(
-  $estimatedTime: Int!
+  $estimatedTime: String!
   $location: String!
   $clientId: ID!
 ) {

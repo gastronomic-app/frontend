@@ -156,7 +156,6 @@ export default {
     link() {
       if (this.ok) {
         localStorage.idComment = "";
-        //localStorage.enterpriseN = "";
         this.$router.push({
           name: "AddRating",
           params: {
@@ -202,7 +201,6 @@ export default {
           review.node.order.products.edges[0].node.enterprise.id === this.id
       );
       this.reviews.reverse();
-      //this.enterpriseName = this.reviews[0].node.order.products.edges[0].node.enterprise.name;
     },
 
     valnum(texto) {

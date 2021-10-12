@@ -387,13 +387,13 @@ export default {
 .btn_ordercancelar {
   background-color: var(--orange-x);
   color: var(--dark);
+  border: none;
 }
 
 .btn_orderguardar:focus {
   box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 .btn_ordercancelar:hover {
-  /*background: var(--grey-hover);*/
   background: var(--orange-x-hover);
   color: var(--dark);
 }
