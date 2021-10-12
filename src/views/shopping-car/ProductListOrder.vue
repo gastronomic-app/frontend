@@ -38,14 +38,12 @@
               (element) =>
                 element.node.productType.includes(leaveType) &&
                 element.node.name.includes(searchString.toLowerCase()) &&
-                element.node.active == true
+                element.node.active == true &&
+                element.node.images.edges[0] !== undefined
             )"
             :key="product.node.id"
           >
-            <div
-              class="contentProduct"
-              v-if="product.node.images.edges[0] !== undefined"
-            >
+            <div class="contentProduct">
               <template>
                 <ProductCard :product="product.node" />
 
@@ -154,21 +152,17 @@
           </div>
           <!--costos-->
           <br />
-          <!-- <TotalOrder :total="this.total" :envio="this.envio"></TotalOrder> -->
           <div class="row ml-1">
             <div class="col">
               <p style="text-align: left; margin-left: 2%">
-                Envio Minimo <br />Sub-Total <br />
                 <span style="font-weight: bold">Total</span>
               </p>
             </div>
             <div class="col">
               <p>
-                $ {{ new Intl.NumberFormat().format(envio) }} <br />
-                $ {{ new Intl.NumberFormat().format(total) }} <br />
                 <span style="font-weight: bold"
-                  >$ {{ new Intl.NumberFormat().format(total + envio) }}</span
-                >
+                  >$ {{ new Intl.NumberFormat().format(total) }}
+                </span>
               </p>
             </div>
           </div>
@@ -182,7 +176,7 @@
           </div>
           <br />
         </div>
-        <h3>Recomendaciones</h3>
+        <h4>Recomendacion Acompañamientos</h4>
         <div>
           <ol id="lista-recomendaciones" class="list-group list-group-numbered">
             <li
@@ -346,7 +340,7 @@ export default {
       // Variable que recibe los resultados
       // de la consulta definida en la sección apollo
       allProducts: Object,
-      enterpriseNode:Object,
+      enterpriseNode: Object,
       items: [{ recoveredProduct: Object, counter: null }],
       total: 0,
       envio: 3000,
@@ -569,7 +563,11 @@ export default {
     continueOrder(enterprise) {
       this.$router.push({
         name: "OrderConfirmation",
-        params: { listado: this.items, enterpriseName: this.enterpriseName,enterpriseNode:enterprise},
+        params: {
+          listado: this.items,
+          enterpriseName: this.enterpriseName,
+          enterpriseNode: enterprise,
+        },
       });
     },
     deleteVariables() {
@@ -612,28 +610,26 @@ export default {
       //Guardar en localStorage datos recuperados.
       localStorage.idEnterprise = this.idRecovered;
       localStorage.enterpriseName = this.enterpriseName;
-      
     }
-    if(this.$route.params.enterpriseNode==undefined){
-    await this.$apollo
-                .query({
-                  // Consulta
-                  query: require("@/graphql/enterprise/allEnterprises.gql"),
-                })
-                .then((response) => {
-                  this.Enterprises = response.data.allEnterprises.edges;
-                  //this.pages = response.data.allEnterprises.edges.length;
-                });
+    if (this.$route.params.enterpriseNode == undefined) {
+      await this.$apollo
+        .query({
+          // Consulta
+          query: require("@/graphql/enterprise/allEnterprises.gql"),
+        })
+        .then((response) => {
+          this.Enterprises = response.data.allEnterprises.edges;
+          //this.pages = response.data.allEnterprises.edges.length;
+        });
 
-              this.Enterprises.forEach(element => {
-                if(element.node.name==localStorage.getItem("enterpriseName")){
-                  this.enterpriseNode=element.node;
-                }
-              });
-    }else{
-      this.enterpriseNode=this.$route.params.enterpriseNode;
+      this.Enterprises.forEach((element) => {
+        if (element.node.name == localStorage.getItem("enterpriseName")) {
+          this.enterpriseNode = element.node;
+        }
+      });
+    } else {
+      this.enterpriseNode = this.$route.params.enterpriseNode;
     }
-
   },
 };
 </script>

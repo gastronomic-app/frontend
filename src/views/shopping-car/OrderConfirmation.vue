@@ -85,7 +85,7 @@
           </div>
           <!--costos-->
           <hr style="background-color: var(--orange)" />
-          <TotalOrder :total="this.total" :envio="this.envio"></TotalOrder>
+          <TotalOrder :total="this.total" ></TotalOrder>
         </div>
       </div>
     </div>
