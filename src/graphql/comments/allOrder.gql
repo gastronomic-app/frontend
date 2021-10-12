@@ -1,20 +1,20 @@
 query enterprise($id: ID!) {
-enterprise(id: $id)  {
+  enterprise(id: $id) {
     name
-      products{
-        edges{
-          node{
-            orders{
-              edges{
-                node{
+    products {
+      edges {
+        node {
+          orders {
+            edges {
+              node {
+                id
+                status
+                client {
                   id
-                  client{
-                    id
-                    email                 
-                  }
-                  review{
-                    id
-                  }                  
+                  email
+                }
+                review {
+                  id
                 }
               }
             }
@@ -22,6 +22,5 @@ enterprise(id: $id)  {
         }
       }
     }
-    }
-
-
+  }
+}
