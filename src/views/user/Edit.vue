@@ -232,8 +232,8 @@ export default {
       if (this.name == null) {
         return null;
       } else {
-        const re = /^[a-zA-Z]+$/;
-        const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+        const re = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
+      const reL = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+ [a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
         if (re.test(this.name.trim()) || reL.test(this.name.trim())) {
           return true;
         }
@@ -244,8 +244,8 @@ export default {
       if (this.lastname == null) {
         return null;
       }
-      const re = /^[a-zA-Z]+$/;
-      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      const re = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
+      const reL = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+ [a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
       if (re.test(this.lastname.trim()) || reL.test(this.lastname.trim())) {
         return true;
       }
