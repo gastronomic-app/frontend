@@ -1,6 +1,9 @@
 <template>
   <div class="dropdown">
     <a class="dropdown" data-toggle="dropdown">
+        <!--<svg class="" height="10" width="10">
+          <circle cx="5" cy="5" r="3" fill="white" />
+        </svg>-->
       <img class="n-bell" src="@/assets/n-bell.png" />
     </a>
     <ul class="dropdown-menu dropdown-menu-right">
@@ -22,7 +25,8 @@
           <div class="notification-title">
             <b>{{ notification.node.title }}</b>
           </div>
-          <p class="message">{{ notification.node.message }}</p>
+          <div class="message">{{ notification.node.message }}</div>
+          <!--<div class="date">{{ notification.node.created}} </div>-->
         </li>
         <div class="dropdown-divider"></div>
       </div>
@@ -44,12 +48,12 @@ export default {
     if (userData) {
       userData = JSON.parse(userData);
       this.getNotifications(userData);
-      setInterval(
+      /*setInterval(
         function () {
           this.getNotifications(userData);
         }.bind(this),
         500
-      );
+      );*/
     }
   },
   methods: {
@@ -60,6 +64,7 @@ export default {
           variables: {
             id: userData.id,
           },
+          fetchPolicy: "no-cache",
         })
         .then((response) => {
           this.notifications = response.data.user.notifications.edges;
@@ -74,20 +79,13 @@ export default {
 
 <style scoped>
 .dropdown-menu {
-  padding: 3em auto;
-  margin-top: 2.2em;
-  width: 23vw;
-  max-width: 25vw;
+  /*padding: 3em auto;*/
+  margin-top: 2.1em;
+  width: 28vw;
+  max-width: 28vw;
   height: auto;
   /*width: 20em;*/
   background: var(--dark-x) !important;
-
-  /*box-sizing: padding-box;
-  text-align: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  width: 23vw;
-  height: 3em;*/
 }
 
 .dropdown:hover {
@@ -124,5 +122,15 @@ export default {
 
 .dropdown-item {
   white-space: normal;
+}
+
+.circle {
+  position: absolute;
+  left: 20px;
+}
+
+.date{
+  color: var(--white);
+  font-size: 0.6em;
 }
 </style>
