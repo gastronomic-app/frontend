@@ -85,7 +85,7 @@
           </div>
           <!--costos-->
           <hr style="background-color: var(--orange)" />
-          <TotalOrder :total="this.total" :envio="this.envio"></TotalOrder>
+          <TotalOrder :total="this.total" ></TotalOrder>
         </div>
       </div>
     </div>
@@ -279,7 +279,7 @@ export default {
             mutation: require("@/graphql/order/createOrder.gql"),
             // Define las variables
             variables: {
-              estimatedTime: this.estimatedTime,
+              estimatedTime: 0,
               location: this.location,
               clientId: this.clientId,
             },
