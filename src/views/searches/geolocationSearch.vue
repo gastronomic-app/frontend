@@ -21,7 +21,7 @@
 
         <br />
       </div>
-      <div v-if="enterprise != null" class="col-sm-4">
+      <div v-if="enterprise != null" class="col-sm-">
         <template>
           <EnterpriseCard :enterprise="enterprise" :key="enterprise.id" />
         </template>
@@ -164,6 +164,7 @@ export default {
       };
 
       window.enterprise = enterprise;
+      enterprise.name = enterprise.name.replace("'", "´");
       const contentString =
         `<center><font size='+2' color='#FF5733'>` +
         enterprise.name.toUpperCase() +

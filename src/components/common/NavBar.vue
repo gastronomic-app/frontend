@@ -62,7 +62,7 @@
                   <a class="dropdown-item " style="color: var(--light)" >Usuario: {{names}}</a>
                   <a class="dropdown-item " style="color: var(--light)" >Rol: {{role}}</a>
                   <a class="dropdown-item " style="color: var(--light)" >Email: {{email}}</a>
-                  <a class="dropdown-item" style="color: var(--light)" v-if="role=='MANAGER'" href="/enterprise-list">Administrar establecimiento</a>
+                  <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='MANAGER'" href="/enterprise-list">Administrar establecimiento</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role!='MANAGER'" @click="redirectEdit()">Editar usuario</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" @click="removeClient()">Darme de baja</a>
@@ -170,12 +170,12 @@ export default {
     },
     onSuccess() {
       this.ok = false;
-      localStorage.clear();
-      this.$router.push({ name: "catalogSearch" });
       this.$store.dispatch("setStorageCountAction", 0);
       localStorage.removeItem("idEnterprise");
       localStorage.getItem("enterpriseName");
-      window.location.reload();
+      localStorage.removeItem("user");
+      localStorage.removeItem("existUser");
+      this.$router.push({ name: "login" });
     },
     removeClient() {
       if (confirm("¿Seguro que desea darse de baja?", false)) {

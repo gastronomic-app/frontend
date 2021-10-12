@@ -187,8 +187,8 @@ export default {
       if (this.names == null) {
         return null;
       }
-      const re = /^[a-zA-Z]+$/;
-      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      const re = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
+      const reL = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+ [a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
       if (re.test(this.names.trim())) {
         return true;
       }
@@ -198,8 +198,8 @@ export default {
       if (this.lastNames == null) {
         return null;
       }
-      const re = /^[a-zA-Z]+$/;
-      const reL = /^[a-zA-Z]+ [a-zA-Z]+$/;
+      const re = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
+      const reL = /^[a-z ñ Ñ A-Z\u00C0-\u024F\u1E00-\u1EFF]+ [a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+$/;
       if (re.test(this.lastNames.trim())) {
         return true;
       }
@@ -258,7 +258,8 @@ export default {
           lastnames: this.lastNames.trim(),
           location: this.location,
           type: this.type,
-          enterpriseId: this.enterpriseId
+          enterpriseId: this.enterpriseId,
+          city: "Popayán"
         },
       });
       if (this.type === 'COURIER') {

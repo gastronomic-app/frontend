@@ -27,7 +27,7 @@
         <ConnectionErrorGraphql />
       </div>
       <!--PAGINACIÓN-->
-      <paginate ref="paginator" name="Enterprises" :list="Enterprises" :per="3">
+      <paginate ref="paginator" name="Enterprises" :list="Enterprises" :per="6">
         <div class="row">
           <div
             class="col-xl-4 col-md-6 col-sm-12"
@@ -85,7 +85,7 @@ export default {
       allProducts: Object,
       currentPage: 1,
       page: 1,
-      perpage: 3,
+      perpage: 6,
       Enterprises: [],
       Products: [],
       paginate: ["Enterprises","Products"],
@@ -153,6 +153,7 @@ export default {
               3000
             );
           }
+          this.$refs.paginator.currentPage = 0;
           this.searchString = "";
         });
     },
