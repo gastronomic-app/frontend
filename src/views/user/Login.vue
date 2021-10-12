@@ -192,6 +192,8 @@ export default {
         // El método query devuelve una promesa
         // que puede usarse para agregar más logica
         .then((response) => {
+             this.$store.dispatch("setStorageCountAction", 0);
+
              if (response.data.allUsers.edges[0].node.isActive) {
               this.user.id = response.data.allUsers.edges[0].node.id;
               this.user.email = response.data.allUsers.edges[0].node.email;
@@ -208,7 +210,6 @@ export default {
               localStorage.setItem("existUser", true);
               this.show_charging = false;
               if (this.user.type === 'CLIENT') {
-                this.$store.dispatch("setStorageCountAction", 0);
                  this.$router.push({ name: "catalogSearch" }).then(() => {
                   this.makeToast(
                   "success",
