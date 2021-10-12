@@ -103,7 +103,7 @@ export default {
         typeof JSON.parse(localStorage.getItem("user")) === "object"
           ? JSON.parse(localStorage.getItem("user"))
           : null;
-          
+
       if (user !== null) {
         if (user.type === "COURIER") {
           this.courier = user;
@@ -180,6 +180,8 @@ export default {
           },
         })
         .then((response) => {
+          user.id =
+            response.data.allUsers.edges[0].node.id;
           user.lastname =
             response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
           user.name =
@@ -194,14 +196,20 @@ export default {
     deliver() {
       this.updateStatusOrder("entregado");
       this.updateStatusCourier(true);
-    
-      this.updatePayment(this.delivery.orderID, "efectivo", this.delivery.cost.toString())
+
+      this.updatePayment(
+        this.delivery.orderID,
+        "efectivo",
+        this.delivery.cost.toString()
+      );
 
       this.delivered = true;
       setTimeout(() => {
         this.makeToast("success", "", "Pedido entregado.", 5000);
         this.exitsDelivery = false;
       }, 2000);
+
+      this.makeNotificationClient();
     },
     toRefuse() {
       this.updateStatusOrder("nuevo");
@@ -238,14 +246,13 @@ export default {
         ],
       });
     },
-    updatePayment(orderID, paymenttype,paymentvalue){
-
+    updatePayment(orderID, paymenttype, paymentvalue) {
       this.$apollo.mutate({
         mutation: require("@/graphql/payments/createPayment.gql"),
         variables: {
-          orderId:orderID,
+          orderId: orderID,
           paymentType: paymenttype,
-          paymentValue:paymentvalue
+          paymentValue: paymentvalue,
         },
         refetchQueries: [
           { query: require("@/graphql/couriers/couriersDeliveries.gql") },
@@ -260,10 +267,43 @@ export default {
         solid: true,
       });
     },
+
+    /**METHODS NEEDED FOR NOTIFICATION */
+
+    makeNotificationClient() {
+
+      console.log(this.delivery);
+      let notification = {
+          userId: this.delivery.orderUser.id,
+          title: "¡Tu pedido fue entregado!",
+          message: `El pedido que realizaste a ${this.delivery.enterprise} fue entregado.`,
+        };
+      this.createNotification(notification);
+    },
+
+    createNotification(notification) {
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/notifications/createNotification.gql"),
+          variables: {
+            title: notification.title,
+            message: notification.message,
+            userId: notification.userId,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "creada notificación para: ",
+            notification.userId,
+            " ",
+            response
+          );
+        });
+    },
   },
 };
 </script>
-//General Component styles 
+//General Component styles
 <style scope>
 .container-image {
   background: linear-gradient(
@@ -286,7 +326,7 @@ export default {
 }
 .thead {
   background-color: var(--dark);
-  color:var(--light)
+  color: var(--light);
 }
 .container-button {
   display: flex;

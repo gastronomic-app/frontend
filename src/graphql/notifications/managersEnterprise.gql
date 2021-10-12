@@ -3,6 +3,7 @@ query enterprises ($id: ID!){
     managers{
       edges{
         node{
+          type
           email
         }
       }
