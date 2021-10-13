@@ -6,12 +6,12 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     count: 0,
-    deliveryTimesLocal:{
-      lastActiveTime:{},
+    deliveryTimesLocal: {
+      lastActiveTime: {},
       deliveryTimes: [],
 
     }
-   
+
   },
   mutations: {
     decrementCount(state) {
@@ -45,7 +45,7 @@ export default new Vuex.Store({
 
     //Add all delivery times to localstorage
     setDeliveryTimes(state) {
-      state.deliveryTimesLocal.lastActiveTime=new Date();
+      state.deliveryTimesLocal.lastActiveTime = new Date();
       localStorage.setItem("deliveryTimes", JSON.stringify(state.deliveryTimesLocal))
     }
   },
@@ -75,7 +75,12 @@ export default new Vuex.Store({
 
   getters: {
     getCount(state) {
-      return state.count;
+      if (isNaN(state.count)) {
+        state.count = 0;
+        return state.count;
+      } else {
+        return state.count;
+      }
     },
   },
   modules: {},

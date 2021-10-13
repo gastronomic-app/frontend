@@ -3,7 +3,6 @@
     <Enterprise
       :name="enterpriseName"
       :enterprise="enterpriseNode"
-      
       section="Comentarios y calificaciones"
     ></Enterprise>
     <div class="row">
@@ -12,13 +11,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Calidad del servicio</h6>
-              <b-form-input
-                id="range-1"
-                v-model="quality"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-1" v-model="quality" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -76,13 +69,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Precio</h6>
-              <b-form-input
-                id="range-3"
-                v-model="price"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-3" v-model="price" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -92,13 +79,7 @@
           <b-row class="mb-3">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Textura</h6>
-              <b-form-input
-                id="range-6"
-                v-model="texture"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-6" v-model="texture" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -108,13 +89,7 @@
           <b-row class="mb-2">
             <b-col sm="10">
               <h6 for="range-2" class="mb-0">Punto de cocción</h6>
-              <b-form-input
-                id="range-7"
-                v-model="cooking"
-                type="range"
-                min="0"
-                max="50"
-              >
+              <b-form-input id="range-7" v-model="cooking" type="range" min="0" max="50">
               </b-form-input>
             </b-col>
             <b-col sm="2" class="mt-4">
@@ -144,9 +119,9 @@
           </div>
         </b-row>
         <br />
-        
-          <div class="contenedor_botones">
-            <div class="botonuno">
+
+        <div class="contenedor_botones">
+          <div class="botonuno">
             <b-button
               class="btn btn-success btn_orderguardar"
               size="sm"
@@ -154,17 +129,13 @@
             >
               Guardar
             </b-button>
-            </div>
-            <div class="botondos">
-            <b-button
-              class="btn btn_ordercancelar mr-3"
-              v-on:click="back()"
-              size="sm"
+          </div>
+          <div class="botondos">
+            <b-button class="btn btn_ordercancelar mr-3" v-on:click="back()" size="sm"
               >Cancelar</b-button
             >
-            </div>
           </div>
-        
+        </div>
       </div>
     </div>
     <br />
@@ -184,7 +155,7 @@ export default {
       // de la consulta definida en la sección apollo
       allReviews: Object,
       enterprise: Object,
-      enterpriseNode:Object,
+      enterpriseNode: Object,
       enterpriseName: "",
       ok: localStorage.getItem("existUser"),
       // Variable que recibe el error de la consulta
@@ -305,68 +276,70 @@ export default {
     save() {
       let bnd_comment = 0;
       let bnd_review = 0;
+      let bnd_received = 0;
       //if (this.enterprise.products.edges.length == 0) {
       //console.log("Empresa no tiene productos");
       //}else{
-      for (
-        var product = 0;
-        product < this.enterprise.products.edges.length;
-        product++
-      ) {
-        if (
-          this.enterprise.products.edges[product].node.orders.edges.length !== 0
-        ) {
+      for (var product = 0; product < this.enterprise.products.edges.length; product++) {
+        if (this.enterprise.products.edges[product].node.orders.edges.length !== 0) {
           for (
             var order = 0;
-            order <
-            this.enterprise.products.edges[product].node.orders.edges.length;
+            order < this.enterprise.products.edges[product].node.orders.edges.length;
             order++
           ) {
             if (
-              this.enterprise.products.edges[product].node.orders.edges[order]
-                .node !== null
+              this.enterprise.products.edges[product].node.orders.edges[order].node !==
+              null
             ) {
               this.update();
               //Condición para validar que el usuario registrado tenga ordenes
               if (
                 this.emailUser ==
-                this.enterprise.products.edges[product].node.orders.edges[order]
-                  .node.client.email
+                this.enterprise.products.edges[product].node.orders.edges[order].node
+                  .client.email
               ) {
                 //Guardo id de la orden
-                this.idOrder =
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.id;
+                this.idOrder = this.enterprise.products.edges[product].node.orders.edges[
+                  order
+                ].node.id;
                 //Mostramos review
                 if (
-                  this.enterprise.products.edges[product].node.orders.edges[
-                    order
-                  ].node.review != null
+                  this.enterprise.products.edges[product].node.orders.edges[order].node
+                    .review != null
                 ) {
                   bnd_review++;
                 }
                 //Aumentamos Bandera de que tiene orden
                 bnd_comment++;
-              } else {
-                console.log("No entró");
+                if (
+                  this.enterprise.products.edges[product].node.orders.edges[order].node
+                    .status == "ENTREGADO"
+                ) {
+                  bnd_received++;
+                }
               }
             }
           }
         }
       }
 
-      if (bnd_review == 0 && bnd_comment != 0) {
+      /*if (bnd_review == 0 && bnd_comment != 0) {
         this.sendData();
         this.link("Su valoración fue registrada", "success");
+      }*/
+      if (bnd_comment == 0) {
+        this.link("Usted no ha efectuado una orden", "danger");
       }
 
       if (bnd_review != 0) {
         this.link("Usted ya ha efectuado una valoración", "danger");
       }
 
-      if (bnd_comment == 0) {
-        this.link("Usted no ha efectuado una orden", "danger");
+      if (bnd_review == 0 && bnd_received != 0) {
+        this.sendData();
+        this.link("Su valoración fue registrada", "success");
+      } else {
+        this.link("Solo puedes valorar cuando tu pedido se te haya entregado.", "danger");
       }
     },
   },
@@ -375,7 +348,7 @@ export default {
       return this.comment.length > 2 ? true : false;
     },
   },
-   async created() {
+  async created() {
     if (
       localStorage.getItem("idComment") == ""
       //&&
@@ -411,29 +384,27 @@ export default {
 };
 </script>
 <style scoped>
-
 .btn_ordercancelar {
   background-color: var(--orange-x);
   color: var(--dark);
-  
+  border: none;
 }
 
 .btn_orderguardar:focus {
   box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 .btn_ordercancelar:hover {
-  /*background: var(--grey-hover);*/
   background: var(--orange-x-hover);
   color: var(--dark);
 }
 .btn_ordercancelar:focus {
   box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
-.contenedor_botones{
+.contenedor_botones {
   display: flex;
   width: 75%;
 }
-.botonuno{
+.botonuno {
   width: 100%;
 }
 </style>

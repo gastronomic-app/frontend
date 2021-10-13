@@ -2,10 +2,10 @@
   <div>
     {{ getNickName() }}
     <div class="row ml-3">
-      <h6 class="font-weight-bold">{{ user }}</h6>
+      <h6 class="font-weight-bold">{{ user | capitalize }}</h6>
     </div>
     <div class="row ml-4 mb-2 font-weight-light text-justify">
-      {{ comment }}
+      {{ comment | capitalize }}
     </div>
     <hr />
   </div>
