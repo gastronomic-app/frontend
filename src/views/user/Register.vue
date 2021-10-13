@@ -1,5 +1,5 @@
 <template>
-  <div class="card-body container align-self-center">
+  <div class=" jumbotron card-body container align-self-center">
     <h1>Regístrate</h1>
     <div v-if="!google">
       <GoogleLogin
@@ -413,9 +413,19 @@ export default {
 </script>
 
 <style scoped>
+.jumbotron{
+  margin: 2em 0;
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
+  padding: 3em 7em ;
+}
 
 .buttonText:hover {
   cursor: pointer;
+   width: calc(100% + .2em);
+   height: calc(100% + .2em);
+   background-color: rgba(245, 245, 245, 0.849);
 }
 .buttonText {
   display: inline-block;
@@ -424,16 +434,24 @@ export default {
   padding-right: 15px;
   font-size: 22px;
   font-weight: lighter;
-  /* Use the Roboto font that is loaded in the <head> */
-  font-family: "Roboto", sans-serif;
-
+  transform: width 1s;
+  transform: height 1s;
   background: url("https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg")
     transparent 5px 50% no-repeat;
   color: #444;
-  width: 250;
-  border-radius: 5px;
-  border: thin solid #888;
-  box-shadow: 1px 1px 1px grey;
+  width: 16em;
+  max-width: 17em;
+  border-radius: .7em;
+  border-style: none;
+  box-shadow: 1px 1px 5px grey;
   white-space: nowrap;
 }
+.btn-block{
+  background-color:var(--orange);
+  
+}
+.btn-color:hover{
+background-color: var(--orange-x);
+}
+
 </style>
