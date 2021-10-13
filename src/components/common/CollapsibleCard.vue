@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="card">
+  <section>
+    <div class="card"  style="right:1.3em">
       <div
       class="card-header"
         :id="'heading' + id"
@@ -42,7 +42,7 @@
         <slot></slot>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 
@@ -62,6 +62,13 @@ export default {
 :root {
   --hover-selected: rgba(0, 0, 0, 0.9);
   --terce-color: orangered;
+}
+.card{
+  border-radius: 1em;
+  margin: 0;
+}
+.card-header{
+  border-radius: 1em;
 }
 /* Customize the label (the container) */
 .container-checkbox {
@@ -153,5 +160,7 @@ export default {
 }
 .card-color {
   background-color: var(--dark);
+  border-top-right-radius: 1em;
+  border-top-left-radius: 1em;
 }
 </style>
