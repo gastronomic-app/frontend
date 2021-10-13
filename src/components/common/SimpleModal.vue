@@ -2,8 +2,8 @@
   <section>
     <div
       class="modal fade"
-      :id="'simpleModal' + modalRef"
-      tabindex="-1"
+      :id="modalRef"
+      tabindex="-6"
       role="dialog"
       aria-labelledby="ModalLabel"
       aria-hidden="true"
@@ -11,7 +11,7 @@
       <div class="modal-dialog" :class="isCentered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title color-title">{{ title }}</h5>
+            <h5 class="modal-title color-title" id="ModalLabel">{{ title }}</h5>
             <button
               type="button"
               class="close"

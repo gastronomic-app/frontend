@@ -1,0 +1,11 @@
+mutation updateEstimateTime($id: ID!, $estimatedTime: String!){
+  updateOrder(
+      input:{
+          estimatedTime: $estimatedTime, id:$id}){
+    order {
+      id
+      estimatedTime
+      status
+    }
+  }
+}

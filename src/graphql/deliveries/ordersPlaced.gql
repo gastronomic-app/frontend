@@ -10,6 +10,7 @@
         date,
         estimatedTime,
         location,
+        status
         details{
           edges{
             node{
@@ -18,6 +19,8 @@
                 id,
                 name,
                 price,
+                preparation
+                estimatedTime
                 enterprise{
                   name,
                   location
@@ -31,3 +34,7 @@
     }
   }
 }
+
+
+
+
