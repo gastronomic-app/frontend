@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class= "jumbotron">
     <!-- Header -->
     <div class="header-container">
       <h2 class="title">
@@ -22,7 +22,7 @@
         />
       </div>
       <button
-        class="new-courier btn btn-success"
+        class="new-courier btn btn-black"
         @click="addCourier"
         type="button"
       >
@@ -157,7 +157,6 @@ export default {
     },
     /*Actualizar el estado del mensajero*/
     updateStatusCourier(courier, status) {
-      this.courier.courierStatus = status;
       this.$apollo.mutate({
         mutation: require("@/graphql/deliveries/updateCourier.gql"),
         variables: {
@@ -185,20 +184,32 @@ export default {
         params: { enterpriseId: this.enterpriseId },
       });
     },
-    changeStatus(courier, state) {
+    changeStatus(courierId, state) {
       this.$apollo.mutate({
         mutation: require("@/graphql/client/deactivateClient.gql"),
         variables: {
-          id: courier,
+          id: courierId,
           is_active: !state,
         },
       });
-      this.updateStatusCourier(courier, state);
+      this.updateStatusCourier(courierId, state);
+      let idx= this.courierList.findIndex((courier)=>{
+        if(courier.id===courierId){
+          return true
+        }
+      })
+     this.courierList[idx].isActive=!state;
     },
   },
 };
 </script>
 <style scoped>
+.jumbotron{
+  margin: 2em 0;
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
+}
 .header-container {
   margin: 2em auto;
   display: grid;
@@ -212,5 +223,15 @@ export default {
   justify-content: space-between;
   gap: 2em;
   flex-wrap: wrap;
+}
+.btn-black{
+  transform: width 1s;
+  transform: height 1s;
+}
+.btn-black:hover{
+  background-color: var(--dark-xx);
+  color:white;
+  width: calc(100% + .2em);
+  height: calc(100% + .2em);
 }
 </style>
