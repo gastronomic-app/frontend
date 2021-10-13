@@ -132,6 +132,7 @@ export default {
       counter: 0,
       varShedule: "",
       calculo: 0,
+      recovered: "",
     };
   },
 
