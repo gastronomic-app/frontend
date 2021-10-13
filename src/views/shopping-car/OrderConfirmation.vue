@@ -3,7 +3,6 @@
     <Enterprise
       :name="enterpriseName"
       :enterprise="enterpriseNode"
-      :image="'@/assets/enterprise.jpg'"
       section="Completa tu dirección de entrega"
     ></Enterprise>
 
@@ -85,7 +84,7 @@
           </div>
           <!--costos-->
           <hr style="background-color: var(--orange)" />
-          <TotalOrder :total="this.total" ></TotalOrder>
+          <TotalOrder :total="this.total"></TotalOrder>
         </div>
       </div>
     </div>
@@ -109,13 +108,13 @@ export default {
       // de la consulta definida en la sección apollo
       allProducts: Object,
       // Variable que recibe el error de la consulta
-      enterpriseNode:Object,
+      enterpriseNode: Object,
       items: [{ recoveredProduct: Object, counter: null }],
       ok: localStorage.getItem("existUser"),
       enterpriseName: "",
       emailUser: "",
       nameClient: "",
-      estimatedTime: 0,
+      //estimatedTime: "",
       selected: "",
       location: "",
       clientId: "",
@@ -132,7 +131,6 @@ export default {
     if (localStorage.getItem("idEnterprise")) {
       this.idRecovered = localStorage.idEnterprise;
     }
-
     if (localStorage.getItem("enterpriseName")) {
       this.enterpriseName = localStorage.enterpriseName;
     }
@@ -148,9 +146,6 @@ export default {
     getLocation(value) {
       this.location = value;
     },
-    /*cleanError() {
-      this.msjError = "";
-    },*/
     update() {
       this.ok = localStorage.getItem("existUser");
       if (this.ok) {
@@ -212,28 +207,13 @@ export default {
       }
       this.saveItems();
     },
-    calculateEstimatedTime() {
-      var sumatoria = 0;
-      for (var index = 1; index < this.items.length; index++) {
-        sumatoria =
-          sumatoria + this.items[index].recoveredProduct.estimatedTime;
-      }
-      this.estimatedTime = sumatoria;
-    },
+
     validate() {
-      //this.msjError = "error";
       if (this.selected === "") {
-        //this.msjError = "Seleccione un tipo de dirección";
-        this.makeToast(
-          "danger",
-          "Error",
-          "Seleccione un tipo de dirección",
-          3000
-        );
+        this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
         return false;
       }
       if (this.location.length == 0) {
-        //this.msjError = "Ingrese una direccion o seleccione en el mapa";
         this.makeToast(
           "danger",
           "Error",
@@ -263,14 +243,12 @@ export default {
 
       if (this.validate()) {
         this.$store.dispatch("setStorageCountAction", 0);
-        this.calculateEstimatedTime();
         this.ok = localStorage.getItem("existUser");
         if (this.ok) {
           let user = JSON.parse(localStorage.getItem("user"));
           this.clientId = user.id;
           this.nameClient = user.names;
           this.emailUser = user.email;
-          //this.location = user.location;
         }
 
         this.$apollo
@@ -279,7 +257,7 @@ export default {
             mutation: require("@/graphql/order/createOrder.gql"),
             // Define las variables
             variables: {
-              estimatedTime: 0,
+              estimatedTime: "0",
               location: this.location,
               clientId: this.clientId,
             },
@@ -310,7 +288,7 @@ export default {
               "success",
               "Éxito",
               "¡Su pedido fue tomado exitosamente!",
-              3000
+              3500
             );
           });
 
@@ -331,24 +309,23 @@ export default {
   async created() {
     this.items = this.$route.params.listado;
     this.enterpriseName = this.$route.params.enterpriseName;
-    if(this.$route.params.enterpriseNode==undefined){
-    await this.$apollo
-                .query({
-                  // Consulta
-                  query: require("@/graphql/enterprise/allEnterprises.gql"),
-                })
-                .then((response) => {
-                  this.Enterprises = response.data.allEnterprises.edges;
-                  //this.pages = response.data.allEnterprises.edges.length;
-                });
+    if (this.$route.params.enterpriseNode == undefined) {
+      await this.$apollo
+        .query({
+          // Consulta
+          query: require("@/graphql/enterprise/allEnterprises.gql"),
+        })
+        .then((response) => {
+          this.Enterprises = response.data.allEnterprises.edges;
+        });
 
-              this.Enterprises.forEach(element => {
-                if(element.node.name==localStorage.getItem("enterpriseName")){
-                  this.enterpriseNode=element.node;
-                }
-              });
-    }else{
-      this.enterpriseNode=this.$route.params.enterpriseNode;
+      this.Enterprises.forEach((element) => {
+        if (element.node.name == localStorage.getItem("enterpriseName")) {
+          this.enterpriseNode = element.node;
+        }
+      });
+    } else {
+      this.enterpriseNode = this.$route.params.enterpriseNode;
     }
   },
 };
@@ -363,7 +340,6 @@ export default {
   color: var(--dark);
 }
 .btn_order:hover {
-  /*background: var(--grey-hover);*/
   background: var(--orange-x-hover);
   color: var(--dark);
 }

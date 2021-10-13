@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="card bg-cart color-black">
     <img
       :src="
@@ -44,7 +45,7 @@
         Valoraciones
       </button>
 
-      <button
+      <!--<button
 
         v-show="user.type!='MANAGER'"
         v-on:click="makeOrder(enterprise,enterprise)"
@@ -52,8 +53,70 @@
         class="btn btn-success btn-sm mr-4"
       >
         Hacer Pedido
-      </button>
+      </button>-->
+      {{ getLocalStorage() }}
+      <template v-if="$store.getters.getCount != 0 && recovered != enterprise.id">
+          <button
+            v-show="user.type!='MANAGER'"
+            type="button"
+            class="btn btn-success btn-sm mr-4"
+            data-toggle="modal"
+            data-target="#deleteConfirmationModal"
+          >
+            Hacer Pedido
+          </button>
+        </template>
+        <template v-else>
+          <button
+            v-show="user.type!='MANAGER'"
+            v-on:click="makeOrder(enterprise,enterprise)"
+            type="button"
+            class="btn btn-success btn-sm mr-4"
+          >
+            Hacer Pedido
+          </button>
+        </template>
     </div>
+  </div>
+ <!-- Modals -->
+    <!-- Delete confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteConfirmationModal"
+      data-backdrop="static"
+      data-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="deleteConfirmationModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteConfirmationModalLabel">Eliminar pedido</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Está a punto de eliminar su último pedido ¿Desea continuar?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn_order" data-dismiss="modal">
+              Cerrar
+            </button>
+            <button
+              type="button"
+              class="btn btn_order"
+              v-on:click="makeOrder(enterprise)"
+              data-dismiss="modal"
+            >
+              Eliminar pedido
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Fin modal-->
   </div>
 </template>
 
@@ -69,6 +132,7 @@ export default {
       counter: 0,
       varShedule: "",
       calculo: 0,
+      recovered: "",
     };
   },
 
@@ -137,8 +201,11 @@ export default {
         });
       }
       }else{
-           this.$router.push({name:"login"});
+          this.$router.push({name:"login"});
       }
+    },
+    getLocalStorage() {
+      this.recovered = localStorage.getItem("idEnterprise");
     },
     valnum(texto) {
       var aux = 1;
@@ -416,5 +483,17 @@ export default {
 }
 .checked {
   color: orange;
+}
+.btn_order {
+  background-color: var(--orange-x);
+  color: var(--dark);
+}
+.btn_order:hover {
+  /*background: var(--grey-hover);*/
+  background: var(--orange-x-hover);
+  color: var(--dark);
+}
+.btn_order:focus {
+  box-shadow: 0 0 0 2px var(--orange-x-focus), 0 0 0 0px var(--orange-x-hover);
 }
 </style>
