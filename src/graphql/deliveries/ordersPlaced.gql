@@ -1,11 +1,16 @@
-{
-  allOrders{
+ {allOrders{
     edges{
       node{
         client{
           id,
           email
+        },
+        courier {
+          id
+          email
+          isAvailable
         }
+        
         id
         date,
         estimatedTime,
@@ -22,6 +27,7 @@
                 preparation
                 estimatedTime
                 enterprise{
+                  id
                   name,
                   location
                   
@@ -34,7 +40,3 @@
     }
   }
 }
-
-
-
-
