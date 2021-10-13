@@ -176,7 +176,7 @@
               :key="recommendation.node.id"
             >
               <div class="ms-2 me-auto">
-                <div class="fw-bold">{{ recommendation.node.name }}</div>
+                <div class="fw-bold">{{ recommendation.node.name | capitalize }}</div>
                 Ingredientes: {{ recommendation.node.ingredients }}
               </div>
               <span class="badge bg-outline-primary rounded-pill orange-background"
