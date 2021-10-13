@@ -4,6 +4,7 @@
       node {
         id
         name
+        city
         location
         businessHours
         created

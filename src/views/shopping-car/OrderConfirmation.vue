@@ -29,7 +29,6 @@
             <Geolocation v-on:value="getLocation" showmap="True"></Geolocation>
           </template>
           <template v-if="selected === 'Dirección del perfil'">
-            <!-- {{ cleanError() }} -->
             {{ update() }}
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -114,7 +113,6 @@ export default {
       enterpriseName: "",
       emailUser: "",
       nameClient: "",
-      //estimatedTime: "",
       selected: "",
       location: "",
       clientId: "",
@@ -123,7 +121,6 @@ export default {
       orderId: "",
       total: 0,
       envio: 3000,
-      // msjError: "",
       error: null,
     };
   },
@@ -144,7 +141,22 @@ export default {
   },
   methods: {
     getLocation(value) {
-      this.location = value[0];
+      if (this.validateAddress(value)) {
+        this.location = value[0];
+      } else {
+        this.makeToast(
+          "danger",
+          "Error",
+          "Lo sentimos. No tenemos cobertura para tu zona",
+          4000
+        );
+      }
+    },
+    validateAddress(value) {
+      if (this.enterpriseNode.city == value[1]) {
+        return true;
+      }
+      return false;
     },
     update() {
       this.ok = localStorage.getItem("existUser");
@@ -155,7 +167,18 @@ export default {
         this.nameClient = user.names;
       }
     },
-
+    validateAddressProfile() {
+      if (this.location.split(",")[1] == this.enterpriseNode.city) {
+        return true;
+      }
+      this.makeToast(
+        "danger",
+        "Error",
+        "Lo sentimos. No tenemos cobertura para tu zona",
+        3000
+      );
+      return false;
+    },
     updateTotal() {
       var sumatoria = 0;
       for (var index = 1; index < this.items.length; index++) {
@@ -212,6 +235,12 @@ export default {
       if (this.selected === "") {
         this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
         return false;
+      }
+      if (this.selected == "Dirección del perfil") {
+        return this.validateAddressProfile();
+      }
+      if (this.selected == "Dirección del perfil") {
+        return this.validateAddress();
       }
       if (this.location.length == 0) {
         this.makeToast(
