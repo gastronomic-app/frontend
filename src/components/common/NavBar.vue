@@ -59,9 +59,10 @@
                 ><img class="img-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"/></a
               >
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item " style="color: var(--light)" >Usuario: {{names}}</a>
-                  <a class="dropdown-item " style="color: var(--light)" >Rol: {{role}}</a>
-                  <a class="dropdown-item " style="color: var(--light)" >Email: {{email}}</a>
+                  <a class="dropdown-item" style="color: var(--light)" >Usuario: {{names}}</a>
+                  <a class="dropdown-item" style="color: var(--light)" >Rol: {{role}}</a>
+                  <a class="dropdown-item" style="color: var(--light)" >Email: {{email}}</a>
+                  <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='COURIER'" href="/my-delivery">Pedidos asignados</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='MANAGER'" href="/enterprise-list">Administrar establecimiento</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role=='CLIENT'" href="/orders">Mis pedidos</a>
                   <a class="dropdown-item btn" style="color: var(--light)" v-if="role!='MANAGER'" @click="redirectEdit()">Editar usuario</a>
@@ -267,6 +268,10 @@ a:active {
 .log-out{
   display:flex;
   justify-content: center;
+  background-color: var(--orange-x);
+}
+.dropdown-menu>.log-out:hover{
+  background-color: var(--orange-x-hover);
 }
 .img-avatar {
   justify-content: center;

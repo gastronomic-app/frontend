@@ -21,7 +21,7 @@
             :key="order.id"
             :item="order"
             :id="idx"
-            :header="'Pediste a ' + order.enterprise"
+            :header="'Pediste a ' + order.enterprise.name"
           >
             <div class="card-body">
               <h5 class="order-summary"><b>Resumen de pedido </b><br /></h5>
@@ -44,8 +44,12 @@
                   </tbody>
                 </table>
               </div>
-              <h6><b> Establecimiento: </b>{{ order.enterprise }}</h6>
+              <h6><b> Establecimiento: </b>{{ order.enterprise.name }}</h6>
               <h6><b>Lugar de entrega: </b>{{ order.route.destination }}</h6>
+              <div v-if="order.courierName !== ''">
+                <h6><b>Mensajero: </b>{{ order.courierName }}</h6>
+              </div>
+
               <h6>
                 <b> Tiempo estimado de preparation: </b>
                 {{ order.preparationTime }} minutos.
@@ -129,15 +133,14 @@
                   >
                     <p class="my-4">
                       Hola, {{ user.names }}. Vamos a envíar tu petición al
-                      administrador de {{order.enterprise}} para que se comunique
-                      contigo e iniciar a evaluar tu caso.
+                      administrador de {{ order.enterprise.name }} para que se
+                      comunique contigo e iniciar a evaluar tu caso.
                     </p>
                     <template #modal-footer="{ cancel }">
                       <b-button
                         size="sm"
                         class="btn-color"
                         @click="[cancelOrder(order.id), cancel()]"
-                       
                       >
                         Reportar</b-button
                       >
@@ -147,7 +150,6 @@
                     </template>
                   </b-modal>
                 </div>
-               
               </div>
               <div v-else class="no-track-order">
                 <span
@@ -441,13 +443,15 @@ export default {
             id: order.node.id,
             date: order.node.date,
             products: [],
-            enterprise: "",
+            enterprise: {},
             cost: 0,
             estimatedTime: { hours: 0, min: 0, sec: 0 },
             estimatedTimeMin:
               order.node.estimatedTime !== "0" ? order.node.estimatedTime : "0",
             preparationTime: 0,
             status: order.node.status,
+            courier: order.node.courier,
+            courierName: "",
             route: {
               origin: {},
               destination: {},
@@ -470,10 +474,14 @@ export default {
               product.node.product.estimatedTime
             );
 
-            newOrder.enterprise = product.node.product.enterprise.name;
+            newOrder.enterprise.name = product.node.product.enterprise.name;
+            newOrder.enterprise.id = product.node.product.enterprise.id;
             newOrder.route.origin = product.node.product.enterprise.location;
           }
           newOrder.route.destination = order.node.location;
+          if (newOrder.courier !== null) {
+            this.queryCouriers(newOrder);
+          }
           this.orders.push(newOrder);
         }
         return true;
@@ -593,6 +601,43 @@ export default {
         ],
       });
     },
+    /*Actualizar el estado del mensajero*/
+    updateStatusCourier(courier, status) {
+      this.$apollo.mutate({
+        mutation: require("@/graphql/deliveries/updateCourier.gql"),
+        variables: {
+          id: courier,
+          isAvailable: status,
+        },
+      });
+    },
+    async queryCouriers(order) {
+      await this.$apollo
+        .query({
+          query: require("@/graphql/deliveries/couriersEnterprise.gql"),
+          variables: {
+            id: order.enterprise.id,
+          },
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          let courier = response.data.enterprise.couriers.edges.filter(
+            (courier) => {
+            
+              if (courier.node.email === order.courier.email) {
+                return true;
+              }
+            }
+          );
+
+          if (courier.length > 0) {
+            order.courierName =
+              courier[0].node.contact.edges[0].node.names +
+              " " +
+              courier[0].node.contact.edges[0].node.lastnames;
+          }
+        });
+    },
     cancelOrder(orderID) {
       this.updateStatusOrder(orderID, "cancelado");
       setTimeout(() => {
@@ -602,6 +647,10 @@ export default {
 
       let idx = this.orders.findIndex((order) => order.id === orderID);
       this.orders[idx].status = "CANCELADO";
+      if(this.orders[idx].courier!==null){
+ this.updateStatusCourier(this.orders[idx].courier.id, true);
+      }
+     
     },
   },
 };

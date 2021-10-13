@@ -327,6 +327,10 @@ export default {
       this.comments = comments;
       var calculo = ((aux1 + aux2 + aux3 + aux4 + aux5 + aux7) / 7).toFixed(1);
       this.valoration = calculo;
+      if(isNaN(this.valoration) ){
+        this.valoration = 0;
+      }
+      
     },
 
     mostrar() {
@@ -455,6 +459,7 @@ export default {
       }
       this.valoration = average / this.counter;
       //this.auxsize=this.itemsRatings.length;
+
     },
     aux(text) {
       var valor = 1;
