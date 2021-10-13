@@ -58,12 +58,12 @@
           <Geolocation
             ref="foo"
             :showmap="true"
-            :disable_input="true"
             :placeholder="location"
+            v-on:value="ral_Location"
           />
           <br />
           <!-- geolocalizacion  -->
-          <input type="submit" class="btn btn-color" value="Guardar Cambios" />
+          <input type="submit" class="btn btn-color" :disabled="!city" value="Guardar Cambios" />
         </div>
       </form>
        <br />
@@ -195,6 +195,7 @@ export default {
       is_alternative: "",
       idAux: "",
       show_modal: false,
+      city: false
     };
   },
   async mounted() {
@@ -220,6 +221,7 @@ export default {
             this.is_alternative = response.data.user.isAlternative;
             this.email = response.data.user.email;
             this.idAux = response.data.user.contact.edges[0].node.id;
+            this.city = response.data.user.contact.edges[0].node.city;
           });
           this.getCompleteAddress(this.location).then((value) => {
             this.$refs.foo.showUserLocation(value.lat, value.lng);
@@ -296,7 +298,10 @@ export default {
     },
   },
   methods: {
-
+    ral_Location(value) {
+      this.location = value[0];
+      this.city = value[1];
+    },
     async getCompleteAddress(address) {
       const geocoder = new google.maps.Geocoder();
       var completeAddress = {
@@ -342,8 +347,9 @@ export default {
               id: this.idAux,
               names: this.name.trim(),
               lastnames: this.lastname.trim(),
-              location: this.$refs.foo.address,
+              location: this.location,
               telephone: this.telephone,
+              city: this.city,
             },
             // Actualiza el cache de GraphQL para visualizar la eliminación
             // al momento de cargar la vista
@@ -364,7 +370,7 @@ export default {
             //Llenar cache
             let user = JSON.parse(localStorage.getItem("user"));
             user.names = this.name;
-            user.location = this.$refs.foo.address;
+            user.location = this.location;
             localStorage.setItem("user", JSON.stringify(user));
             this.$router.push({ name: "catalogSearch" }).then(() => {
               this.makeToast(
