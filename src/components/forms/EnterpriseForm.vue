@@ -254,7 +254,8 @@ export default {
         businessHours: "",
       // Reseña
         historicalReview: "",
-      //Id administrador de los establecimientos a mostrar
+      // Ciudad donde se encuentra el establecimiento
+        city: null,
     };
 },
 /**
@@ -324,7 +325,8 @@ methods: {
     });
     },
     ral_Location(value){
-        this.location = value;
+        this.location = value[0];
+        this.city = value[1]
     },
     //Crea la empresa
     addEnterprise() {
@@ -365,7 +367,7 @@ methods: {
             showCloseButton:true,
             showLoaderOnConfirm:true
         }).then(async (result) => {
-            if(result.isConfirmed){
+            if(result.isConfirmed && this.city != ""){
                 /*obtener los datos del input y agregarlo a la variable Bussiness_hours*/
                 let lunesStatus = document.getElementById("CheckboxLunes").checked;
                 let martesStatus = document.getElementById("CheckboxMartes").checked;
@@ -437,6 +439,7 @@ methods: {
             location: this.location,
             businessHours: this.businessHours,
             historicalReview: this.historicalReview,
+            city: this.city,
         },
         })
         // El método mutate devuelve una promesa
@@ -452,11 +455,17 @@ methods: {
             this.makeToast(
                 "warning",
                 "Datos incorrectos",
-                "La informacion proporcionada es incorrecta",
+                "La informacion proporcionada es incorrecta.",
                 4000);
         }
         });
         this.$router.push({ name: "EnterpriseList" });
+        }else if(this.city == ""){
+          this.makeToast(
+              "warning",
+              "Datos incorrectos",
+              "Por favor verifique que su direccion este completa y sea valida",
+              5000);
         }
         //Si se presiona en la X o en la opcion de no modificar se queda en la pagina actual
         })

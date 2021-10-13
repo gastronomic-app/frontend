@@ -1,11 +1,12 @@
-mutation updateEnterprise($id: ID!, $name: String, $location: String, $businessHours: String!,$historicalReview: String) {
-  updateEnterprise(input: { id: $id, name: $name, location: $location, businessHours: $businessHours, historicalReview: $historicalReview }) {
+mutation updateEnterprise($id: ID!, $name: String, $location: String, $businessHours: String!,$historicalReview: String, $city: String) {
+  updateEnterprise(input: { id: $id, name: $name, location: $location, businessHours: $businessHours, historicalReview: $historicalReview, city: $city }) {
     enterprise {
       id
       name
       location
       businessHours
       historicalReview
+      city
     }
   }
 }
