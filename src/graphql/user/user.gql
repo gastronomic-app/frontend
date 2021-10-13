@@ -8,6 +8,7 @@ query user($id: ID!) {
       edges{
         node
         {
+          city
           names
           id
           lastnames
