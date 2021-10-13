@@ -112,7 +112,10 @@
         <label for="location"
           >Direccion <span class="text-danger">*</span></label
         >
-        <Geolocation novalidate required="" v-on:value="ral_Location" :showmap="true" />
+        <Geolocation novalidate required=""  v-on:value="ral_Location" :showmap="true" />
+        <b-form-invalid-feedback :state="city">
+            La dirección no es valida.
+          </b-form-invalid-feedback>
         <br />
         <p>
           Los campos marcados con <span class="text-danger">*</span> son
@@ -120,6 +123,7 @@
         </p>
         <input
           type="submit"
+          :disabled="!city"
           class="btn btn-color btn-block"
           value="Registrar"
         />
@@ -172,6 +176,7 @@ export default {
       login: null,
       type: "CLIENT",
       params: {},
+      city: false,
     };
   },
   computed: {
@@ -235,7 +240,8 @@ export default {
   },
   methods: {
     ral_Location(value) {
-      this.location = value;
+      this.location = value[0];
+      this.city = value[1];
     },
     makeToast(variant = null, title, info, time) {
       this.$bvToast.toast(info, {
@@ -259,7 +265,7 @@ export default {
           location: this.location,
           type: this.type,
           enterpriseId: this.enterpriseId,
-          city: "Popayán"
+          city: this.city
         },
       });
       if (this.type === 'COURIER') {
@@ -306,7 +312,9 @@ export default {
             if (this.password === this.passwordConfirmation) {
               await this.checkEmail();
               if (this.flag === false) {
-                this.createRegister();
+                if (this.city) {
+                  this.createRegister();
+                }
               } else {
                 this.makeToast(
                   "danger",

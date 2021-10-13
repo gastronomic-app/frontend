@@ -38,6 +38,7 @@ export default {
       address: "", //variable donde se guardará la dirección formateada
       error: "",
       map: Object, //Objeto de google maps para el mapa
+      city: "",
     };
   },
   props: {
@@ -54,6 +55,7 @@ export default {
     const autocomplete = new google.maps.places.Autocomplete(
       this.$refs.autocomplete,
       {
+        componentRestrictions: { country: ["co"] }, // Limitar solo Colombia
         bounds: google.maps.LatLngBounds(
           new google.maps.LatLng(2.45, -76.6167)
         ),
@@ -70,6 +72,10 @@ export default {
       const place = autocomplete.getPlace();
       this.address = place.formatted_address;
       this.returnValue();
+      this.getAddressFrom(
+        place.geometry.location.lat(),
+        place.geometry.location.lng()
+      );
       this.showUserLocation(
         place.geometry.location.lat(),
         place.geometry.location.lng()
@@ -109,6 +115,17 @@ export default {
       geocoder.geocode({ location: latlng }, (response, status) => {
         if (status === "OK") {
           this.address = response[0].formatted_address;
+          if (response[0].address_components.length != 1) {
+            let localityObject = response[0].address_components.filter((obj) => {
+            return obj.types.includes('administrative_area_level_2');})[0];
+          if (!localityObject?.long_name) {
+            localityObject = response[0].address_components.filter((obj) => {
+            return obj.types.includes('administrative_area_level_1');})[0];
+          }
+          this.city = localityObject.long_name;
+          }else{
+            this.city = false;
+          }
           //Se emite el evento con la inforación de la dirección formateada
           this.returnValue();
         } else {
@@ -124,6 +141,7 @@ export default {
       });
       //Marcador que se dibujara al obtener la ubicacion o dar click sobre un lugar del mapa
       let marker = new google.maps.Marker({
+        componentRestrictions: { country: ["co"] }, // Limitar solo Colombia
         position: new google.maps.LatLng(lat, lon),
         map: this.map,
       });
@@ -141,7 +159,7 @@ export default {
       });
     },
     returnValue() {
-      this.$emit("value", this.address);
+      this.$emit("value", [this.address, this.city]);
     },
   },
 };
