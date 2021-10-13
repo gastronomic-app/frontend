@@ -144,7 +144,7 @@ export default {
   },
   methods: {
     getLocation(value) {
-      this.location = value;
+      this.location = value[0];
     },
     update() {
       this.ok = localStorage.getItem("existUser");
