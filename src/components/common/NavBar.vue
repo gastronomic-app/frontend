@@ -56,7 +56,7 @@
                 role="button"
                 aria-haspopup="false"
                 aria-expanded="false"
-                ><img class="img-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"/></a
+                ><img src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"/></a
               >
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item" style="color: var(--light)" >Usuario: {{names}}</a>
@@ -275,8 +275,17 @@ a:active {
 }
 .img-avatar {
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   font-size: 14.4px;
+}
+@media  only screen and  (max-width: 1000px) {
+  .separator{
+    display: none;
+  }
+  .navbar-brand{
+    width: 10em
+  }
+  
 }
 </style>
