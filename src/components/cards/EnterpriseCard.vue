@@ -345,8 +345,8 @@ export default {
       ];
       let hoy = new Date();
       let dia = dias[hoy.getDay()];
-
-      if (dia == "lunes") {
+      try {
+        if (dia == "lunes") {
         if (diasSemana.lunes.horaI != "" && diasSemana.lunes.estado == true) {
           this.varShedule =
             "Abierto: " +
@@ -426,6 +426,10 @@ export default {
           this.varShedule = "Hoy no habra atencion";
         }
       }
+      } catch (error) {
+        console.log("Establecimientos sin horario");
+      }
+
     },
     apreciation() {
       var varaux = 0;
