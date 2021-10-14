@@ -236,7 +236,7 @@ export default {
           "Lo sentimos. No tenemos cobertura para tu zona",
           3000
         );
-        return true;
+        return false;
       }
 
       if (this.location.length == 0) {
