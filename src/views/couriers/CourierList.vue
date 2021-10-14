@@ -1,5 +1,5 @@
 <template>
-  <div class= "jumbotron">
+  <div class="jumbotron">
     <!-- Header -->
     <div class="header-container">
       <h2 class="title">
@@ -27,6 +27,9 @@
         type="button"
       >
         Agregar
+      </button>
+      <button class="new-courier btn btn-black" @click="back" type="button">
+        volver
       </button>
     </div>
     <!-- Section List -->
@@ -68,6 +71,19 @@
     </div>
     <div v-show="isReadyQuery && courierList.length == 0">
       <not-found></not-found>
+    </div>
+    <div>
+      <b-modal id="warning" centered title="¡Atención!">
+        <p class="my-4">
+          El mensajero que quiere desactivar de su lista tiene asignada una
+          entrega.
+        </p>
+        <template #modal-footer="{ cancel }">
+          <b-button class="btn-black" size="sm" @click="cancel">
+            Cancelar</b-button
+          >
+        </template>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -145,7 +161,7 @@ export default {
           id: courier.node.id,
           email: courier.node.email,
           isAvailable:
-            courier.node.isAvailable == true ? "Disponible" : "Asignado",
+            courier.node.isAvailable === true ?  "Disponible" :"Asignado",
           isActive: courier.node.isActive,
           names: courier.node.contact.edges[0].node.names,
           last: courier.node.contact.edges[0].node.lastnames,
@@ -161,7 +177,7 @@ export default {
         mutation: require("@/graphql/deliveries/updateCourier.gql"),
         variables: {
           id: courier,
-          isAvailable: !status,
+          isAvailable: status ?true: true,
         },
       });
     },
@@ -184,27 +200,37 @@ export default {
         params: { enterpriseId: this.enterpriseId },
       });
     },
-    changeStatus(courierId, state) {
-      this.$apollo.mutate({
-        mutation: require("@/graphql/client/deactivateClient.gql"),
-        variables: {
-          id: courierId,
-          is_active: !state,
-        },
+    back() {
+      this.$router.push({
+        name: "EnterpriseList",
       });
-      this.updateStatusCourier(courierId, state);
-      let idx= this.courierList.findIndex((courier)=>{
-        if(courier.id===courierId){
-          return true
-        }
-      })
-     this.courierList[idx].isActive=!state;
     },
+    changeStatus(courierId, state) {
+      let idx = this.courierList.findIndex((courier) => {
+        if (courier.id === courierId) {
+          return true;
+        }
+      });
+      if (this.courierList[idx].isAvailable!=="Asignado" ) {
+        this.$apollo.mutate({
+          mutation: require("@/graphql/client/deactivateClient.gql"),
+          variables: {
+            id: courierId,
+            is_active: !state,
+          },
+        });
+        this.updateStatusCourier(courierId, status);
+        this.courierList[idx].isActive = !state;
+      } else {
+        this.$bvModal.show("warning");
+      }
+    },
+
   },
 };
 </script>
 <style scoped>
-.jumbotron{
+.jumbotron {
   margin: 2em 0;
   background-color: whitesmoke;
   box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
@@ -224,14 +250,14 @@ export default {
   gap: 2em;
   flex-wrap: wrap;
 }
-.btn-black{
+.btn-black {
   transform: width 1s;
   transform: height 1s;
 }
-.btn-black:hover{
+.btn-black:hover {
   background-color: var(--dark-xx);
-  color:white;
-  width: calc(100% + .2em);
-  height: calc(100% + .2em);
+  color: white;
+  width: calc(100% + 0.2em);
+  height: calc(100% + 0.2em);
 }
 </style>

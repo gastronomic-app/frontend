@@ -147,7 +147,7 @@ export default {
       await this.queryCouriers().then(() => {
         availableCouriers = this.couriers.filter(
           (courier) =>
-            courier.node.isAvailable && courier.node.contact.edges.length > 0
+            courier.node.isAvailable && courier.node.isActive && courier.node.contact.edges.length > 0
         );
       });
       return availableCouriers;
