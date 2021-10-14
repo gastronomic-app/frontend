@@ -1,0 +1,45 @@
+{
+ allOrders {
+   edges {
+     node {
+       id
+      estimatedTime
+      location
+      date
+      status
+      courier {
+        id
+        email
+      }
+      client {
+        email
+      }
+     details {
+          edges {
+            node {
+              quantity
+              product {
+                name
+                price
+                enterprise {
+                  name
+                }
+                
+              }
+            }
+          }
+        }
+      products{
+      edges {
+        node {
+          price
+          
+        }
+      }
+      }
+      
+     }
+   }
+ }
+}
+

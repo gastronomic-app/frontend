@@ -6,6 +6,7 @@ query couriersEnterprise($id: ID!){
           id,
           email,
           isAvailable,
+          isActive,
           contact {
             edges {
               node {
