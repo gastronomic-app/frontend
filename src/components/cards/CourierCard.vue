@@ -27,22 +27,13 @@
     </div>
     <div class="container">
       <select
-      v-show="courierInfo.isActive"
         class="btn btn-color"
-        @change="[fn(id, active),changeState]"
+        :class="{ btnred: !courierInfo.isActive }"
+        @change="fn(id, courierInfo.isActive)"
       >
-        <option v-if="courierInfo.isActive" selected="">Activo</option>
-        <option >Inactivo</option>
+        <option :selected="courierInfo.isActive">Activo</option>
+        <option :selected="!courierInfo.isActive">Inactivo</option>
       </select>
-      <select
-      v-show="!courierInfo.isActive"
-        class="btn btnred"
-         @change="[fn(id, active),changeState]"
-      >
-        <option v-if="!courierInfo.isActive" selected="">Inactivo</option>
-        <option >Activo</option>
-      </select>
-
       <div class="dropdown-menu"></div>
     </div>
   </div>
@@ -72,9 +63,7 @@ export default {
       },
     },
   },
-  computed:{
-   
-  },
+  computed: {},
 
   data() {
     return {
@@ -83,10 +72,9 @@ export default {
     };
   },
   methods: {
-     changeState(){
-      this.active=!this.active;
-
-    }
+    changeState() {
+      this.active = !this.active;
+    },
   },
 };
 </script>
@@ -124,19 +112,18 @@ img {
 .color-black:hover {
   box-shadow: 1em 1em 5em 1em gray;
   width: 20.7em;
-  height: 28.5em
+  height: 28.5em;
 }
 .orange {
   color: orange;
 }
-select option:checked{
+select option:checked {
   background-color: var(--orange-x);
-  margin:auto;
+  margin: auto;
   padding: 0;
 }
-.btnred{
+.btnred {
   background: rgb(163, 1, 1);
-  color:white
+  color: white;
 }
-
 </style>

@@ -60,6 +60,9 @@
         <button type="button" class="btn btn-black" @click="toRefuse">
           Rechazar
         </button>
+        <button type="button" class="btn btn-black" @click="redirect">
+          Generar reporte
+        </button>
       </div>
       <br />
     </div>
@@ -180,8 +183,7 @@ export default {
           },
         })
         .then((response) => {
-          user.id =
-            response.data.allUsers.edges[0].node.id;
+          user.id = response.data.allUsers.edges[0].node.id;
           user.lastname =
             response.data.allUsers.edges[0].node.contact.edges[0].node.lastnames;
           user.name =
@@ -220,6 +222,12 @@ export default {
         this.makeToast("success", "", "Orden rechazada", 5000);
         this.exitsDelivery = false;
       }, 2000);
+    },
+    redirect() {
+      this.$router.push({
+        name: "Report",
+        params: { deliveryId: this.delivery.orderID, enterprise: this.delivery.enterprise },
+      });
     },
 
     /*Actualizar el estado del mensajero*/
@@ -271,13 +279,12 @@ export default {
     /**METHODS NEEDED FOR NOTIFICATION */
 
     makeNotificationClient() {
-
       console.log(this.delivery);
       let notification = {
-          userId: this.delivery.orderUser.id,
-          title: "¡Tu pedido fue entregado!",
-          message: `El pedido que realizaste a ${this.delivery.enterprise} fue entregado.`,
-        };
+        userId: this.delivery.orderUser.id,
+        title: "¡Tu pedido fue entregado!",
+        message: `El pedido que realizaste a ${this.delivery.enterprise} fue entregado.`,
+      };
       this.createNotification(notification);
     },
 
