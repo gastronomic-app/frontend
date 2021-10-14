@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div  class="jumbotron">
     <h1>
       Generar reporte para <b>{{ enterprise | capitalize }}</b>
     </h1>
-    <div class="jumbotron">
+    <div>
       <div v-for="option in options" :key="option.id">
         <div class="custom-control custom-radio">
           <input
@@ -32,18 +32,19 @@
         >
         </textarea>
       </div>
-    </div>
-    <div class="text-right">
+       <div class="text-right">
       <button
         type="button"
-        class="btn btn-success mr-2"
+        class="btn btn-color mr-2"
         :disabled="inputEmpty"
         @click="sendReport"
       >
         Enviar
       </button>
-      <button type="button" class="btn btn-danger">Cancelar</button>
+      <button type="button" class="btn btn-black">Cancelar</button>
     </div>
+    </div>
+   
   </div>
 </template>
 
@@ -143,3 +144,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+
+.jumbotron {
+  margin: 2em;
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
+}
+
+.btn-black:hover{
+  background-color: var(--dark-xx);
+  color:var(--light)
+}
+</style>
