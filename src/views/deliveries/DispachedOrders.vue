@@ -96,7 +96,7 @@ export default {
     };
   },
 
-  methods: {  
+  methods: {
     /**Transformar el formato las órdenes que vienen de la base de datos */
     transform(result) {
       let count = 0;
@@ -112,13 +112,14 @@ export default {
             price: productsOrder.price,
             delivery: "4000",
             email: order.node.client.email,
-            client:{names:""},
-            courier:{},
+            client: { names: "" },
+            courier: {},
             date: order.node.date,
           });
           count++;
         }
       }
+  
       return this.orders.length > 0;
     },
 
@@ -146,7 +147,6 @@ export default {
       };
     },
 
-   
     async getUserId(order) {
       let id = "";
       await this.$apollo
@@ -158,19 +158,19 @@ export default {
         })
         .then((response) => {
           id = response.data.allUsers.edges[0].node.id;
-          order.client.names=response.data.allUsers.edges.node.names + " "+ response.data.allUsers.edges.node.lastnames
-          
+          order.client.names =
+            response.data.allUsers.edges.node.names +
+            " " +
+            response.data.allUsers.edges.node.lastnames;
         });
       return id;
     },
-
-    
 
     queryOrders() {
       this.$apollo
         .query({
           // Establece la consulta para traer las ordenes
-          query: require("@/graphql/deliveries/canceledOrders.gql"),
+          query: require("@/graphql/deliveries/dispachedOrders.gql"),
           fetchPolicy: "no-cache",
         })
         .then((response) => {
@@ -180,6 +180,7 @@ export default {
     },
 
     async queryCouriers() {
+ 
       await this.$apollo
         .query({
           query: require("@/graphql/deliveries/couriersEnterprise.gql"),
@@ -195,8 +196,10 @@ export default {
   },
 
   mounted() {
-    this.queryCouriers();
-    this.queryOrders();
+  
+      this.queryCouriers();
+      this.queryOrders();
+  
   },
 
   created() {
@@ -245,5 +248,4 @@ export default {
   box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
   border-radius: 1em;
 }
-
 </style>
