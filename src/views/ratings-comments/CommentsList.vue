@@ -11,7 +11,7 @@
       <div class="col-xl-5 col-sm-12 mt-2">
         <div>
           <h5>
-            <b>Puntuacion {{ calculo }}</b>
+            <b>Puntuación {{ calculo }}</b>
           </h5>
           <b-form-rating
             class="puntuacion mb-4 mb-0 p-0"
@@ -281,6 +281,7 @@ export default {
     } else {
       this.id = localStorage.getItem("idCaught");
       //this.prueba();
+      this.enterpriseName = this.$route.params.nameenterprise;
       this.queryReviews();
     }
     if (this.$route.params.enterpriseNode == undefined) {

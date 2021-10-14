@@ -208,12 +208,20 @@ export default {
     back() {
       this.$router.push({
         name: "CommentsList",
-        params: { idCaught: this.id },
+        params: { 
+          idCaught: this.id,
+          enterpriseNode : this.enterpriseNode,
+          nameenterprise : this.enterpriseName
+          },
       });
     },
     link(mensaje, tipo) {
       this.$router
-        .push({ name: "CommentsList", params: { idCaught: this.id } })
+        .push({ name: "CommentsList", params: { 
+          idCaught: this.id,
+           enterpriseNode : this.enterpriseNode,
+           nameenterprise : this.enterpriseName
+          } })
         .then(() => {
           this.makeToast(tipo, "Mensaje", mensaje, 3000);
         });
