@@ -97,35 +97,6 @@ export default {
   },
 
   methods: {
-    /*Despachar los pedidos seleccionados*/
-    dispatch() {
-      let selectedOrders = this.orders.filter((order) => order.selected);
-      selectedOrders.forEach((order) => {
-        this.asignCourier(order.id);
-      });
-    },
-
-    /*Asignar un mensajero disponible a la orden y cambiar estado del pedido*/
-    asignCourier(orderId) {
-      let availableCouriers;
-      this.getAvailableCouriers().then((value) => {
-        availableCouriers = value;
-        if (availableCouriers.length === 0) {
-          this.toastDispatchFailed();
-        } else {
-          let courier = availableCouriers[0].node;
-          this.notificate(orderId, courier.email);
-          this.updateStatusOrder(orderId, "despachado", courier.id);
-          this.updateStatusCourier(courier.id, false);
-          this.toastDispatchSuccessful(
-            orderId,
-            courier.contact.edges[0].node.names,
-            courier.contact.edges[0].node.lastnames
-          );
-        }
-      });
-    },
-
   
     /**Transformar el formato las órdenes que vienen de la base de datos */
     transform(result) {
