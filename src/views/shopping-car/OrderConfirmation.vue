@@ -120,7 +120,6 @@ export default {
       productId: "",
       orderId: "",
       total: 0,
-      envio: 3000,
       error: null,
       managers: [],
       idRecovered: "",
@@ -146,21 +145,13 @@ export default {
     getLocation(value) {
       if (this.validateAddress(value)) {
         this.location = value[0];
-      } else {
-        this.makeToast(
-          "danger",
-          "Error",
-          "Lo sentimos. No tenemos cobertura para tu zona",
-          4000
-        );
       }
     },
     validateAddress(value) {
       console.log(value[1]);
       //debugger
       if (
-        this.enterpriseNode.city.toUpperCase().trim() ===
-        value[1].toUpperCase().trim()
+        this.enterpriseNode.city.toUpperCase().trim() === value[1].toUpperCase().trim()
       ) {
         return true;
       } else {
@@ -168,7 +159,7 @@ export default {
           "danger",
           "Error",
           "Lo sentimos. No tenemos cobertura para tu zona",
-          4000
+          2000
         );
         return false;
       }
@@ -227,23 +218,7 @@ export default {
     },
     validate() {
       if (this.selected === "") {
-        this.makeToast(
-          "danger",
-          "Error",
-          "Seleccione un tipo de dirección",
-          3000
-        );
-        return false;
-      }
-      if (
-        this.location.split(",")[1].trim() != this.enterpriseNode.city.trim()
-      ) {
-        this.makeToast(
-          "danger",
-          "Error",
-          "Lo sentimos. No tenemos cobertura para tu zona",
-          3000
-        );
+        this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
         return false;
       }
 
@@ -252,6 +227,15 @@ export default {
           "danger",
           "Error",
           "Ingrese una dirección o seleccione una en el mapa",
+          3000
+        );
+        return false;
+      }
+      if (!this.location.includes(this.enterpriseNode.city.trim())) {
+        this.makeToast(
+          "danger",
+          "Error",
+          "Lo sentimos. No tenemos cobertura para tu zona",
           3000
         );
         return false;
@@ -379,12 +363,7 @@ export default {
           },
         })
         .then((response) => {
-          console.log(
-            "creada notificación para: ",
-            notification.userId,
-            " ",
-            response
-          );
+          console.log("creada notificación para: ", notification.userId, " ", response);
         });
     },
     makeNotificationEnterprise() {
