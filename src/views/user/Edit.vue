@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper fadeInDown align-self-lg-center">
+  <div class=" jumbotron wrapper fadeInDown align-self-lg-center">
     <h1>Actualización de datos</h1>
     <div class="card-body container align-self-center">
       <form v-on:submit.prevent="editContact()">
@@ -63,14 +63,14 @@
           />
           <br />
           <!-- geolocalizacion  -->
-          <input type="submit" class="btn btn-color" :disabled="!city" value="Guardar Cambios" />
+          <input type="submit" class="btn btn-color btn-block" :disabled="!city" value="Guardar Cambios" />
         </div>
       </form>
        <br />
       <button
         v-show="!disable()"
         type="submit"
-        class="btn btn-black"
+        class="btn btn-black btn-dark btn-block"
         v-b-modal.ModalCenter
         @click="show_modal = true"
       >
@@ -468,3 +468,15 @@ export default {
   },
 };
 </script>
+<style scoped>
+.jumbotron{
+  margin: 2em 0;
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
+  padding: 3em 7em ;
+}
+.btn-color:hover{
+background-color: var(--orange-x);
+}
+</style>
