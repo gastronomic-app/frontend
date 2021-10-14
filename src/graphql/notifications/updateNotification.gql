@@ -1,0 +1,12 @@
+mutation updateNotification($id: ID!, $read: Boolean){
+  updateNotification(input: {id: $id, read: $read}){
+    notification{
+      id
+      title
+      read
+      user{
+        email
+      }
+    }
+  }
+}

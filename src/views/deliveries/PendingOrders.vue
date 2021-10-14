@@ -1,82 +1,82 @@
 <template>
   <div>
     <br />
+    <div class="jumbotron">
+      <div class="div-width">
+        <h2>
+          <b>{{ enterpriseName }}</b>
+        </h2>
+        <h4>Pedidos por despachar</h4>
 
-    <div class="div-width">
-      <h2>
-        <b>{{ enterpriseName }}</b>
-      </h2>
-      <h4>Pedidos por despachar</h4>
-
-      <!--ERROR DE CONEXIÓN & LOADING-->
-      <div v-if="$apollo.loading">
-        <LoadingGraphql />
-      </div>
-      <div v-else-if="error" class="d-flex justify-content-center">
-        <ConnectionErrorGraphql />
-      </div>
-
-      <!--NO HAY PEDIDOS-->
-      <div v-if="!existsOrders">
-        <br />
-        <h5><b>No tienes pedidos por despachar :c</b></h5>
-        <not-found></not-found>
-      </div>
-
-      <div v-if="existsOrders">
-        <!--SELECCIONAR TODOS-->
-        <div class="d-flex justify-content-end">
-          <label class="form-check-label">
-            Seleccionar todos
-            <input type="checkbox" v-on:click="selectAll()" />
-          </label>
+        <!--ERROR DE CONEXIÓN & LOADING-->
+        <div v-if="$apollo.loading">
+          <LoadingGraphql />
+        </div>
+        <div v-else-if="error" class="d-flex justify-content-center">
+          <ConnectionErrorGraphql />
         </div>
 
-        <div class="accordion" id="accordion">
-          <!--PAGINACIÓN-->
-          <paginate ref="paginator" name="orders" :list="orders" :per="5">
-            <template v-for="order in paginated('orders')">
-              <!--LISTADO DE PEDIDOS-->
-              <collapsible-card
-                :key="order.id"
-                :item="order"
-                :id="order.idx"
-                :checkbox_use="true"
-                v-if="order.status"
-              >
-                <div class="card-body">
-                  <h5><b>Resumen del pedido</b></h5>
-                  <p></p>
-                  <h6><b>Productos: </b>{{ order.products }}</h6>
-                  <h6><b>Envío: </b> ${{ order.delivery }}</h6>
-                  <h6><b>Precio total: </b> ${{ order.price }}</h6>
-                  <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
-                </div>
-              </collapsible-card>
-            </template>
-          </paginate>
-        </div>
-        <div class="div-paginate">
-          <paginate-links
-            for="orders"
-            :classes="{ ul: 'pagination' }"
-            :show-step-links="true"
-          ></paginate-links>
+        <!--NO HAY PEDIDOS-->
+        <div v-if="!existsOrders">
+          <br />
+          <h5><b>No tienes pedidos por despachar :c</b></h5>
+          <not-found></not-found>
         </div>
 
-        <div class="div-paginate">
-          <span v-if="$refs.paginator">
-            Viendo {{ $refs.paginator.pageItemsCount }} resultados
+        <div v-if="existsOrders">
+          <!--SELECCIONAR TODOS-->
+          <div class="d-flex justify-content-end">
+            <label class="form-check-label">
+              Seleccionar todos
+              <input type="checkbox" v-on:click="selectAll()" />
+            </label>
+          </div>
+
+          <div class="accordion" id="accordion">
+            <!--PAGINACIÓN-->
+            <paginate ref="paginator" name="orders" :list="orders" :per="5">
+              <template v-for="order in paginated('orders')">
+                <!--LISTADO DE PEDIDOS-->
+                <collapsible-card
+                  :key="order.id"
+                  :item="order"
+                  :id="order.idx"
+                  :checkbox_use="true"
+                  v-if="order.status"
+                >
+                  <div class="card-body">
+                    <h5><b>Resumen del pedido</b></h5>
+                    <p></p>
+                    <h6><b>Productos: </b>{{ order.products }}</h6>
+                    <h6><b>Precio total: </b> ${{ order.price }}</h6>
+                    <h6><b>Lugar de entrega: </b>{{ order.location }}</h6>
+                  </div>
+                </collapsible-card>
+              </template>
+            </paginate>
+          </div>
+          <div class="div-paginate">
+            <paginate-links
+              for="orders"
+              :classes="{ ul: 'pagination' }"
+              :show-step-links="true"
+            ></paginate-links>
+          </div>
+
+          <div class="div-paginate">
+            <span v-if="$refs.paginator">
+              Viendo {{ $refs.paginator.pageItemsCount }} resultados
+            </span>
+          </div>
+
+          <!--BOTON DESPACHAR PEDIDOS-->
+          <span class="d-flex justify-content-end">
+            <button type="button" class="btn btn-color" v-on:click="dispatch()">
+              Despachar Pedidos
+            </button>
           </span>
+          <br />
         </div>
-
-        <!--BOTON DESPACHAR PEDIDOS-->
-        <span class="d-flex justify-content-end">
-          <button type="button" class="btn btn-color" v-on:click="dispatch()">
-            Despachar Pedidos
-          </button>
-        </span>
-        <br />
       </div>
     </div>
   </div>
@@ -205,7 +205,7 @@ export default {
       return {
         belongs: belong,
         names: prodNames.substring(0, prodNames.length - 2),
-        price: prodTotal + 4000,
+        price: prodTotal,
       };
     },
 
@@ -350,14 +350,21 @@ export default {
 
     /*Actualizar el estado de la orden*/
     updateStatusOrder(orderId, orderStatus, courierId) {
-      console.log("idCourier:",courierId, "orderStatus:", orderStatus, "orderId", orderId);
+      console.log(
+        "idCourier:",
+        courierId,
+        "orderStatus:",
+        orderStatus,
+        "orderId",
+        orderId
+      );
       this.$apollo
         .mutate({
           mutation: require("@/graphql/deliveries/updateOrder.gql"),
           variables: {
             id: orderId,
             status: orderStatus,
-            courierId: courierId
+            courierId: courierId,
           },
           refetchQueries: [
             { query: require("@/graphql/deliveries/pendingOrders.gql") },
@@ -444,5 +451,10 @@ export default {
 }
 .div {
   margin-left: 81%;
+}
+.jumbotron {
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
 }
 </style>

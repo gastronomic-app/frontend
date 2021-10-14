@@ -1,6 +1,6 @@
 query couriersEnterprise($id: ID!){
   enterprise(id: $id) {
-    couriers (type: "COURIER"){
+    couriers {
       edges {
         node {
           id,
