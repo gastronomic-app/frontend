@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div  class="jumbotron">
     <h1>
       Generar reporte para <b>{{ enterprise | capitalize }}</b>
     </h1>
-    <div class="jumbotron">
+    <div>
       <div v-for="option in options" :key="option.id">
         <div class="custom-control custom-radio">
           <input
@@ -32,18 +32,20 @@
         >
         </textarea>
       </div>
-    </div>
-    <div class="text-right">
+       <div class="text-right">
       <button
         type="button"
-        class="btn btn-success mr-2"
+        class="btn btn-color mr-2"
+
         :disabled="inputEmpty"
         @click="sendReport"
       >
         Enviar
       </button>
-      <button type="button" class="btn btn-danger">Cancelar</button>
+      <button type="button" class="btn btn-black">Cancelar</button>
     </div>
+    </div>
+   
   </div>
 </template>
 
@@ -62,6 +64,7 @@ export default {
   },
   data() {
     return {
+      userData:{},
       options: {
         type: Array,
         default: null,
@@ -72,17 +75,17 @@ export default {
   },
   created() {
     let userData = localStorage.getItem("user");
-    userData = JSON.parse(userData);
+    this.userData = JSON.parse(userData);
 
     // Opciones para el reporte
-    if (userData.type == "CLIENT") {
+    if (this.userData.type == "CLIENT") {
       this.options = [
         { id: 1, message: "El tiempo de entrega fue excesivo" },
         { id: 2, message: "Llegaron los productos incorrectos" },
         { id: 3, message: "Mala atención del domiciliario" },
       ];
     }
-    if (userData.type == "COURIER") {
+    if (this.userData.type == "COURIER") {
       this.options = [
         { id: 1, message: "El pedido no fue pagado" },
         { id: 2, message: "No se encontro la ubicación" },
@@ -129,7 +132,11 @@ export default {
         });
 
       // Redirección a otra página
-      this.$router.push({ name: "OrdersPlaced" });
+      if (this.userData.type == "CLIENT") {
+      this.$router.push({ name: "OrdersPlaced" });}
+      else{
+        this.$router.push({name: "DeliveryDone"})
+      }
     },
   },
   computed: {
@@ -143,3 +150,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+
+.jumbotron {
+  margin: 2em;
+  background-color: whitesmoke;
+  box-shadow: 1em 1em 4em 1em rgba(13, 13, 13, 0.2);
+  border-radius: 1em;
+}
+
+.btn-black:hover{
+  background-color: var(--dark-xx);
+  color:var(--light)
+}
+</style>

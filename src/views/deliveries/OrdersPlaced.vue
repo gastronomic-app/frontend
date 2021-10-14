@@ -101,20 +101,29 @@
                 </b>
               </h6>
               <h6><b> Costo Total: </b>${{ order.cost }}</h6>
-              <div v-if="order.route.status" class="track-order-container">
-                <button
-                  :ref="order.id"
-                  type="button "
-                  class="btn btn-color"
-                  :class="{
-                    deactive:
-                      order.status === 'CANCELADO' ||
-                      order.status === 'ENTREGADO',
-                  }"
-                  @click="trackOrder(order.id)"
-                >
-                  {{ btnValue }}
-                </button>
+              <div class="track-order-container">
+                <div v-if="order.route.status">
+                  <button
+                    :ref="order.id"
+                    type="button "
+                    class="btn btn-color"
+                    :class="{
+                      deactive:
+                        order.status === 'CANCELADO' ||
+                        order.status === 'ENTREGADO',
+                    }"
+                    @click="trackOrder(order.id)"
+                  >
+                    {{ btnValue }}
+                  </button>
+                </div>
+                <div v-else class="no-track-order">
+                  <span
+                    >La opción de seguir pedido no está disponible para la
+                    ubicación que colocaste.</span
+                  >
+                </div>
+
                 <div>
                   <b-button
                     class="btn-black"
@@ -123,11 +132,11 @@
                         order.status === 'CANCELADO' ||
                         order.status === 'ENTREGADO',
                     }"
-                    @click="$bvModal.show(order.id)"
+                    @click="$bvModal.show(order.id +'idx')"
                     >Cancelar</b-button
                   >
                   <b-modal
-                    :id="order.id"
+                    :id="order.id+'idx'"
                     centered
                     title="Realizar reporte de pedido"
                   >
@@ -150,12 +159,6 @@
                     </template>
                   </b-modal>
                 </div>
-              </div>
-              <div v-else class="no-track-order">
-                <span
-                  >La opción de seguir pedido no está disponible para la
-                  ubicación que colocaste.</span
-                >
               </div>
             </div>
           </collapsible-card>
@@ -584,7 +587,7 @@ export default {
       if (order !== undefined) {
         this.$router.push({
           name: "Report",
-          params: { deliveryId: order.id, enterprise: order.enterprise },
+          params: { deliveryId: order.id, enterprise: order.enterprise.name },
         });
       }
     },
@@ -623,7 +626,6 @@ export default {
         .then((response) => {
           let courier = response.data.enterprise.couriers.edges.filter(
             (courier) => {
-            
               if (courier.node.email === order.courier.email) {
                 return true;
               }
@@ -647,10 +649,9 @@ export default {
 
       let idx = this.orders.findIndex((order) => order.id === orderID);
       this.orders[idx].status = "CANCELADO";
-      if(this.orders[idx].courier!==null){
- this.updateStatusCourier(this.orders[idx].courier.id, true);
+      if (this.orders[idx].courier !== null) {
+        this.updateStatusCourier(this.orders[idx].courier.id, true);
       }
-     
     },
   },
 };
@@ -731,6 +732,9 @@ div.accordion {
 
 .map-container {
   margin: auto;
+}
+.card-body {
+  margin: 0 2em;
 }
 .order-summary {
   display: flex;
