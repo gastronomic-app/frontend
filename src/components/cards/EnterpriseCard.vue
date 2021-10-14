@@ -9,7 +9,6 @@
           "
       class="card-img-top img-fluid img-responsive"
       :alt="'Imagen de ' + enterprise.name"
-      style="width: 23rem; height: 18rem"
     />
     <div class="card-body container-md">
       <div>
@@ -330,7 +329,7 @@ export default {
       if(isNaN(this.valoration) ){
         this.valoration = 0;
       }
-      
+
     },
 
     mostrar() {
