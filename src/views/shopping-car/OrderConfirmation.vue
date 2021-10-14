@@ -122,6 +122,8 @@ export default {
       total: 0,
       envio: 3000,
       error: null,
+      managers: [],
+      idRecovered: "",
     };
   },
   mounted() {
@@ -138,6 +140,7 @@ export default {
         localStorage.removeItem("items");
       }
     }
+    this.queryManagers(this.idRecovered);
   },
   methods: {
     getLocation(value) {
@@ -156,7 +159,8 @@ export default {
       console.log(value[1]);
       //debugger
       if (
-        this.enterpriseNode.city.toUpperCase().trim() === value[1].toUpperCase().trim()
+        this.enterpriseNode.city.toUpperCase().trim() ===
+        value[1].toUpperCase().trim()
       ) {
         return true;
       } else {
@@ -187,7 +191,6 @@ export default {
       }
       this.total = sumatoria;
     },
-
     deleteItem(id) {
       for (var index = 1; index < this.items.length; index++) {
         if (id == this.items[index].recoveredProduct.id) {
@@ -204,7 +207,6 @@ export default {
       }
       this.saveItems();
     },
-
     decrementCounter(id) {
       for (var index = 1; index < this.items.length; index++) {
         if (
@@ -223,13 +225,19 @@ export default {
       }
       this.saveItems();
     },
-
     validate() {
       if (this.selected === "") {
-        this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
+        this.makeToast(
+          "danger",
+          "Error",
+          "Seleccione un tipo de dirección",
+          3000
+        );
         return false;
       }
-      if (this.location.split(",")[1].trim() != this.enterpriseNode.city.trim()) {
+      if (
+        this.location.split(",")[1].trim() != this.enterpriseNode.city.trim()
+      ) {
         this.makeToast(
           "danger",
           "Error",
@@ -318,6 +326,8 @@ export default {
             );
           });
 
+        this.makeNotificationEnterprise();
+
         this.$router.push({ name: "catalogSearch" });
         localStorage.removeItem("items");
         localStorage.removeItem("envio");
@@ -327,10 +337,70 @@ export default {
         localStorage.removeItem("car");
       }
     },
-  },
-
-  saveItems() {
-    localStorage.setItem("items", JSON.stringify(this.items));
+    saveItems() {
+      localStorage.setItem("items", JSON.stringify(this.items));
+    },
+    /**METHODS NEEDED FOR THE NOTIFICATIONS */
+    queryManagers(entId) {
+      this.$apollo
+        .query({
+          query: require("@/graphql/notifications/managersEnterprise.gql"),
+          variables: {
+            id: entId,
+          },
+          fetchPolicy: "no-cache",
+        })
+        .then((response) => {
+          this.managers = response.data.enterprise.managers.edges;
+        });
+    },
+    async getUserId(userEmail) {
+      let id = "";
+      await this.$apollo
+        .query({
+          query: require("@/graphql/user/userByEmail.gql"),
+          variables: {
+            email: userEmail,
+          },
+        })
+        .then((response) => {
+          id = response.data.allUsers.edges[0].node.id;
+        });
+      return id;
+    },
+    createNotification(notification) {
+      this.$apollo
+        .mutate({
+          mutation: require("@/graphql/notifications/createNotification.gql"),
+          variables: {
+            title: notification.title,
+            message: notification.message,
+            userId: notification.userId,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "creada notificación para: ",
+            notification.userId,
+            " ",
+            response
+          );
+        });
+    },
+    makeNotificationEnterprise() {
+      this.managers.forEach((manager) => {
+        let email = manager.node.email;
+        let notification = {
+          userId: "",
+          title: "¡Tienes un nuevo pedido!",
+          message: `Se ha realizado una nueva orden de pedido al establecimiento ${this.enterpriseName}`,
+        };
+        this.getUserId(email).then((result) => {
+          notification.userId = result;
+          this.createNotification(notification);
+        });
+      });
+    },
   },
   async created() {
     this.items = this.$route.params.listado;
@@ -353,6 +423,7 @@ export default {
     } else {
       this.enterpriseNode = this.$route.params.enterpriseNode;
     }
+    this.idRecovered = this.enterpriseNode.id;
   },
 };
 </script>
