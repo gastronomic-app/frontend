@@ -195,7 +195,7 @@ export default {
       localStorage.setItem("entID", idEnterprise);
       localStorage.setItem("entName", enterpriseName);
       this.$router.push({
-        name: "PendingOrders",
+        name: "OrdersManagement",
         params: { id: idEnterprise, name: enterpriseName },
       });
     },
