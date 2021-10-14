@@ -4,7 +4,7 @@
       <a class="dropdown" data-toggle="dropdown">
         <div class="bell-fer">
         <svg class="dot" v-if="unread" height="10" width="10">
-          <circle cx="5" cy="5" r="3.5" fill="white" />
+          <circle cx="5" cy="5" r="4" fill="white" />
         </svg>
         <img class="n-bell" src="@/assets/n-bell2.png" />
         </div>
@@ -64,12 +64,12 @@ export default {
     if (userData) {
       userData = JSON.parse(userData);
       this.getNotifications(userData);
-      setInterval(
+      /*setInterval(
         function () {
           this.getNotifications(userData);
         }.bind(this),
         3000
-      );
+      );*/
     }
   },
   filters: {
@@ -237,7 +237,7 @@ export default {
 
 .dot {
   position: absolute;
-  left: 0.8em;
+  left: 0.85em;
   top: 0.1em;
   z-index: 10;
 }
