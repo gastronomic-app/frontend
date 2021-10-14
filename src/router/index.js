@@ -61,9 +61,14 @@ const routes = [
     props:true
   },
   {
-    path: "/geolocation",
-    name: "Geolocation",
-    component: () => import("@/components/geolocation/Geolocation.vue"),
+    path: "/orders-management",
+    name: "OrdersManagement",
+    component: () => import("@/views/deliveries/OrdersManagement.vue"),
+  },
+  {
+    path: "/canceled",
+    name: "CanceledOrders",
+    component: () => import("@/views/deliveries/OrdersCanceled.vue"),
   },
   {
     path: "/orders",

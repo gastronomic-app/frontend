@@ -1,0 +1,30 @@
+{
+  allOrders(status: "cancelado") {
+    edges {
+      node {
+        id
+        status
+        location
+        date
+        client{
+          email
+        }
+        details {
+          edges {
+            node {
+              quantity
+              product {
+                name
+                price
+                enterprise {
+                  id,
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
