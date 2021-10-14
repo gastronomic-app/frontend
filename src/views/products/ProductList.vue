@@ -350,7 +350,10 @@ export default {
     if (localStorage.getItem("user")) {
       let user = JSON.parse(localStorage.getItem("user"));
       if (user.type === "MANAGER") {
-        this.idEnterprise = this.$route.params.idEnt;
+        this.idEnterprise =
+          this.$route.params.idEnt != undefined
+            ? this.$route.params.idEnt
+            : localStorage.getItem("idEnterprise");
         await this.$apollo
           .query({
             query: require("@/graphql/user/usersenterprise.gql"),
