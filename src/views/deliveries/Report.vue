@@ -36,6 +36,7 @@
       <button
         type="button"
         class="btn btn-color mr-2"
+
         :disabled="inputEmpty"
         @click="sendReport"
       >
@@ -63,6 +64,7 @@ export default {
   },
   data() {
     return {
+      userData:{},
       options: {
         type: Array,
         default: null,
@@ -73,17 +75,17 @@ export default {
   },
   created() {
     let userData = localStorage.getItem("user");
-    userData = JSON.parse(userData);
+    this.userData = JSON.parse(userData);
 
     // Opciones para el reporte
-    if (userData.type == "CLIENT") {
+    if (this.userData.type == "CLIENT") {
       this.options = [
         { id: 1, message: "El tiempo de entrega fue excesivo" },
         { id: 2, message: "Llegaron los productos incorrectos" },
         { id: 3, message: "Mala atención del domiciliario" },
       ];
     }
-    if (userData.type == "COURIER") {
+    if (this.userData.type == "COURIER") {
       this.options = [
         { id: 1, message: "El pedido no fue pagado" },
         { id: 2, message: "No se encontro la ubicación" },
@@ -130,7 +132,11 @@ export default {
         });
 
       // Redirección a otra página
-      this.$router.push({ name: "OrdersPlaced" });
+      if (this.userData.type == "CLIENT") {
+      this.$router.push({ name: "OrdersPlaced" });}
+      else{
+        this.$router.push({name: "DeliveryDone"})
+      }
     },
   },
   computed: {
