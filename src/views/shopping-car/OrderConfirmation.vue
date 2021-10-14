@@ -153,10 +153,21 @@ export default {
       }
     },
     validateAddress(value) {
-      if (this.enterpriseNode.city == value[1]) {
+      console.log(value[1]);
+      //debugger
+      if (
+        this.enterpriseNode.city.toUpperCase().trim() === value[1].toUpperCase().trim()
+      ) {
         return true;
+      } else {
+        this.makeToast(
+          "danger",
+          "Error",
+          "Lo sentimos. No tenemos cobertura para tu zona",
+          4000
+        );
+        return false;
       }
-      return false;
     },
     update() {
       this.ok = localStorage.getItem("existUser");
@@ -166,18 +177,6 @@ export default {
         this.location = user.location;
         this.nameClient = user.names;
       }
-    },
-    validateAddressProfile() {
-      if (this.location.split(",")[1] == this.enterpriseNode.city) {
-        return true;
-      }
-      this.makeToast(
-        "danger",
-        "Error",
-        "Lo sentimos. No tenemos cobertura para tu zona",
-        3000
-      );
-      return false;
     },
     updateTotal() {
       var sumatoria = 0;
@@ -224,24 +223,22 @@ export default {
       }
       this.saveItems();
     },
-    deleteCart() {
-      if (window.confirm("¿Desea eliminar todos los items?")) {
-        this.items.splice(1, this.items.length);
-      }
-      this.saveItems();
-    },
 
     validate() {
       if (this.selected === "") {
         this.makeToast("danger", "Error", "Seleccione un tipo de dirección", 3000);
         return false;
       }
-      if (this.selected == "Dirección del perfil") {
-        return this.validateAddressProfile();
+      if (this.location.split(",")[1].trim() != this.enterpriseNode.city.trim()) {
+        this.makeToast(
+          "danger",
+          "Error",
+          "Lo sentimos. No tenemos cobertura para tu zona",
+          3000
+        );
+        return true;
       }
-      if (this.selected == "Dirección del perfil") {
-        return this.validateAddress();
-      }
+
       if (this.location.length == 0) {
         this.makeToast(
           "danger",
